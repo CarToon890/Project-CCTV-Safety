@@ -1,0 +1,10 @@
+.aider*
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+runs/
+*.pt
+*.onnx
+dataset/
+.env
+.vscode/
