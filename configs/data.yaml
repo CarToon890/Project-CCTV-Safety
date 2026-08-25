@@ -1,0 +1,8 @@
+# YOLOv8 Dataset Configuration — 4 Classes CCTV
+path: ../dataset          # root directory ของ dataset
+train: images/train       # path รูป train (เทียบกับ 'path')
+val: images/val           # path รูป validation
+test: images/test         # path รูป test
+
+nc: 4                     # จำนวน class
+names: ['fall', 'fire_smoke', 'ppe', 'fight']
