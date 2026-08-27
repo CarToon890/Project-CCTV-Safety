@@ -48,6 +48,7 @@ Project-CCTV-Safety/
 │   └── yolov8_baseline.ipynb      # Jupyter Notebook สำหรับ Pipeline การเทรนและประเมินผล
 ├── Project-Plan.jpg               # แผนการดำเนินงานโครงการ
 ├── SWOT.jpg                       # การวิเคราะห์ SWOT ของโครงการ
+├── requirements.txt               # รายการ Dependencies สำหรับติดตั้งระบบ
 └── README.md                      # เอกสารแนะนำโครงการ
 ```
 
@@ -69,7 +70,7 @@ Project-CCTV-Safety/
 
 2. ติดตั้ง Dependencies:
    ```bash
-   pip install ultralytics roboflow opencv-python torch torchvision
+   pip install -r requirements.txt
    ```
 
 3. การเทรนโมเดล (Model Training):
