@@ -7,4 +7,7 @@ runs/
 *.onnx
 dataset/
 .env
+.venv/
+venv/
+env/
 .vscode/
