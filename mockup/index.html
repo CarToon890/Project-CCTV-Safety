@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCTV Safety — Draft Mockup</title>
+<style>
+:root{
+  --bg:#0a0e13; --panel:#111823; --panel2:#161f2c; --panel3:#1c2635;
+  --line:#22303f; --line2:#2c3c4e;
+  --text:#e7eef7; --muted:#8fa0b4; --muted2:#657588;
+  --accent:#38bdf8; --ok:#22c55e; --warn:#f59e0b; --crit:#ef4444;
+  --c-fall:#f59e0b; --c-fire:#ef4444; --c-ppe:#38bdf8; --c-fight:#a855f7;
+  --r:12px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai","IBM Plex Sans Thai",
+         "Sarabun",Roboto,"Helvetica Neue",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--text); font-family:var(--font);
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,select{font-family:inherit;font-size:inherit;color:inherit}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#2b3a4b;border-radius:9px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- LAYOUT ---------- */
+.app{display:grid;grid-template-columns:232px 1fr;height:100vh}
+.sidebar{
+  background:linear-gradient(180deg,#0d141d,#0a0e13);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;padding:16px 12px;gap:4px;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
+.brand-mark{
+  width:34px;height:34px;border-radius:9px;flex:none;
+  background:linear-gradient(145deg,#0ea5e9,#0369a1);
+  display:grid;place-items:center;box-shadow:0 0 0 1px #1e4b66,0 6px 16px -6px #0ea5e9aa;
+}
+.brand-mark svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.9}
+.brand-txt b{display:block;font-size:14px;letter-spacing:.2px}
+.brand-txt span{display:block;font-size:10.5px;color:var(--muted2);letter-spacing:.7px;text-transform:uppercase}
+
+.nav-label{font-size:10px;letter-spacing:1.1px;color:var(--muted2);text-transform:uppercase;padding:14px 10px 6px}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:9px;
+  color:var(--muted);width:100%;text-align:left;transition:.14s;position:relative;
+}
+.nav-item svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;flex:none}
+.nav-item:hover{background:var(--panel2);color:var(--text)}
+.nav-item.on{background:var(--panel3);color:#fff}
+.nav-item.on::before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+.nav-badge{margin-left:auto;font-size:10.5px;font-weight:700;background:var(--crit);color:#fff;
+  padding:1px 6px;border-radius:20px;font-family:var(--mono)}
+
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:12px}
+.sysbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 11px}
+.sysrow{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;padding:3px 0;color:var(--muted)}
+.sysrow b{color:var(--text);font-family:var(--mono);font-weight:600}
+
+main{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{
+  height:58px;flex:none;border-bottom:1px solid var(--line);background:#0c121a;
+  display:flex;align-items:center;gap:14px;padding:0 20px;
+}
+.topbar h1{font-size:16px;font-weight:600;letter-spacing:.2px}
+.topbar .sub{font-size:11.5px;color:var(--muted2)}
+.spacer{margin-left:auto}
+.chip-mock{
+  font-size:10.5px;letter-spacing:.6px;font-weight:700;color:#fbbf24;
+  border:1px dashed #7c5e12;background:#3a2d0a55;padding:3px 9px;border-radius:6px;
+}
+.clock{font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.4px}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(145deg,#334155,#1e293b);
+  display:grid;place-items:center;font-size:11px;font-weight:700;color:#cbd5e1;border:1px solid var(--line2)}
+
+.view{display:none;flex:1;overflow-y:auto;padding:20px}
+.view.on{display:block}
+.view.live.on{display:flex;flex-direction:column;overflow:hidden;padding:16px}
+
+/* ---------- SHARED ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.card-h{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.card-h h3{font-size:13px;font-weight:600}
+.card-h .hint{font-size:11px;color:var(--muted2);margin-left:auto}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.dot.ok{background:var(--ok);box-shadow:0 0 0 3px #22c55e22}
+.dot.warn{background:var(--warn);box-shadow:0 0 0 3px #f59e0b22}
+.dot.off{background:#54637a}
+.pulse{animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+  padding:2.5px 8px;border-radius:6px;white-space:nowrap}
+.tag i{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+.t-fall{color:var(--c-fall);background:#f59e0b1c}
+.t-fire_smoke{color:var(--c-fire);background:#ef44441c}
+.t-ppe{color:var(--c-ppe);background:#38bdf81c}
+.t-fight{color:var(--c-fight);background:#a855f71c}
+.sev{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.3px;white-space:nowrap}
+.sev-critical{color:#fecaca;background:#7f1d1d}
+.sev-high{color:#fed7aa;background:#7c2d12}
+.sev-medium{color:#fde68a;background:#713f12}
+.st{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;border:1px solid}
+.st-new{color:#fca5a5;border-color:#7f1d1d;background:#450a0a66}
+.st-ack{color:#93c5fd;border-color:#1e3a5f;background:#0c1e3366}
+.st-closed{color:#86efac;border-color:#14532d;background:#052e1666}
+
+/* ---------- DASHBOARD ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+.kpi{padding:15px 16px;position:relative;overflow:hidden}
+.kpi .lbl{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.kpi .val{font-size:29px;font-weight:700;letter-spacing:-.6px;margin-top:8px;font-family:var(--mono)}
+.kpi .val small{font-size:14px;color:var(--muted2);font-weight:500}
+.kpi .delta{font-size:11.5px;margin-top:5px;color:var(--muted2)}
+.kpi .delta b{font-weight:600}
+.up{color:#f87171}.down{color:#4ade80}
+.kpi .spark{position:absolute;right:0;bottom:0;width:96px;height:42px;opacity:.5}
+
+.grid2{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;margin-bottom:14px}
+.grid2b{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}
+.chart-wrap{padding:16px 12px 10px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;padding:0 16px 14px}
+.legend span{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted)}
+.legend i{width:8px;height:8px;border-radius:2px;flex:none}
+
+.donut-box{display:flex;align-items:center;gap:18px;padding:18px 16px}
+.donut{position:relative;width:132px;height:132px;flex:none}
+.donut-mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.donut-mid b{display:block;font-size:24px;font-family:var(--mono);letter-spacing:-.5px}
+.donut-mid span{font-size:10.5px;color:var(--muted2)}
+.mix{flex:1;display:flex;flex-direction:column;gap:9px;min-width:0}
+.mix-row{display:grid;grid-template-columns:1fr auto;gap:6px;font-size:12px;align-items:center}
+.mix-row .bar{grid-column:1/-1;height:5px;border-radius:4px;background:var(--panel3);overflow:hidden}
+.mix-row .bar i{display:block;height:100%;border-radius:4px}
+.mix-row .n{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+.camlist{padding:6px 0;max-height:284px;overflow-y:auto}
+.camrow{display:flex;align-items:center;gap:11px;padding:9px 16px;border-bottom:1px solid #1a2431}
+.camrow:last-child{border:none}
+.camrow .nm{font-size:12.5px}
+.camrow .zn{font-size:11px;color:var(--muted2)}
+.camrow .fps{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.camrow .lat{font-family:var(--mono);font-size:11px;color:var(--muted2);width:52px;text-align:right}
+
+.mini-log{max-height:284px;overflow-y:auto}
+.mini-row{display:flex;align-items:center;gap:11px;padding:10px 16px;border-bottom:1px solid #1a2431;font-size:12px}
+.mini-row:last-child{border:none}
+.mini-row .tm{font-family:var(--mono);font-size:11px;color:var(--muted2);width:52px;flex:none}
+.mini-row .cm{color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- LIVE ---------- */
+.live-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex:none;flex-wrap:wrap}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:3px}
+.seg button{padding:5px 11px;border-radius:6px;font-size:12px;color:var(--muted)}
+.seg button.on{background:var(--panel3);color:#fff}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:9px;
+  background:var(--panel);border:1px solid var(--line);font-size:12.5px;color:var(--muted);transition:.14s}
+.btn:hover{border-color:var(--line2);color:var(--text)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9}
+.btn.primary{background:#0b4a6f;border-color:#0e6c9e;color:#e0f2fe}
+.btn.primary:hover{background:#0e5a86}
+
+.live-body{display:grid;grid-template-columns:1fr 306px;gap:14px;flex:1;min-height:0}
+.cam-grid{display:grid;gap:12px;overflow-y:auto;padding-right:2px;align-content:start}
+.cam-grid[data-lay="2"]{grid-template-columns:repeat(2,1fr)}
+.cam-grid[data-lay="3"]{grid-template-columns:repeat(3,1fr)}
+.cam-grid[data-lay="1"]{grid-template-columns:1fr}
+
+.cam{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;
+  border:1px solid var(--line);background:#05080c;cursor:pointer;transition:.15s}
+.cam:hover{border-color:var(--line2)}
+.cam.alarm{border-color:#ef4444;box-shadow:0 0 0 1px #ef4444,0 0 26px -6px #ef444488}
+.cam.offline .scene,.cam.offline .grain{display:none}
+
+/* ----- CCTV scenes (pure CSS) ----- */
+.scene{position:absolute;inset:0;overflow:hidden}
+.wall{position:absolute;inset:0;background:linear-gradient(180deg,#2a323c 0%,#20272f 46%,#171c23 47%,#101419 100%)}
+.floor{position:absolute;left:0;right:0;bottom:0;height:53%;
+  background:linear-gradient(180deg,#171c23,#252c35)}
+.floor::after{content:"";position:absolute;inset:0;opacity:.5;
+  background:
+   repeating-linear-gradient(90deg,#ffffff10 0 1px,transparent 1px 14%),
+   repeating-linear-gradient(180deg,#ffffff0c 0 1px,transparent 1px 22%);
+  transform:perspective(150px) rotateX(52deg);transform-origin:bottom}
+.beam{position:absolute;top:-10%;left:var(--bx,20%);width:38%;height:75%;
+  background:radial-gradient(ellipse at 50% 0,#ffffff26,transparent 70%);filter:blur(3px)}
+.box{position:absolute;background:linear-gradient(160deg,#3a4351,#232a34);border-radius:2px;
+  box-shadow:inset 0 1px 0 #ffffff14}
+.door{position:absolute;bottom:47%;width:9%;height:26%;background:#0d1117;border:1px solid #333c48;border-bottom:none}
+.pillar{position:absolute;top:0;bottom:0;width:5%;background:linear-gradient(90deg,#39424e,#242b34)}
+
+.sil{position:absolute;bottom:var(--b,16%);left:var(--l,20%);width:var(--w,3.4%);height:var(--h,27%);
+  --tone:#080b0f;}
+.sil::before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);
+  width:175%;aspect-ratio:1;border-radius:50%;background:var(--tone)}
+.sil::after{content:"";position:absolute;left:-16%;top:32%;width:132%;height:68%;
+  border-radius:44% 44% 22% 22%;background:var(--tone)}
+.walk{animation:walk var(--dur,14s) ease-in-out infinite alternate}
+@keyframes walk{from{transform:translateX(0)}to{transform:translateX(var(--tx,320%))}}
+.bob{animation:bob 1s ease-in-out infinite alternate}
+@keyframes bob{from{margin-bottom:0}to{margin-bottom:.6%}}
+.fallen{transform:rotate(-78deg);transform-origin:bottom center}
+.scuffle{animation:scuffle .45s ease-in-out infinite alternate}
+@keyframes scuffle{from{transform:translateX(-6%) rotate(-4deg)}to{transform:translateX(6%) rotate(5deg)}}
+
+.fire{position:absolute;left:var(--fl,60%);bottom:var(--fb,14%);width:15%;height:24%;
+  background:radial-gradient(ellipse at 50% 100%,#fff3c4 0%,#fbbf24 22%,#f97316 45%,#dc2626 68%,transparent 78%);
+  filter:blur(2px);animation:flick .28s steps(2) infinite}
+@keyframes flick{from{transform:scale(1,1) translateX(0);opacity:.95}to{transform:scale(1.09,.93) translateX(2%);opacity:.78}}
+.smoke{position:absolute;left:var(--sl,52%);bottom:var(--sb,28%);width:34%;height:60%;
+  background:radial-gradient(ellipse at 40% 90%,#cbd5e1aa,#94a3b855 45%,transparent 72%);
+  filter:blur(7px);animation:smoke 5s ease-in-out infinite alternate}
+@keyframes smoke{from{transform:translate(0,4%) scale(1);opacity:.55}to{transform:translate(7%,-9%) scale(1.22);opacity:.8}}
+.glow-fire{position:absolute;inset:0;background:radial-gradient(circle at 66% 74%,#f9731633,transparent 55%);
+  animation:pulse 1.4s ease-in-out infinite}
+
+.nv{filter:grayscale(1) sepia(1) hue-rotate(58deg) saturate(2.6) brightness(.82)}
+.warm{filter:sepia(.28) saturate(1.15)}
+.cool{filter:hue-rotate(-12deg) saturate(.85) brightness(.95)}
+
+.grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:.3;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='0.55'/></svg>");
+  animation:grainmv .5s steps(3) infinite}
+@keyframes grainmv{0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-3%)}}
+.scan{position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(180deg,#00000038 0 1px,transparent 1px 3px)}
+.vig{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 45%,transparent 42%,#000000b0 100%)}
+
+.osd{position:absolute;inset:0;pointer-events:none;font-family:var(--mono);font-size:10px;
+  text-shadow:0 1px 3px #000,0 0 2px #000}
+.osd .tl{position:absolute;top:7px;left:9px;display:flex;align-items:center;gap:7px}
+.osd .tr{position:absolute;top:7px;right:9px;letter-spacing:.4px;color:#dbe6f2}
+.osd .bl{position:absolute;bottom:7px;left:9px;color:#b9c7d6;letter-spacing:.3px}
+.osd .br{position:absolute;bottom:7px;right:9px;color:#7f8fa1}
+.rec{display:flex;align-items:center;gap:5px;color:#fca5a5;font-weight:700;letter-spacing:.6px}
+.rec i{width:6px;height:6px;border-radius:50%;background:#ef4444;animation:pulse 1.4s infinite}
+.camname{color:#e8f0f8;font-weight:600;letter-spacing:.3px}
+
+/* bounding boxes */
+.bbox{position:absolute;left:var(--l);top:var(--t);width:var(--w);height:var(--h);
+  border:1.6px solid var(--c);border-radius:2px;box-shadow:0 0 14px -3px var(--c),inset 0 0 22px -12px var(--c);
+  animation:drift var(--d,6s) ease-in-out infinite alternate;pointer-events:none}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(var(--dx,2%),var(--dy,-2%))}}
+.bbox::before,.bbox::after{content:"";position:absolute;width:9px;height:9px;border:2px solid var(--c)}
+.bbox::before{top:-2px;left:-2px;border-right:none;border-bottom:none}
+.bbox::after{bottom:-2px;right:-2px;border-left:none;border-top:none}
+.bbox .lb{position:absolute;top:-19px;left:-1.6px;display:flex;align-items:center;gap:5px;
+  background:var(--c);color:#08111a;font-family:var(--mono);font-size:9.5px;font-weight:700;
+  padding:2px 6px;border-radius:3px 3px 3px 0;white-space:nowrap;letter-spacing:.2px}
+.bbox.crit{animation:drift var(--d,6s) ease-in-out infinite alternate, blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.42}}
+
+.alarm-tape{position:absolute;left:0;right:0;bottom:0;height:20px;background:#ef4444e6;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  font-size:10.5px;font-weight:700;letter-spacing:.9px;color:#fff;animation:pulse 1.3s infinite}
+.offline-msg{position:absolute;inset:0;display:grid;place-content:center;gap:6px;justify-items:center;
+  background:repeating-linear-gradient(45deg,#0d1218 0 10px,#0a0f14 10px 20px);color:#5b6b7f;font-size:11.5px}
+.offline-msg b{font-family:var(--mono);font-size:12px;color:#8195aa;letter-spacing:.5px}
+
+/* live side panel */
+.live-side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.feed{flex:1;overflow-y:auto;min-height:0}
+.fitem{display:flex;gap:10px;padding:11px 13px;border-bottom:1px solid #1a2431;animation:slidein .4s ease}
+@keyframes slidein{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:none}}
+.fitem .bar{width:3px;border-radius:3px;flex:none}
+.fitem .bd{flex:1;min-width:0}
+.fitem .r1{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.fitem .tm{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--muted2)}
+.fitem .r2{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.det-list{padding:11px 13px;display:flex;flex-direction:column;gap:9px}
+.det-row{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;font-size:12px}
+.det-row .bar2{grid-column:1/-1;height:4px;border-radius:3px;background:var(--panel3);overflow:hidden}
+.det-row .bar2 i{display:block;height:100%;transition:width .6s ease}
+
+/* ---------- LOGS ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:14px}
+.field{display:flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--line);
+  border-radius:9px;padding:0 11px;height:36px}
+.field svg{width:14px;height:14px;stroke:var(--muted2);fill:none;stroke-width:1.9;flex:none}
+.field input,.field select{background:none;border:none;outline:none;font-size:12.5px;min-width:0}
+.field input{width:186px}
+.field select{cursor:pointer;padding-right:2px}
+.field select option{background:var(--panel2)}
+.fchip{padding:6px 11px;border-radius:20px;border:1px solid var(--line);background:var(--panel);
+  font-size:12px;color:var(--muted);transition:.14s;display:inline-flex;align-items:center;gap:6px}
+.fchip i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.fchip.on{color:#fff;border-color:currentColor}
+.fchip.on[data-k="fall"]{background:#f59e0b26;border-color:#f59e0b;color:#fcd34d}
+.fchip.on[data-k="fire_smoke"]{background:#ef444426;border-color:#ef4444;color:#fca5a5}
+.fchip.on[data-k="ppe"]{background:#38bdf826;border-color:#38bdf8;color:#7dd3fc}
+.fchip.on[data-k="fight"]{background:#a855f726;border-color:#a855f7;color:#d8b4fe}
+
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--muted2);
+  text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;
+  position:sticky;top:0;background:var(--panel);z-index:1}
+tbody td{padding:11px 14px;border-bottom:1px solid #1a2431;font-size:12.5px;vertical-align:middle}
+tbody tr{cursor:pointer;transition:.1s}
+tbody tr:hover{background:var(--panel2)}
+.tb-wrap{max-height:calc(100vh - 268px);overflow:auto}
+.thumb{width:62px;height:36px;border-radius:4px;overflow:hidden;position:relative;flex:none;background:#05080c;border:1px solid var(--line)}
+.thumb .bb{position:absolute;border:1.2px solid var(--c);border-radius:1px}
+.mono{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.conf{display:flex;align-items:center;gap:7px}
+.conf .track{width:44px;height:4px;border-radius:3px;background:var(--panel3);overflow:hidden}
+.conf .track i{display:block;height:100%;background:var(--accent)}
+.pager{display:flex;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.pager .info{font-size:12px;color:var(--muted2)}
+.pg{width:30px;height:30px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);
+  color:var(--muted);font-size:12px;display:grid;place-items:center}
+.pg:hover{color:#fff;border-color:var(--line2)}
+.pg.on{background:#0b4a6f;border-color:#0e6c9e;color:#fff}
+.pg:disabled{opacity:.35;cursor:default}
+.empty{padding:46px;text-align:center;color:var(--muted2);font-size:13px}
+
+/* modal */
+.mask{position:fixed;inset:0;background:#000000b8;backdrop-filter:blur(3px);display:none;
+  align-items:center;justify-content:center;z-index:50;padding:24px}
+.mask.on{display:flex}
+.modal{background:var(--panel);border:1px solid var(--line2);border-radius:14px;width:min(660px,100%);
+  overflow:hidden;box-shadow:0 30px 70px -20px #000;animation:pop .18s ease}
+@keyframes pop{from{opacity:0;transform:scale(.97) translateY(8px)}to{opacity:1;transform:none}}
+.modal-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.modal-h h3{font-size:14px;font-weight:600}
+.x{margin-left:auto;width:28px;height:28px;border-radius:7px;color:var(--muted);display:grid;place-items:center;font-size:17px}
+.x:hover{background:var(--panel3);color:#fff}
+.snap{aspect-ratio:16/9;position:relative;background:#05080c;border-bottom:1px solid var(--line)}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
+.meta div{background:var(--panel);padding:11px 14px}
+.meta .k{font-size:10.5px;color:var(--muted2);letter-spacing:.4px;text-transform:uppercase}
+.meta .v{font-size:13px;margin-top:3px}
+.modal-f{display:flex;gap:9px;padding:13px 16px;border-top:1px solid var(--line)}
+
+.note{margin-top:16px;font-size:11.5px;color:var(--muted2);line-height:1.7;
+  border-left:2px solid var(--line2);padding-left:12px}
+
+@media(max-width:1180px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2,.grid2b{grid-template-columns:1fr}
+  .live-body{grid-template-columns:1fr}
+  .live-side{display:none}
+}
+@media(max-width:820px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .sidebar{flex-direction:row;align-items:center;overflow-x:auto;padding:8px 10px;gap:6px;
+    border-right:none;border-bottom:1px solid var(--line)}
+  .brand{padding:0 10px 0 4px}.brand-txt{display:none}
+  .nav-label,.side-foot{display:none}
+  .nav-item{width:auto;white-space:nowrap}
+  .nav-item.on::before{display:none}
+  .cam-grid[data-lay="3"],.cam-grid[data-lay="2"]{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr}
+  .meta{grid-template-columns:1fr}
+  .topbar .sub,.clock{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2l8 3.5v6c0 5-3.4 9.2-8 10.5C7.4 20.7 4 16.5 4 11.5v-6L12 2z"/><circle cx="12" cy="11" r="2.6"/></svg>
+      </div>
+      <div class="brand-txt"><b>CCTV Safety</b><span>Detection System</span></div>
+    </div>
+
+    <div class="nav-label">เมนูหลัก</div>
+    <button class="nav-item on" data-go="dashboard">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-item" data-go="live">
+      <svg viewBox="0 0 24 24"><path d="M2.5 7.5h13v9h-13z" rx="2"/><path d="M15.5 11l6-3.5v9l-6-3.5z"/></svg>
+      Live Monitoring
+      <span class="nav-badge" id="navLive">3</span>
+    </button>
+    <button class="nav-item" data-go="logs">
+      <svg viewBox="0 0 24 24"><path d="M10.3 3.2 2.6 17a1.8 1.8 0 0 0 1.6 2.7h15.6A1.8 1.8 0 0 0 21.4 17L13.7 3.2a1.9 1.9 0 0 0-3.4 0z"/><path d="M12 9v4.5M12 17h.01"/></svg>
+      Alerts / Logs
+      <span class="nav-badge" id="navLogs">12</span>
+    </button>
+
+    <div class="nav-label">อื่นๆ</div>
+    <button class="nav-item" data-soon="1">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
+      จัดการกล้อง
+    </button>
+    <button class="nav-item" data-soon="1">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7.5 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H1.7a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 7.5"/></svg>
+      ตั้งค่าระบบ
+    </button>
+
+    <div class="side-foot">
+      <div class="sysbox">
+        <div class="sysrow"><span>Model</span><b>yolov8n</b></div>
+        <div class="sysrow"><span>Inference</span><b>28 ms</b></div>
+        <div class="sysrow"><span>GPU</span><b>62%</b></div>
+        <div class="sysrow"><span>Uptime</span><b>7d 04h</b></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main>
+    <header class="topbar">
+      <div>
+        <h1 id="pgTitle">ภาพรวมระบบ</h1>
+        <div class="sub" id="pgSub">สรุปสถานะกล้องและสถิติเหตุการณ์</div>
+      </div>
+      <div class="spacer"></div>
+      <span class="chip-mock">MOCKUP · ข้อมูลจำลอง</span>
+      <span class="clock" id="clock">--:--:--</span>
+      <div class="avatar">OP</div>
+    </header>
+
+    <!-- ---------- DASHBOARD ---------- -->
+    <section class="view on" id="v-dashboard">
+      <div class="kpis">
+        <div class="card kpi">
+          <div class="lbl"><span class="dot ok"></span>กล้องที่ออนไลน์</div>
+          <div class="val">12<small> / 14</small></div>
+          <div class="delta">ออฟไลน์ 1 · สัญญาณอ่อน 1</div>
+          <svg class="spark" id="sp1" viewBox="0 0 96 42" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="card kpi">
+          <div class="lbl"><span class="dot ok pulse"></span>สถานะระบบตรวจจับ</div>
+          <div class="val" style="font-size:22px;color:#4ade80;letter-spacing:0">ทำงานปกติ</div>
+          <div class="delta">ประมวลผล 12 stream · 24.6 FPS เฉลี่ย</div>
+        </div>
+        <div class="card kpi">
+          <div class="lbl"><span class="dot warn"></span>เหตุการณ์วันนี้</div>
+          <div class="val">47</div>
+          <div class="delta"><b class="up">▲ 18%</b> เทียบเมื่อวาน (40)</div>
+          <svg class="spark" id="sp2" viewBox="0 0 96 42" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="card kpi">
+          <div class="lbl"><span class="dot ok"></span>เวลาตอบสนองเฉลี่ย</div>
+          <div class="val">1:24<small> น.</small></div>
+          <div class="delta"><b class="down">▼ 22 วิ</b> เร็วขึ้นจากสัปดาห์ก่อน</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-h"><h3>เหตุการณ์รายชั่วโมง (24 ชม. ล่าสุด)</h3><span class="hint">แยกตามประเภท</span></div>
+          <div class="chart-wrap"><svg id="barChart" viewBox="0 0 720 220" preserveAspectRatio="none" style="width:100%;height:220px"></svg></div>
+          <div class="legend">
+            <span><i style="background:var(--c-fall)"></i>fall (คนล้ม)</span>
+            <span><i style="background:var(--c-fire)"></i>fire_smoke (ไฟ/ควัน)</span>
+            <span><i style="background:var(--c-ppe)"></i>ppe (อุปกรณ์ป้องกัน)</span>
+            <span><i style="background:var(--c-fight)"></i>fight (ทะเลาะวิวาท)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>สัดส่วนเหตุการณ์</h3><span class="hint">7 วันล่าสุด</span></div>
+          <div class="donut-box">
+            <div class="donut">
+              <svg viewBox="0 0 42 42" id="donut" style="width:132px;height:132px;transform:rotate(-90deg)"></svg>
+              <div class="donut-mid"><b id="dTotal">0</b><span>เหตุการณ์</span></div>
+            </div>
+            <div class="mix" id="mix"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2b">
+        <div class="card">
+          <div class="card-h"><h3>สถานะกล้อง</h3><span class="hint">14 ตัว</span></div>
+          <div class="camlist" id="camHealth"></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><span class="dot ok pulse"></span><h3>การแจ้งเตือนล่าสุด</h3>
+            <button class="hint" data-go="logs" style="cursor:pointer;color:var(--accent)">ดูทั้งหมด →</button></div>
+          <div class="mini-log" id="miniLog"></div>
+        </div>
+      </div>
+
+      <p class="note">
+        หน้านี้เป็น Draft Mockup — ตัวเลข กราฟ และรายการทั้งหมดเป็นข้อมูลจำลอง (mock data)
+        ยังไม่ได้เชื่อมต่อกับโมเดล YOLOv8 หรือฐานข้อมูลจริง ใช้เพื่อสื่อสารโครงหน้าจอและ flow การใช้งานเท่านั้น
+      </p>
+    </section>
+
+    <!-- ---------- LIVE ---------- -->
+    <section class="view live" id="v-live">
+      <div class="live-bar">
+        <div class="seg">
+          <button class="on" data-lay="3">3 × N</button>
+          <button data-lay="2">2 × N</button>
+          <button data-lay="1">เดี่ยว</button>
+        </div>
+        <button class="btn" id="btnAlarmOnly">
+          <svg viewBox="0 0 24 24"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+          เฉพาะที่มีเหตุการณ์
+        </button>
+        <button class="btn" id="btnBoxes">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+          ซ่อน Bounding Box
+        </button>
+        <div class="spacer"></div>
+        <span class="clock" id="liveClock">--:--:--</span>
+        <button class="btn primary">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          เพิ่มกล้อง
+        </button>
+      </div>
+
+      <div class="live-body">
+        <div class="cam-grid" data-lay="3" id="camGrid"></div>
+
+        <div class="live-side">
+          <div class="card" style="flex:none">
+            <div class="card-h"><h3>ค่าความเชื่อมั่นล่าสุด</h3></div>
+            <div class="det-list" id="detList"></div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;min-height:0">
+            <div class="card-h"><span class="dot ok pulse"></span><h3>Live Event Stream</h3></div>
+            <div class="feed" id="feed"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- LOGS ---------- -->
+    <section class="view" id="v-logs">
+      <div class="filters">
+        <div class="field">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="text" id="fSearch" placeholder="ค้นหา กล้อง / โซน / รหัสเหตุการณ์…">
+        </div>
+        <div class="field">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+          <select id="fDate">
+            <option value="all">ทุกช่วงเวลา</option>
+            <option value="today">วันนี้</option>
+            <option value="yesterday">เมื่อวาน</option>
+            <option value="7d">7 วันล่าสุด</option>
+          </select>
+        </div>
+        <div class="field">
+          <svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="13" height="10" rx="2"/><path d="M15.5 11l6-3.5v9l-6-3.5z"/></svg>
+          <select id="fCam"><option value="all">ทุกกล้อง</option></select>
+        </div>
+        <div class="field">
+          <svg viewBox="0 0 24 24"><path d="M12 3l9 16H3z"/></svg>
+          <select id="fSev">
+            <option value="all">ทุกระดับ</option>
+            <option value="critical">วิกฤต</option>
+            <option value="high">สูง</option>
+            <option value="medium">ปานกลาง</option>
+          </select>
+        </div>
+        <button class="fchip on" data-k="fall"><i style="background:var(--c-fall)"></i>fall</button>
+        <button class="fchip on" data-k="fire_smoke"><i style="background:var(--c-fire)"></i>fire_smoke</button>
+        <button class="fchip on" data-k="ppe"><i style="background:var(--c-ppe)"></i>ppe</button>
+        <button class="fchip on" data-k="fight"><i style="background:var(--c-fight)"></i>fight</button>
+        <div class="spacer"></div>
+        <button class="btn">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></svg>
+          Export CSV
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="tb-wrap">
+          <table>
+            <thead><tr>
+              <th style="width:56px">ภาพ</th>
+              <th style="width:132px">วัน / เวลา</th>
+              <th>กล้อง</th>
+              <th style="width:132px">เหตุการณ์</th>
+              <th style="width:104px">ความเชื่อมั่น</th>
+              <th style="width:86px">ระดับ</th>
+              <th style="width:104px">สถานะ</th>
+              <th style="width:92px">ผู้รับผิดชอบ</th>
+            </tr></thead>
+            <tbody id="logBody"></tbody>
+          </table>
+          <div class="empty" id="logEmpty" style="display:none">ไม่พบเหตุการณ์ที่ตรงกับเงื่อนไข</div>
+        </div>
+        <div class="pager">
+          <span class="info" id="pgInfo"></span>
+          <div class="spacer"></div>
+          <div style="display:flex;gap:6px" id="pgBtns"></div>
+        </div>
+      </div>
+
+      <p class="note">
+        ตารางนี้ใช้ข้อมูลจำลอง 90 รายการที่สุ่มขึ้นในเบราว์เซอร์ — ตัวกรอง การแบ่งหน้า และหน้ารายละเอียดใช้งานได้จริง
+        เพื่อให้เห็นภาพ flow ก่อนต่อ API จริง (คลิกที่แถวเพื่อดูรายละเอียด)
+      </p>
+    </section>
+  </main>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div class="mask" id="mask">
+  <div class="modal">
+    <div class="modal-h">
+      <span class="dot warn"></span>
+      <h3 id="mTitle">รายละเอียดเหตุการณ์</h3>
+      <button class="x" id="mClose">×</button>
+    </div>
+    <div class="snap" id="mSnap"></div>
+    <div class="meta" id="mMeta"></div>
+    <div class="modal-f">
+      <button class="btn primary">รับทราบเหตุการณ์</button>
+      <button class="btn">ส่งต่อเจ้าหน้าที่</button>
+      <button class="btn">ดาวน์โหลดคลิป 30 วิ</button>
+      <div class="spacer"></div>
+      <button class="btn" id="mClose2">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ CONFIG / MOCK DATA ============ */
+const CLS = {
+  fall:       {th:'คนล้ม',            c:'#f59e0b', sev:'high'},
+  fire_smoke: {th:'ไฟไหม้ / ควัน',    c:'#ef4444', sev:'critical'},
+  ppe:        {th:'ไม่สวมอุปกรณ์ป้องกัน', c:'#38bdf8', sev:'medium'},
+  fight:      {th:'ทะเลาะวิวาท',       c:'#a855f7', sev:'high'}
+};
+const SEV_TH = {critical:'วิกฤต', high:'สูง', medium:'ปานกลาง'};
+const CAMS = [
+  {id:'CAM-01', zone:'โถงทางเดิน ชั้น 1',  st:'ok',   fps:25},
+  {id:'CAM-02', zone:'โรงงาน โซน A',       st:'ok',   fps:25},
+  {id:'CAM-03', zone:'ลานจอดรถ ฝั่งตะวันออก', st:'ok', fps:24},
+  {id:'CAM-04', zone:'คลังสินค้า ชั้น 2',   st:'ok',   fps:25},
+  {id:'CAM-05', zone:'บันไดหนีไฟ ปีก B',    st:'ok',   fps:25},
+  {id:'CAM-06', zone:'ประตูทางเข้าหลัก',    st:'ok',   fps:25},
+  {id:'CAM-07', zone:'ห้องเครื่อง ชั้นใต้ดิน', st:'warn', fps:14},
+  {id:'CAM-08', zone:'โรงอาหาร',           st:'ok',   fps:25},
+  {id:'CAM-09', zone:'ลานขนถ่ายสินค้า',     st:'ok',   fps:24},
+  {id:'CAM-10', zone:'ทางเดิน ชั้น 3',      st:'ok',   fps:25},
+  {id:'CAM-11', zone:'จุดคัดแยกวัสดุ',      st:'off',  fps:0},
+  {id:'CAM-12', zone:'สำนักงาน ชั้น 2',     st:'ok',   fps:25},
+  {id:'CAM-13', zone:'รั้วรอบนอก ทิศเหนือ',  st:'ok',   fps:24},
+  {id:'CAM-14', zone:'ห้องเก็บสารเคมี',      st:'ok',   fps:25}
+];
+const STAFF = ['สมชาย ร.','ปวีณา ก.','ธนกร ส.','อารีย์ พ.','—'];
+const pad = n => String(n).padStart(2,'0');
+const rnd = (a,b) => a + Math.random()*(b-a);
+const ri  = (a,b) => Math.floor(rnd(a,b+1));
+const pick = a => a[ri(0,a.length-1)];
+
+/* ---- generate 90 log rows over last 7 days ---- */
+const WEIGHT = ['ppe','ppe','ppe','ppe','fall','fall','fight','fire_smoke'];
+const LOGS = [];
+(function(){
+  const now = Date.now();
+  for(let i=0;i<90;i++){
+    const k = pick(WEIGHT);
+    const cam = pick(CAMS.filter(c=>c.st!=='off'));
+    const t = new Date(now - ri(0, 7*24*60)*60*1000 - ri(0,59)*1000);
+    const age = (now - t) / 36e5;
+    LOGS.push({
+      id:'EVT-'+String(24800+i),
+      cls:k, cam:cam.id, zone:cam.zone, t,
+      conf:+rnd(k==='ppe'?0.62:0.55, 0.97).toFixed(2),
+      sev:CLS[k].sev,
+      status: age<1.5 ? 'new' : (age<24 ? pick(['ack','ack','closed']) : 'closed'),
+      by: age<1.5 ? '—' : pick(STAFF),
+      box:[rnd(.12,.55), rnd(.14,.5), rnd(.16,.3), rnd(.22,.42)]
+    });
+  }
+  LOGS.sort((a,b)=>b.t-a.t);
+})();
+const fmtT  = d => pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+const fmtD  = d => pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+String(d.getFullYear()+543).slice(-2);
+
+/* ============ NAVIGATION ============ */
+const PAGES = {
+  dashboard:['ภาพรวมระบบ','สรุปสถานะกล้องและสถิติเหตุการณ์'],
+  live:     ['Live CCTV Monitoring','ภาพสดพร้อมผลตรวจจับ 4 เหตุการณ์แบบเรียลไทม์'],
+  logs:     ['Alert / Logs','ประวัติการแจ้งเตือนเหตุการณ์ย้อนหลัง']
+};
+document.querySelectorAll('[data-go]').forEach(b=>{
+  b.addEventListener('click',()=>go(b.dataset.go));
+});
+document.querySelectorAll('[data-soon]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    b.style.opacity=.5; setTimeout(()=>b.style.opacity=1,220);
+  });
+});
+function go(p){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('v-'+p).classList.add('on');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('on', n.dataset.go===p));
+  pgTitle.textContent = PAGES[p][0];
+  pgSub.textContent   = PAGES[p][1];
+}
+
+/* ============ CLOCK ============ */
+setInterval(()=>{
+  const d = new Date(), s = fmtD(d)+'  '+fmtT(d);
+  clock.textContent = s; liveClock.textContent = s;
+  document.querySelectorAll('[data-osdclock]').forEach(e=>e.textContent = fmtD(d)+' '+fmtT(d));
+},1000);
+
+/* ============ DASHBOARD : charts ============ */
+function spark(el, up){
+  const pts=[]; let v=rnd(12,20);
+  for(let i=0;i<18;i++){ v += rnd(-4,up?5:4); v=Math.max(4,Math.min(38,v)); pts.push([i*96/17, 42-v]); }
+  const d = pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  el.innerHTML = `<path d="${d}" fill="none" stroke="${up?'#f87171':'#38bdf8'}" stroke-width="1.6"/>
+   <path d="${d} L96 42 L0 42Z" fill="${up?'#f8717120':'#38bdf820'}"/>`;
+}
+spark(sp1,false); spark(sp2,true);
+
+(function bars(){
+  const W=720,H=220,PADB=26,PADL=26, n=24, keys=Object.keys(CLS);
+  const data = Array.from({length:n},(_,h)=>{
+    const busy = (h>=7&&h<=10)||(h>=16&&h<=19) ? 1.9 : (h>=1&&h<=5 ? .35 : 1);
+    const o={}; keys.forEach(k=>o[k]=Math.round(rnd(0,k==='ppe'?4.5:k==='fire_smoke'?.9:2.4)*busy));
+    return o;
+  });
+  const max = Math.max(6, ...data.map(d=>keys.reduce((s,k)=>s+d[k],0)));
+  const bw = (W-PADL-10)/n, gap = bw*0.26;
+  let g = '';
+  for(let i=0;i<=4;i++){
+    const y = PADB + (H-PADB*2)*(i/4);
+    g += `<line x1="${PADL}" y1="${y}" x2="${W}" y2="${y}" stroke="#22303f" stroke-width="1"/>
+          <text x="0" y="${y+3.5}" fill="#657588" font-size="10" font-family="monospace">${Math.round(max*(1-i/4))}</text>`;
+  }
+  data.forEach((d,i)=>{
+    let acc=0; const x = PADL + i*bw + gap/2, w = bw-gap;
+    keys.forEach(k=>{
+      const h = d[k]/max*(H-PADB*2);
+      if(h>0){
+        const y = H-PADB-acc-h;
+        g += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${CLS[k].c}" opacity=".88"><title>${pad(i)}:00 — ${k}: ${d[k]}</title></rect>`;
+        acc += h;
+      }
+    });
+    if(i%3===0) g += `<text x="${(x+w/2).toFixed(1)}" y="${H-9}" fill="#657588" font-size="10" font-family="monospace" text-anchor="middle">${pad(i)}</text>`;
+  });
+  barChart.innerHTML = g;
+})();
+
+(function donut(){
+  const tally={}; Object.keys(CLS).forEach(k=>tally[k]=0);
+  LOGS.forEach(l=>tally[l.cls]++);
+  const total = LOGS.length; dTotal.textContent = total;
+  let off=0, g='<circle cx="21" cy="21" r="15.9" fill="none" stroke="#1c2635" stroke-width="5.2"/>';
+  let mixHtml='';
+  Object.entries(tally).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+    const pct = v/total*100;
+    g += `<circle cx="21" cy="21" r="15.9" fill="none" stroke="${CLS[k].c}" stroke-width="5.2"
+           stroke-dasharray="${pct.toFixed(2)} ${(100-pct).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"
+           stroke-linecap="butt"/>`;
+    off += pct;
+    mixHtml += `<div class="mix-row">
+      <span class="tag t-${k}"><i></i>${k}</span>
+      <span class="n">${v} · ${pct.toFixed(0)}%</span>
+      <span class="bar"><i style="width:${pct.toFixed(1)}%;background:${CLS[k].c}"></i></span></div>`;
+  });
+  document.getElementById('donut').innerHTML = g;
+  mix.innerHTML = mixHtml;
+})();
+
+camHealth.innerHTML = CAMS.map(c=>`
+  <div class="camrow">
+    <span class="dot ${c.st==='ok'?'ok':c.st==='warn'?'warn':'off'}"></span>
+    <div><div class="nm">${c.id}</div><div class="zn">${c.zone}</div></div>
+    <span class="fps">${c.st==='off'?'—':c.fps+' fps'}</span>
+    <span class="lat">${c.st==='off'?'offline':c.st==='warn'?'สัญญาณอ่อน':ri(18,46)+' ms'}</span>
+  </div>`).join('');
+
+miniLog.innerHTML = LOGS.slice(0,7).map(l=>`
+  <div class="mini-row">
+    <span class="tm">${fmtT(l.t).slice(0,5)}</span>
+    <span class="tag t-${l.cls}"><i></i>${l.cls}</span>
+    <span class="cm">${l.cam} · ${l.zone}</span>
+    <span class="sev sev-${l.sev}">${SEV_TH[l.sev]}</span>
+  </div>`).join('');
+
+/* ============ LIVE : camera scenes ============ */
+const SCENES = [
+  {cam:0, grade:'', html:`
+    <div class="wall"></div><div class="floor"></div>
+    <div class="beam" style="--bx:8%"></div><div class="beam" style="--bx:58%"></div>
+    <div class="door" style="left:12%"></div><div class="door" style="left:74%"></div>
+    <div class="sil fallen" style="--l:38%;--w:3.6%;--h:26%;--b:14%"></div>
+    <div class="sil walk" style="--l:72%;--w:3.2%;--h:25%;--tx:-90%;--dur:11s"></div>`,
+   boxes:[{cls:'fall', l:'33%', t:'55%', w:'22%', h:'20%', crit:true}]},
+
+  {cam:1, grade:'warm', html:`
+    <div class="wall" style="background:linear-gradient(180deg,#333b44,#20262d 46%,#181d24 47%,#0f1318)"></div>
+    <div class="floor"></div>
+    <div class="pillar" style="left:22%"></div><div class="pillar" style="left:68%"></div>
+    <div class="box" style="left:6%;bottom:20%;width:13%;height:16%"></div>
+    <div class="box" style="left:46%;bottom:18%;width:10%;height:13%"></div>
+    <div class="sil bob" style="--l:40%;--w:3.4%;--h:27%;--b:20%"></div>
+    <div class="sil bob" style="--l:57%;--w:3.2%;--h:26%;--b:19%"></div>`,
+   boxes:[{cls:'ppe', l:'36%', t:'30%', w:'13%', h:'46%'},
+          {cls:'ppe', l:'54%', t:'32%', w:'12%', h:'44%'}]},
+
+  {cam:2, grade:'nv', html:`
+    <div class="wall" style="background:linear-gradient(180deg,#1b2229,#141a20 40%,#10151a 41%,#0b0f13)"></div>
+    <div class="floor" style="height:58%;background:linear-gradient(180deg,#121820,#1b232c)"></div>
+    <div class="box" style="left:8%;bottom:26%;width:20%;height:15%;border-radius:6px 14px 4px 4px"></div>
+    <div class="box" style="left:34%;bottom:25%;width:19%;height:14%;border-radius:6px 14px 4px 4px"></div>
+    <div class="box" style="left:60%;bottom:24%;width:21%;height:15%;border-radius:6px 14px 4px 4px"></div>
+    <div class="sil walk" style="--l:14%;--w:3%;--h:22%;--b:12%;--tx:420%;--dur:16s"></div>`,
+   boxes:[]},
+
+  {cam:3, grade:'cool', html:`
+    <div class="wall" style="background:linear-gradient(180deg,#2d353f,#222a33 50%,#1a1f26 51%,#12161b)"></div>
+    <div class="floor"></div>
+    <div class="box" style="left:4%;bottom:22%;width:11%;height:30%"></div>
+    <div class="box" style="left:16%;bottom:22%;width:11%;height:22%"></div>
+    <div class="box" style="left:80%;bottom:21%;width:14%;height:26%"></div>
+    <div class="glow-fire"></div>
+    <div class="smoke" style="--sl:48%;--sb:30%"></div>
+    <div class="fire" style="--fl:56%;--fb:16%"></div>
+    <div class="sil walk" style="--l:22%;--w:3.2%;--h:25%;--b:18%;--tx:-40%;--dur:6s"></div>`,
+   boxes:[{cls:'fire_smoke', l:'46%', t:'22%', w:'34%', h:'58%', crit:true}]},
+
+  {cam:4, grade:'', html:`
+    <div class="wall" style="background:linear-gradient(180deg,#39424d,#262d36 48%,#1b2128 49%,#12161c)"></div>
+    <div class="floor"></div>
+    <div class="beam" style="--bx:32%"></div>
+    <div class="door" style="left:60%;height:30%"></div>
+    <div class="sil scuffle" style="--l:38%;--w:3.6%;--h:27%;--b:16%"></div>
+    <div class="sil scuffle" style="--l:46%;--w:3.6%;--h:27%;--b:16%;animation-direction:alternate-reverse"></div>`,
+   boxes:[{cls:'fight', l:'32%', t:'42%', w:'26%', h:'42%', crit:true}]},
+
+  {cam:10, grade:'', html:``, boxes:[]},
+
+  {cam:5, grade:'cool', html:`
+    <div class="wall"></div><div class="floor"></div>
+    <div class="beam" style="--bx:40%"></div>
+    <div class="box" style="left:70%;bottom:19%;width:16%;height:22%"></div>
+    <div class="sil walk" style="--l:20%;--w:3.2%;--h:26%;--b:17%;--tx:260%;--dur:13s"></div>
+    <div class="sil walk" style="--l:60%;--w:3.1%;--h:25%;--b:16%;--tx:-160%;--dur:15s"></div>`,
+   boxes:[]}
+];
+
+function camHTML(s){
+  const c = CAMS[s.cam];
+  if(c.st==='off'){
+    return `<div class="cam offline" data-cam="${c.id}">
+      <div class="offline-msg"><b>NO SIGNAL</b><span>${c.id} · ${c.zone}</span></div>
+      <div class="osd"><div class="tl"><span class="camname">${c.id}</span></div>
+      <div class="bl">ขาดการเชื่อมต่อ 00:42:11</div></div></div>`;
+  }
+  const crit = s.boxes.some(b=>b.crit);
+  const boxes = s.boxes.map(b=>`
+    <div class="bbox ${b.crit?'crit':''}" data-cls="${b.cls}"
+         style="--l:${b.l};--t:${b.t};--w:${b.w};--h:${b.h};--c:${CLS[b.cls].c};--d:${rnd(4,8).toFixed(1)}s;--dx:${rnd(-2.5,2.5).toFixed(1)}%;--dy:${rnd(-2.5,2.5).toFixed(1)}%">
+      <span class="lb">${b.cls} <b data-conf>${rnd(.72,.95).toFixed(2)}</b></span>
+    </div>`).join('');
+  return `<div class="cam ${crit?'alarm':''}" data-cam="${c.id}">
+    <div class="scene ${s.grade}">${s.html}</div>
+    <div class="grain"></div><div class="scan"></div><div class="vig"></div>
+    ${boxes}
+    <div class="osd">
+      <div class="tl"><span class="rec"><i></i>REC</span><span class="camname">${c.id}</span></div>
+      <div class="tr" data-osdclock>--</div>
+      <div class="bl">${c.zone}</div>
+      <div class="br">${c.fps}fps · 1920×1080</div>
+    </div>
+    ${crit?`<div class="alarm-tape">⚠ ตรวจพบเหตุการณ์ — ${CLS[s.boxes.find(b=>b.crit).cls].th}</div>`:''}
+  </div>`;
+}
+camGrid.innerHTML = SCENES.map(camHTML).join('');
+
+/* layout switch */
+document.querySelectorAll('.seg button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.seg button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); camGrid.dataset.lay = b.dataset.lay;
+  });
+});
+let alarmOnly=false, showBoxes=true;
+btnAlarmOnly.addEventListener('click',()=>{
+  alarmOnly=!alarmOnly;
+  btnAlarmOnly.classList.toggle('primary',alarmOnly);
+  document.querySelectorAll('.cam').forEach(c=>{
+    c.style.display = (alarmOnly && !c.classList.contains('alarm')) ? 'none' : '';
+  });
+});
+btnBoxes.addEventListener('click',()=>{
+  showBoxes=!showBoxes;
+  btnBoxes.lastChild.textContent = showBoxes ? ' ซ่อน Bounding Box' : ' แสดง Bounding Box';
+  btnBoxes.classList.toggle('primary', !showBoxes);
+  document.querySelectorAll('.bbox').forEach(b=>b.style.display = showBoxes?'':'none');
+});
+
+/* confidence side panel + jitter */
+const ACTIVE = SCENES.flatMap(s=>s.boxes.map(b=>({cls:b.cls, cam:CAMS[s.cam].id})));
+detList.innerHTML = ACTIVE.map((a,i)=>`
+  <div class="det-row" data-i="${i}">
+    <span class="tag t-${a.cls}"><i></i>${a.cls}</span>
+    <span style="color:var(--muted2);font-size:11.5px">${a.cam}</span>
+    <span class="mono" data-v>0.00</span>
+    <span class="bar2"><i style="background:${CLS[a.cls].c};width:0%"></i></span>
+  </div>`).join('');
+function jitter(){
+  document.querySelectorAll('[data-conf]').forEach(e=>{
+    e.textContent = Math.min(.99, Math.max(.55, +e.textContent + rnd(-.04,.04))).toFixed(2);
+  });
+  document.querySelectorAll('.det-row').forEach((r,i)=>{
+    const src = document.querySelectorAll('[data-conf]')[i];
+    const v = src ? +src.textContent : rnd(.6,.9);
+    r.querySelector('[data-v]').textContent = v.toFixed(2);
+    r.querySelector('.bar2 i').style.width = (v*100).toFixed(0)+'%';
+  });
+}
+jitter(); setInterval(jitter, 1400);
+
+/* live event stream */
+function pushFeed(){
+  const l = LOGS[ri(0,20)], d = new Date();
+  const el = document.createElement('div');
+  el.className='fitem';
+  el.innerHTML = `<span class="bar" style="background:${CLS[l.cls].c}"></span>
+    <div class="bd">
+      <div class="r1"><span class="tag t-${l.cls}"><i></i>${l.cls}</span>
+        <span class="sev sev-${l.sev}">${SEV_TH[l.sev]}</span>
+        <span class="tm">${fmtT(d)}</span></div>
+      <div class="r2">${l.cam} · ${l.zone} · conf ${rnd(.6,.96).toFixed(2)}</div>
+    </div>`;
+  feed.prepend(el);
+  while(feed.children.length>14) feed.lastChild.remove();
+}
+for(let i=0;i<6;i++) pushFeed();
+setInterval(pushFeed, 4200);
+
+/* ============ LOGS ============ */
+fCam.innerHTML = '<option value="all">ทุกกล้อง</option>' +
+  CAMS.map(c=>`<option value="${c.id}">${c.id} · ${c.zone}</option>`).join('');
+
+let page=1, PER=10;
+const active = new Set(Object.keys(CLS));
+document.querySelectorAll('.fchip').forEach(ch=>{
+  ch.addEventListener('click',()=>{
+    const k=ch.dataset.k;
+    if(active.has(k)){active.delete(k);ch.classList.remove('on');}
+    else{active.add(k);ch.classList.add('on');}
+    page=1; render();
+  });
+});
+[fSearch,fDate,fCam,fSev].forEach(e=>e.addEventListener('input',()=>{page=1;render();}));
+
+function filtered(){
+  const q = fSearch.value.trim().toLowerCase();
+  const now = new Date(); const day0 = new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  return LOGS.filter(l=>{
+    if(!active.has(l.cls)) return false;
+    if(fCam.value!=='all' && l.cam!==fCam.value) return false;
+    if(fSev.value!=='all' && l.sev!==fSev.value) return false;
+    if(fDate.value==='today'     && l.t < day0) return false;
+    if(fDate.value==='yesterday' && !(l.t >= day0-864e5 && l.t < day0)) return false;
+    if(fDate.value==='7d'        && l.t < now-7*864e5) return false;
+    if(q && !(l.cam+' '+l.zone+' '+l.id+' '+l.cls).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+function thumbHTML(l){
+  const [x,y,w,h] = l.box;
+  return `<div class="thumb"><div style="position:absolute;inset:0;background:
+    linear-gradient(180deg,#232b35 0 46%,#161c24 46% 100%)"></div>
+    <div class="bb" style="--c:${CLS[l.cls].c};left:${x*100}%;top:${y*100}%;width:${w*100}%;height:${h*100}%"></div></div>`;
+}
+function render(){
+  const rows = filtered();
+  const pages = Math.max(1, Math.ceil(rows.length/PER));
+  page = Math.min(page, pages);
+  const slice = rows.slice((page-1)*PER, page*PER);
+
+  logBody.innerHTML = slice.map(l=>`
+    <tr data-id="${l.id}">
+      <td>${thumbHTML(l)}</td>
+      <td><div class="mono" style="color:var(--text)">${fmtT(l.t)}</div><div class="mono">${fmtD(l.t)}</div></td>
+      <td><div>${l.cam}</div><div style="font-size:11px;color:var(--muted2)">${l.zone}</div></td>
+      <td><span class="tag t-${l.cls}"><i></i>${l.cls}</span></td>
+      <td><div class="conf"><span class="mono">${l.conf.toFixed(2)}</span>
+          <span class="track"><i style="width:${l.conf*100}%;background:${CLS[l.cls].c}"></i></span></div></td>
+      <td><span class="sev sev-${l.sev}">${SEV_TH[l.sev]}</span></td>
+      <td><span class="st st-${l.status}">${l.status==='new'?'ใหม่':l.status==='ack'?'รับทราบแล้ว':'ปิดเคส'}</span></td>
+      <td style="color:var(--muted)">${l.by}</td>
+    </tr>`).join('');
+  logEmpty.style.display = rows.length ? 'none' : 'block';
+
+  pgInfo.textContent = rows.length
+    ? `แสดง ${(page-1)*PER+1}–${Math.min(page*PER,rows.length)} จาก ${rows.length} เหตุการณ์`
+    : 'ไม่มีข้อมูล';
+
+  let b = `<button class="pg" ${page===1?'disabled':''} data-p="${page-1}">‹</button>`;
+  for(let i=1;i<=pages;i++){
+    if(pages>7 && i>2 && i<pages-1 && Math.abs(i-page)>1){
+      if(i===3) b += `<span class="pg" style="border:none;background:none">…</span>`;
+      continue;
+    }
+    b += `<button class="pg ${i===page?'on':''}" data-p="${i}">${i}</button>`;
+  }
+  b += `<button class="pg" ${page===pages?'disabled':''} data-p="${page+1}">›</button>`;
+  pgBtns.innerHTML = b;
+  pgBtns.querySelectorAll('[data-p]').forEach(x=>x.addEventListener('click',()=>{
+    page = +x.dataset.p; render();
+    document.querySelector('.tb-wrap').scrollTop = 0;
+  }));
+  logBody.querySelectorAll('tr').forEach(tr=>tr.addEventListener('click',()=>openModal(tr.dataset.id)));
+}
+render();
+
+/* ============ MODAL ============ */
+function openModal(id){
+  const l = LOGS.find(x=>x.id===id); if(!l) return;
+  const s = SCENES.find(sc=>sc.boxes.some(b=>b.cls===l.cls)) || SCENES[0];
+  const hit = s.boxes.find(b=>b.cls===l.cls);
+  const P = v => parseFloat(v)/100;
+  const [x,y,w,h] = hit ? [P(hit.l),P(hit.t),P(hit.w),P(hit.h)] : l.box;
+  mTitle.textContent = `${l.id} · ${CLS[l.cls].th}`;
+  mSnap.innerHTML = `
+    <div class="scene ${s.grade}" style="position:absolute;inset:0">${s.html}</div>
+    <div class="grain"></div><div class="scan"></div><div class="vig"></div>
+    <div class="bbox crit" style="--l:${(x*100).toFixed(0)}%;--t:${(y*100).toFixed(0)}%;--w:${(w*100).toFixed(0)}%;--h:${(h*100).toFixed(0)}%;--c:${CLS[l.cls].c};--dx:0;--dy:0">
+      <span class="lb">${l.cls} <b>${l.conf.toFixed(2)}</b></span></div>
+    <div class="osd"><div class="tl"><span class="rec"><i></i>SNAPSHOT</span>
+      <span class="camname">${l.cam}</span></div>
+      <div class="tr">${fmtD(l.t)} ${fmtT(l.t)}</div>
+      <div class="bl">${l.zone}</div></div>`;
+  mMeta.innerHTML = [
+    ['เหตุการณ์', `<span class="tag t-${l.cls}"><i></i>${l.cls}</span>`],
+    ['ระดับความรุนแรง', `<span class="sev sev-${l.sev}">${SEV_TH[l.sev]}</span>`],
+    ['ความเชื่อมั่นโมเดล', `<span class="mono" style="color:var(--text);font-size:13px">${l.conf.toFixed(2)}</span>`],
+    ['กล้อง', l.cam],
+    ['ตำแหน่ง', l.zone],
+    ['วัน / เวลา', `<span class="mono" style="color:var(--text);font-size:12.5px">${fmtD(l.t)} ${fmtT(l.t)}</span>`],
+    ['สถานะ', `<span class="st st-${l.status}">${l.status==='new'?'ใหม่':l.status==='ack'?'รับทราบแล้ว':'ปิดเคส'}</span>`],
+    ['ผู้รับผิดชอบ', l.by],
+    ['Bounding Box', `<span class="mono">[${l.box.map(v=>v.toFixed(2)).join(', ')}]</span>`]
+  ].map(([k,v])=>`<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+  mask.classList.add('on');
+}
+mClose.addEventListener('click',()=>mask.classList.remove('on'));
+mClose2.addEventListener('click',()=>mask.classList.remove('on'));
+mask.addEventListener('click',e=>{if(e.target===mask) mask.classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape') mask.classList.remove('on')});
+
+/* badges */
+navLogs.textContent = LOGS.filter(l=>l.status==='new').length;
+navLive.textContent = SCENES.filter(s=>s.boxes.length).length;
+</script>
+</body>
+</html>

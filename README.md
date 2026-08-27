@@ -41,6 +41,9 @@ Project-CCTV-Safety/
 ├── docs/
 │   ├── data_schema_4classes.md    # รายละเอียด Data Schema และแนวทางการ Label ข้อมูล
 │   └── yolov8_architecture.md     # เอกสารสรุปสถาปัตยกรรมโมเดลและพารามิเตอร์
+├── mockup/
+│   ├── index.html                 # UI Mockup (Dashboard, Live Monitoring, Alert Logs)
+│   └── README.md                  # คำอธิบาย Mockup และ Code Map
 ├── notebooks/
 │   └── yolov8_baseline.ipynb      # Jupyter Notebook สำหรับ Pipeline การเทรนและประเมินผล
 ├── Project-Plan.jpg               # แผนการดำเนินงานโครงการ
