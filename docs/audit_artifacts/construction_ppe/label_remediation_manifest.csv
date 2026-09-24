@@ -57,6 +57,25 @@ images/train/image566.jpg,train,grp_scene_0566,missing_annotation,person,"Rotate
 images/train/image1169.jpg,train,grp_negatives_1117_1356,missing_annotation,person,"Fashion model in knit sweater missing Person (6) entirely; annotated only with negative classes","Add bounding box for visible person (class 6)",pending_human_review,critical
 images/train/image1171.jpg,train,grp_negatives_1117_1356,missing_annotation,person,"Young man in baseball cap & t-shirt missing Person (6) entirely; negative torso labeled","Add bounding box for visible person (class 6)",pending_human_review,critical
 images/train/image1378.jpg,train,grp_negatives_1357_1386,missing_annotation,person,"Negative everyday portrait scene frame missing Person (6) entirely","Add bounding box for visible person (class 6)",pending_human_review,critical
+images/train/image57.jpeg,train,grp_scene_0057,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image81.jpg,train,grp_scene_0081,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image82.jpg,train,grp_scene_0082,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image83.jpg,train,grp_scene_0083,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image84.jpg,train,grp_scene_0084,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image85.jpg,train,grp_scene_0085,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image472.jpg,train,grp_scene_0472,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image475.jpg,train,grp_scene_0475,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image479.jpg,train,grp_scene_0479,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image482.jpg,train,grp_rooftop_a,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image501.jpg,train,grp_rooftop_a,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image526.jpg,train,grp_scene_0526,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image539.jpg,train,grp_scene_0539,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image579.jpg,train,grp_scene_0579,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image582.jpg,train,grp_scene_0582,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image629.jpg,train,grp_scene_0629,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image653.jpeg,train,grp_scene_0653,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image720.jpeg,train,grp_scene_0720,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
+images/train/image734.jpeg,train,grp_scene_0734,missing_annotation,person,"Machine-detected zero Person label","Human inspection/add Person box if visible",pending_human_review,critical
 images/train/image3.jpeg,train,grp_scene_0003,misclassified,helmet,"Soft fabric bucket hat mislabeled as industrial helmet (class 0)","Reclassify soft bucket hat from helmet (0) to negative / remove bounding box",pending_human_review,high
 images/train/image4.jpg,train,grp_scene_0004,unboxed_object,vest,"Worker in hi-vis vest; vest is unboxed (missing class 2)","Add bounding box for visible worn hi-vis vest (class 2)",pending_human_review,high
 images/train/image100.jpg,train,grp_china_police_inspection,misclassified,helmet,"Police peaked service visor cap mislabeled as industrial helmet (0)","Reclassify police peaked cap from helmet (0) to negative / remove bounding box",pending_human_review,high

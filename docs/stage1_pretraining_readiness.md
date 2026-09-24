@@ -19,7 +19,7 @@
 
 The Stage 1 spatial detector pipeline is **NOT ready for model training**. While primary candidate datasets have been identified, license terms and educational safeguards established, and cross-split leakage resolved for the primary PPE candidate, critical data-readiness gates remain open across all six canonical classes:
 
-1. **PPE (`person`, `helmet`, `vest`):** Ultralytics Construction-PPE has completed 100% machine inventory and a 42-image stratified human visual QA sample. However, training is blocked by **77 label files with zero `Person` boxes**, unboxed worn PPE, misclassified non-industrial garments, duplicate boxes, and 10 orphan labels. These defects are cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv) and require human label remediation and second-pass review.
+1. **PPE (`person`, `helmet`, `vest`):** Ultralytics Construction-PPE has completed 100% machine inventory and a 42-image stratified human visual QA sample. However, training is blocked by **77 label files with zero `Person` boxes**, unboxed worn PPE, misclassified non-industrial garments, duplicate boxes, and 10 orphan labels. These defects are fully cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv) (covering all 77 zero-Person files and 11 other evidenced defects, totaling exactly 88 data rows) and require human label remediation and second-pass review.
 2. **Fall (`fall`):** The shortlisted candidate ([samruddhi-2308/FallDetectionDataset](https://github.com/samruddhi-2308/FallDetectionDataset)) is approved under **GO — sample audit only** (CC BY-NC 4.0), but the raw video files are **absent locally** and the 10-clip sample audit protocol has **not yet been executed on disk**.
 3. **Fire & Smoke (`fire`, `smoke`):** The shortlisted supplementary smoke candidate ([Boreal Forest Fire — Subset A](https://doi.org/10.23729/fd-72c6cf74-b8eb-3687-860d-bf93a1ab94c9)) is approved under **GO — sample audit only** (CC BY 4.0), and the primary fire/smoke candidate ([DFireDataset](https://github.com/gaia-solutions-on-demand/DFireDataset)) is conditionally approved under **CONDITIONAL GO — educational prototype/sample audit only** (CC0 1.0 annotations). Both datasets are **absent locally** and their 80-image sample audits have **not yet been executed on disk**.
 
@@ -27,7 +27,7 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
 
 | Canonical Class ID | Canonical Class Name | Primary Candidate Dataset | Operative License | Completed Evidence | Open Work / Blockers | Current Status |
 |:---:|---|---|---|---|---|:---:|
-| **`0`** | **`person`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 100% machine inventory (1,416 paired files); 42-image human QA; regroup manifest resolves split leakage | 77 zero-Person files; unboxed background personnel; duplicate boxes; Pass 1 & Pass 2 remediation required | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
+| **`0`** | **`person`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 100% machine inventory (1,416 paired files); 42-image human QA; regroup manifest resolves split leakage; all 77 zero-Person files cataloged | 77 zero-Person files (58 context-evidenced + 19 machine-only); unboxed background personnel; duplicate boxes; Pass 1 & Pass 2 remediation required | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
 | **`1`** | **`helmet`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,734 paired instances cataloged; mapped to canonical ID 1 | Soft bucket hats, police peaked caps, bicycle racing helmets mislabeled as hardhats; unboxed helmets | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
 | **`2`** | **`vest`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,618 paired instances cataloged; mapped to canonical ID 2 | Orange jumpsuits mislabeled as vests; unboxed hi-vis vests; source class 5 `none` must be discarded | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
 | **`3`** | **`fall`** | Fall Detection Dataset (State-to-Fall + ADL) | CC BY-NC 4.0 | Desk review of 54 clips; 8 CVAT XML clips mapped; 10-clip audit protocol approved | Dataset absent locally; 10-clip visual audit not executed; dual-box (`person` + `fall`) semantics pending verification | **SHORTLISTED (GO: Sample Audit Only) → HOLD PENDING LOCAL AUDIT** |
@@ -46,12 +46,14 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
   - 10 duplicate orphan label files identified in `labels/train/` (`image940(1).txt`, etc.) and isolated for exclusion.
   - 42-image stratified human visual QA sample completed across splits, sequences, and hard negatives.
   - Non-destructive regroup manifest [proposed_regroup_manifest.csv](audit_artifacts/construction_ppe/proposed_regroup_manifest.csv) generated (1,416 rows), completely eliminating multi-frame video leakage across splits.
-- **Identified Deficiencies:**
-  - **77 zero-Person files:** Automated regex identified 77 label files containing visible human workers or actors but zero `Person` (class 6) annotations (4 `val`, 8 `test`, 65 `train`).
-  - **58 explicitly evidenced zero-Person files:** The sample audit report explicitly detailed 58 files across multi-frame sequence clusters (`grp_lobby_tryon`, `grp_vietnam_road`, `grp_fall_incident`, `grp_scene_0807..0819`, rotated scenes, and portrait negatives). The remaining 19 train files were un-enumerated singletons.
+  - Automated regex screening (`rg --files-without-match "^6 "`) executed directly on raw labels, reconciling all 77 label files lacking class 6.
+- **Identified Deficiencies & Remediation Scope:**
+  - **All 77 zero-Person files fully cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv):**
+    - **58 visually and context-evidenced files:** 4 `val`, 8 `test`, and 46 `train` files across defined multi-frame clusters (`grp_lobby_tryon`, `grp_vietnam_road`, `grp_fall_incident`, `grp_scene_0807..0819`, rotated scenes, and portrait negatives).
+    - **19 machine-only review candidates:** 19 `train` files identified via automated regex without visual inference (`image57.jpeg`, `image81.jpg`–`image85.jpg`, `image472.jpg`, `image475.jpg`, `image479.jpg`, `image482.jpg`, `image501.jpg`, `image526.jpg`, `image539.jpg`, `image579.jpg`, `image582.jpg`, `image629.jpg`, `image653.jpeg`, `image720.jpeg`, `image734.jpeg`), scheduled for human inspection to add `person` boxes if visible.
   - **Unboxed background personnel:** In scenes such as `image1008.jpeg` (cinderblock masonry) and `image109.jpg` (blueprint review), background engineers and workers are unannotated.
   - **Duplicate annotations:** Overlapping duplicate `person` boxes on single individuals (e.g., `image207.jpg`).
-- **Impact if Untrained:** YOLO penalized detected persons as false positives during loss computation, suppressing human recall across all CCTV frames.
+- **Impact if Untrained:** YOLO penalizes detected persons as false positives during loss computation, suppressing human recall across all CCTV frames.
 
 ### Class 1: `helmet`
 - **Candidate:** Ultralytics Construction-PPE.
@@ -128,7 +130,7 @@ The table below defines the formal, approved sample sizes and selection criteria
 
 | Candidate Dataset | Canonical Class(es) | Total Archive Scale | Approved Audit Sample Size | Stratification & Sampling Protocol | Status of Physical Audit |
 |---|---|---|---|---|:---:|
-| **Ultralytics Construction-PPE** | `0: person`<br/>`1: helmet`<br/>`2: vest` | 1,416 images<br/>(1,132 train, 143 val, 141 test)<br/>1,426 label files | **1,416 images (100% Machine Inventory)**<br/>+ **42 images (Stratified Human QA)** | • Machine check: 100% paired image/label parsing.<br/>• Human QA: 42 images across original splits (22 train, 8 val, 12 test), all multi-frame sequences, and negative portraits. | **EXECUTED**<br/>(Yielded 77 zero-Person & 11 visual defect findings) |
+| **Ultralytics Construction-PPE** | `0: person`<br/>`1: helmet`<br/>`2: vest` | 1,416 images<br/>(1,132 train, 143 val, 141 test)<br/>1,426 label files | **1,416 images (100% Machine Inventory)**<br/>+ **42 images (Stratified Human QA)** | • Machine check: 100% paired image/label parsing.<br/>• Human QA: 42 images across original splits (22 train, 8 val, 12 test), all multi-frame sequences, and negative portraits.<br/>• Remediation scope: **All 77 zero-Person files** (58 context-evidenced + 19 machine-only) + **11 other evidenced defects** = **88 data rows** in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv). | **EXECUTED**<br/>(Yielded 77 zero-Person & 11 visual defect findings) |
 | **Fall Detection Dataset (State-to-Fall + ADL)** | `3: fall`<br/>(`0: person`) | 54 MP4 video clips<br/>(~3,000–5,000 frames) | **10 video clips**<br/>(~410–700 extracted frames) | • 100% of CVAT-annotated clips (8 clips: 6 standing_to_fall, 2 sleeping_to_fall).<br/>• 2 unannotated spot-checks (1 sitting_to_fall, 1 ADL negative control).<br/>• Grouping by actor ID & room setting. | **PENDING**<br/>(Dataset absent locally; protocol approved) |
 | **Boreal Forest Fire — Subset A** | `5: smoke` | 4,954 4K images<br/>(4 burn locations,<br/>256 negative images) | **80 images**<br/>(stratified drone frames) | • 20 images from Ruokolahti (15 smoke, 5 negative).<br/>• 20 images from Karkkila (15 smoke, 5 negative).<br/>• 20 images from Heinola (15 smoke, 5 negative).<br/>• 20 images from Evo (15 smoke, 5 negative).<br/>• Grouping by flight sequence / burn event. | **PENDING**<br/>(Dataset absent locally; protocol approved) |
 | **D-Fire (`DFireDataset`)** | `4: fire`<br/>`5: smoke`<br/>(`0: person`) | 21,527 images<br/>(14,692 fire boxes,<br/>11,865 smoke boxes) | **80 images**<br/>(stratified web scenes) | • 25 Fire-only images.<br/>• 25 Fire + Smoke co-occurring images.<br/>• 15 Smoke-only images.<br/>• 15 Hard negatives (lamps, sun glare, reflections).<br/>• Grouping by web burst / scene background. | **PENDING**<br/>(Dataset absent locally; protocol approved) |
@@ -142,10 +144,11 @@ To transition Construction-PPE from **HOLD FOR REMEDIATION** to **TRAINING READY
 ### 4.1 Pass 1: Primary Labeler Remediation
 The primary labeler operates directly against the cataloged entries in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv):
 
-1. **Zero-Person Remediation:**
-   - Open each of the 58 cataloged zero-Person files (and any newly surfaced train singletons).
+1. **Zero-Person Remediation (77 Files):**
+   - Open each of the 77 cataloged zero-Person files (distinguishing the 58 visually/context-evidenced files from the 19 machine-only review candidates).
    - Draw tight bounding boxes enclosing all visible humans from head to toe, assigning canonical class `6` (source ID for `person`).
    - For fallen or recumbent individuals (e.g., `image806.jpg`), ensure the box tightly bounds the full recumbent body.
+   - For the 19 machine-only review candidates, perform visual inspection and add `person` boxes if visible.
 2. **Missing PPE Annotation:**
    - Box visible worn hi-vis vests on foreground workers (`image4.jpg`, `image100.jpg`) and background personnel (`image1008.jpeg`, `image109.jpg`), assigning source class `2` (`vest`).
    - Box visible worn industrial hardhats on all personnel, assigning source class `0` (`helmet`).
@@ -265,17 +268,21 @@ The following sequential, decision-free task queue specifies the exact order of 
                    (4,954 images), and DFireDataset (21,527 images) into data/raw/.
            Constraint: Ensure all raw files remain strictly excluded from Git tracking via .gitignore.
 
-[QUEUE-02] EXTRACT THE 19 UN-ENUMERATED TRAIN ZERO-PERSON FILES
-           Action: Run automated regex (rg --files-without-match "^6 " data/raw/construction-ppe/labels/train/)
-                   to identify the 19 un-enumerated train singleton files.
-           Action: Append these 19 files to docs/audit_artifacts/construction_ppe/label_remediation_manifest.csv
-                   with joined group_id from proposed_regroup_manifest.csv.
+[QUEUE-02] RECONCILE AND INGEST THE 19 UN-ENUMERATED TRAIN ZERO-PERSON FILES [COMPLETED]
+           Status: COMPLETED. The 19 machine-detected zero-Person files (image57.jpeg,
+                   image81.jpg–image85.jpg, image472.jpg, image475.jpg, image479.jpg,
+                   image482.jpg, image501.jpg, image526.jpg, image539.jpg, image579.jpg,
+                   image582.jpg, image629.jpg, image653.jpeg, image720.jpeg, image734.jpeg)
+                   were extracted via rg directly from raw labels, reconciled with
+                   proposed_regroup_manifest.csv, and appended to label_remediation_manifest.csv,
+                   bringing total manifest records to 88 data rows (77 zero-Person + 11 visual defects).
 
 [QUEUE-03] EXECUTE CONSTRUCTION-PPE PASS 1 LABEL REMEDIATION
-           Action: Carry out bounding box additions, corrections, and deletions on all rows
+           Action: Carry out bounding box additions, corrections, and deletions on all 88 rows
                    in docs/audit_artifacts/construction_ppe/label_remediation_manifest.csv.
-           Rule: Add person (6) boxes; add worn vest (2) and helmet (0) boxes; delete bucket hat,
-                 police cap, and racing helmet boxes; remove vest label from coveralls; merge duplicate boxes.
+           Rule: Add person (6) boxes on all 77 zero-Person files; add worn vest (2) and helmet (0) boxes;
+                 delete bucket hat, police cap, and racing helmet boxes; remove vest label from coveralls;
+                 merge duplicate boxes.
 
 [QUEUE-04] EXECUTE CONSTRUCTION-PPE PASS 2 INDEPENDENT QA
            Action: Second reviewer validates 100% of remediated files and 10% spot check of remainder.
@@ -318,18 +325,22 @@ The following sequential, decision-free task queue specifies the exact order of 
 
 ## 8. Explicit Reconciliations & Scope Clarifications
 
-### 8.1 Reconciliation of Zero-Person File Counts (58 Evidenced vs 77 Headline)
+### 8.1 Reconciliation of Zero-Person File Counts (All 77 Reconciled in Remediation Manifest)
 In [construction_ppe_sample_audit.md](construction_ppe_sample_audit.md), Section 6 reported that machine regex filtering identified **77 label files with zero Person annotations** across the 1,416 paired files:
-- `val`: 4 files (`image23.txt`, `image808.txt`, `image824.txt`, `image826.txt`).
-- `test`: 8 files (`image502.txt`, `image538.txt`, `image714.txt`, `image805.txt`, `image810.txt`, `image825.txt`, `image834.txt`, `image846.txt`).
-- `train`: 65 files total, of which the audit explicitly named sequences covering **46 unique files**:
-  - `grp_lobby_tryon`: 16 train files (`image820`–`image823`, `image827`–`image833`, `image835`–`image839`).
-  - `grp_vietnam_road`: 9 train files (`image840`–`image845`, `image847`–`image849`).
-  - `grp_fall_incident` / scaffold: 12 train files (`image806`, `image807`, `image809`, `image811`–`image819`).
-  - Rotated construction scenes: 6 train files (`image554`, `image556`, `image559`, `image562`, `image563`, `image566`).
-  - Portrait negatives: 3 train files (`image1169`, `image1171`, `image1378`).
+- `val` (4 files): `image23.txt`, `image808.txt`, `image824.txt`, `image826.txt`.
+- `test` (8 files): `image502.txt`, `image538.txt`, `image714.txt`, `image805.txt`, `image810.txt`, `image825.txt`, `image834.txt`, `image846.txt`.
+- `train` (65 files):
+  - **46 visually / context-evidenced files** across known multi-frame sequences and portrait negatives:
+    - `grp_lobby_tryon` (16 train files): `image820`–`image823`, `image827`–`image833`, `image835`–`image839`.
+    - `grp_vietnam_road` (9 train files): `image840`–`image845`, `image847`–`image849`.
+    - `grp_fall_incident` / scaffold (12 train files): `image806`, `image807`, `image809`, `image811`–`image819`.
+    - Rotated construction scenes (6 train files): `image554`, `image556`, `image559`, `image562`, `image563`, `image566`.
+    - Portrait negatives (3 train files): `image1169`, `image1171`, `image1378`.
+  - **19 machine-only review candidates** enumerated directly from raw labels via `rg --files-without-match "^6 "`:
+    `image57.jpeg`, `image81.jpg`, `image82.jpg`, `image83.jpg`, `image84.jpg`, `image85.jpg`, `image472.jpg`, `image475.jpg`, `image479.jpg`, `image482.jpg`, `image501.jpg`, `image526.jpg`, `image539.jpg`, `image579.jpg`, `image582.jpg`, `image629.jpg`, `image653.jpeg`, `image720.jpeg`, `image734.jpeg`.
 
-Summing the explicitly named files yields $4 + 8 + 46 = 58$ unique files. The remaining 19 `train` files were un-enumerated singletons in the historical audit text. Because `data/raw/` is not committed to Git and discovering outside paths or inventing visual findings is strictly prohibited, [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv) documents **all 58 explicitly evidenced zero-Person files** plus **11 explicitly observed visual defect rows** (69 total data rows). As established in `[QUEUE-02]`, an automated regex query will extract the remaining 19 train singletons immediately upon local archive extraction.
+**Reconciliation Summary:**
+All 77 zero-Person files ($4 \text{ val} + 8 \text{ test} + 46 \text{ train sequence} + 19 \text{ train machine-only} = 77$) are now fully enumerated and cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv). Each row joins `source_split` and `group_id` from [proposed_regroup_manifest.csv](audit_artifacts/construction_ppe/proposed_regroup_manifest.csv). Combined with the 11 other explicitly evidenced defect rows (6 unboxed objects, 4 misclassifications, 1 duplicate annotation), the remediation manifest contains **exactly 88 data rows** (89 total lines including the CSV header).
 
 ### 8.2 Two-Stage Scope & Architecture Boundary
 - **Stage 1 Detector:** Dedicated strictly to real-time spatial bounding-box detection of the six canonical physical classes (`person`, `helmet`, `vest`, `fall`, `fire`, `smoke`).
