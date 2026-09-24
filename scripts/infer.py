@@ -13,6 +13,19 @@ from ultralytics import YOLO
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from cctv_safety.ppe import Detection, assess_ppe
+from cctv_safety.schema import CLASS_NAMES
+
+
+def validate_runtime_contract(model: YOLO, thresholds: dict) -> None:
+    actual_names = list(model.names.values()) if isinstance(model.names, dict) else list(model.names)
+    expected_names = list(CLASS_NAMES)
+    if actual_names != expected_names:
+        raise ValueError(f"Detector schema mismatch: expected {expected_names}, got {actual_names}")
+    if set(thresholds) != set(expected_names):
+        raise ValueError(
+            "Threshold keys must exactly match detector classes: "
+            f"expected {expected_names}, got {sorted(thresholds)}"
+        )
 
 
 def main() -> int:
@@ -24,6 +37,7 @@ def main() -> int:
     args = parser.parse_args()
     model = YOLO(args.weights)
     thresholds = yaml.safe_load(args.thresholds.read_text(encoding="utf-8"))
+    validate_runtime_contract(model, thresholds)
     minimum = min(float(value) for value in thresholds.values())
     for result in model.predict(args.source, conf=minimum, stream=True, save=args.save):
         detections = []

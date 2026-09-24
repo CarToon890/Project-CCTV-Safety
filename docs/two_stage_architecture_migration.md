@@ -6,7 +6,8 @@
 > **เป้าหมาย:** กำหนดขั้นตอน มาตรฐานข้อมูล อินเทอร์เฟซ และแผนการทดสอบในการปรับปรุงระบบตรวจจับความปลอดภัยกล้องวงจรปิด จากระบบตรวจจับภาพนิ่ง 7 คลาสเดิม (v1) สู่ระบบสองระยะ (v2 Two-Stage Pipeline):  
 > 1. **Stage 1 (Spatial Object Detection):** YOLOv8 รับผิดชอบ 6 คลาสเชิงพื้นที่ (`0: person`, `1: helmet`, `2: vest`, `3: fall`, `4: fire`, `5: smoke`)  
 > 2. **Stage 2 (Temporal Event Classification):** โมดูลวิดีโอเชิงเวลารับผิดชอบการจำแนกเหตุการณ์ทะเลาะวิวาท (`fight`)  
-> **ข้อกำหนดการควบคุม:** แผนฉบับนี้เป็นเอกสารวางแผนทางวิศวกรรม ยังไม่มีการแก้ไข Source Code, Configs, ดาวน์โหลด Dataset เพิ่มเติม, หรือรัน Training ในรอบนี้
+> **สถานะการนำไปใช้:** Detector schema และ configuration ถูกปรับเป็น v2 จำนวน
+> 6 spatial classes แล้ว ส่วน Dataset download, Training และ Stage 2 ยังไม่เริ่ม
 
 ---
 
@@ -264,18 +265,18 @@ IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
 | ไฟล์ที่ได้รับผลกระทบ | บทบาทเดิม (v1) | บทบาทใหม่ (v2) | การควบคุมความเสี่ยง |
 |---|---|---|---|
-| [configs/classes.yaml](../configs/classes.yaml) | `nc: 7`, ระบุ 0–6 รวมถึง `fight` | ปรับเป็น `version: 2`, `names` มี 0–5 (6 คลาส), เพิ่มส่วน `temporal_events` | ใส่คีย์ `version: 2` เพื่อให้ Loader ตรวจสอบ |
-| [configs/data.yaml](../configs/data.yaml) | `nc: 7`, `names: [person, ..., fight]` | ปรับเป็น `nc: 6`, `names: [person, helmet, vest, fall, fire, smoke]` | ตรวจสอบว่า Dataset ไม่มีคลาส ID 6 ก่อนเทรน |
-| [configs/thresholds.yaml](../configs/thresholds.yaml) | มีค่า threshold ของ 7 คลาส | ปรับ thresholds 6 คลาส และแยกคีย์ `temporal_thresholds` | ป้องกัน KeyError โดยสคริปต์ spatial ไม่อ่าน key fight |
-| [cctv_safety/schema.py](../cctv_safety/schema.py) | Hardcoded tuple 7 คลาส | ประกาศ `DETECTOR_SCHEMA_VERSION = 2` (6 คลาส) และคง V1 ไว้เป็น Guard | Import เข้ากันได้ 100% |
-| [cctv_safety/dataset.py](../cctv_safety/dataset.py) | ตรวจสอบคลาส 0–6 | ตรวจสอบ dynamic class range ตาม schema v2 | ปฏิเสธทันทีหากพบคลาส $\ge 6$ ในไฟล์ label |
-| [cctv_safety/ppe.py](../cctv_safety/ppe.py) | จับคู่ person กับ helmet/vest | คงเดิม แต่เปิดให้ปรับค่า Head/Torso Ratio ผ่านพารามิเตอร์ได้ | ไม่กระทบ logic เดิม |
-| [scripts/infer.py](../scripts/infer.py) | รัน YOLO 7 คลาส | เพิ่ม Runtime Guard `len(model.names) == 6` และโครงร่างส่ง person เข้า Tracker | แจ้งเตือนข้อผิดพลาดชัดเจนหากใช้ Weights v1 |
-| [scripts/prepare_dataset.py](../scripts/prepare_dataset.py) | แปลง label เข้าสู่ 7 คลาส | **Fail Fast ทันที** หากพบ source mapping หรือ label เป็น `fight` | **ห้ามข้ามหรือทิ้ง label เงียบๆ** |
-| [scripts/train_compare.py](../scripts/train_compare.py) | เทรนโมเดล 7 คลาส | เทรนโมเดล 6 คลาส, สร้าง `model_manifest.json` sidecar ทุกครั้ง | ไม่ hardcode จำนวนคลาส |
-| [scripts/validate_dataset.py](../scripts/validate_dataset.py) | Validate 7 คลาส | Validate 6 คลาส และตรวจว่าต้องไม่มีคลาส 6 หลงเหลือ | สแกนทั้ง dataset ก่อนเทรน |
-| [tests/test_dataset.py](../tests/test_dataset.py) | Unit tests 7 คลาส | ปรับ test fixtures เป็น 6 คลาส และทดสอบการ reject คลาส 6 | รวมอยู่ใน Commit 1 |
-| [docs/data_schema_7classes.md](data_schema_7classes.md) | เอกสารหลัก 7 คลาส | ใส่ Deprecation Banner แจ้งว่าถูกทดแทนด้วย Schema v2 | ป้องกันความสับสน |
+| [configs/classes.yaml](../configs/classes.yaml) | v1 เคยระบุ 0–6 รวม `fight` | **ดำเนินการแล้ว:** `version: 2`, names 0–5 และแยก temporal event | Loader ต้องตรวจ version |
+| [configs/data.yaml](../configs/data.yaml) | v1 เคยมี `nc: 7` | **ดำเนินการแล้ว:** `nc: 6` และ names 6 คลาส | Dataset ต้องไม่มี class ID 6 |
+| [configs/thresholds.yaml](../configs/thresholds.yaml) | v1 เคยมี threshold `fight` | **ดำเนินการแล้ว:** เหลือ 6 spatial thresholds | Spatial inference ตรวจ key แบบ exact match |
+| [cctv_safety/schema.py](../cctv_safety/schema.py) | v1 เคย hardcode 7 คลาส | **ดำเนินการแล้ว:** ประกาศ v2 และคง v1 สำหรับ legacy guard | ห้ามใช้ v1 เป็น active mapping |
+| [cctv_safety/dataset.py](../cctv_safety/dataset.py) | v1 ยอมรับคลาส 0–6 | **ดำเนินการแล้ว:** อ่าน active schema แบบ dynamic | ปฏิเสธ class ID 6 ใน v2 |
+| [cctv_safety/ppe.py](../cctv_safety/ppe.py) | จับคู่ PPE ด้วย region คงที่ | **ดำเนินการแล้ว:** region เป็นพารามิเตอร์ที่ตรวจสอบค่าได้ | ต้องจูนบน validation set |
+| [scripts/infer.py](../scripts/infer.py) | v1 รัน YOLO 7 คลาส | **ดำเนินการบางส่วน:** ตรวจ class names/order และ threshold keys แบบ exact match | Mandatory model manifest guard ยังเป็นงานถัดไป |
+| [scripts/prepare_dataset.py](../scripts/prepare_dataset.py) | v1 แปลง label เข้า 7 คลาส | **ดำเนินการแล้ว:** Fail Fast หาก mapping เป็น `fight` | ห้ามทิ้ง label เงียบ ๆ |
+| [scripts/train_compare.py](../scripts/train_compare.py) | ใช้ class list จาก data config | **ดำเนินการบางส่วน:** ตรวจ data schema, dataset gate และ trained class order | การสร้าง `model_manifest.json` ยังเป็นงานถัดไป |
+| [scripts/validate_dataset.py](../scripts/validate_dataset.py) | ใช้ active schema จาก library | **ดำเนินการแล้ว:** class ID ต้องอยู่ในช่วง 0–5 | สแกน dataset ก่อนเทรน |
+| [tests/test_dataset.py](../tests/test_dataset.py) | Unit tests เดิม | **ดำเนินการแล้ว:** เพิ่ม schema v2 และ reject class 6 | ต้องคง regression tests ไว้ |
+| [docs/data_schema_7classes.md](data_schema_7classes.md) | เอกสารหลัก v1 | **ดำเนินการแล้ว:** ใส่ Deprecation Banner และสร้าง [v2](data_schema_6classes.md) | v1 ใช้อ้างอิงประวัติเท่านั้น |
 
 ---
 
@@ -770,12 +771,9 @@ flowchart TD
 ## 12. สรุปสถานะปัจจุบันและขั้นตอนถัดไป (Current Status & Next Steps)
 
 ณ วันที่ 25 กันยายน 2026:
-1. **รอบการทำงานนี้จัดทำเฉพาะ Documentation & Planning:**
-   * เอกสาร [docs/two_stage_architecture_migration.md](two_stage_architecture_migration.md) ได้รับการปรับปรุงครบถ้วนทั้ง 11 ประเด็นทางวิศวกรรม
-2. **การคงข้อกำหนดความปลอดภัยอย่างเคร่งครัด:**
-   * ยังไม่มีการแก้ไข `configs/classes.yaml` หรือ `configs/data.yaml`
-   * ยังไม่มีการแก้ไข Source Code ใดๆ ใน `cctv_safety/`, `scripts/`, `tests/`
-   * ยังไม่มีการดาวน์โหลด Dataset เพิ่มเติม
-   * ยังไม่มีการเริ่มฝึกสอนโมเดล (Training)
-   * ไม่มีการ Commit หรือ Push เข้าสู่ Git Repository
-3. **ขั้นตอนถัดไป:** ส่งมอบรายงานเพื่อให้เจ้าของโครงการตรวจรับแผนการย้ายระบบฉบับปรับปรุง ก่อนเริ่มการ Implementation ในรอบถัดไป
+1. **Detector contract:** Schema, configs, dataset preparation guard, class-name
+   inference guard และ tests ถูกปรับให้สอดคล้องกับ v2 จำนวน 6 spatial classes แล้ว
+   ส่วน mandatory model manifest ยังเป็นงาน implementation ถัดไป
+2. **ข้อมูลและการฝึก:** ยังไม่มีการดาวน์โหลด Candidate Dataset หรือเริ่ม Training
+3. **Stage 2:** คงสถานะ `BLOCKED / PENDING DATA APPROVAL` ตาม Entry Gate
+4. **ขั้นตอนถัดไป:** ตรวจและอนุมัติ Candidate Dataset สำหรับ Stage 1 ก่อนเตรียมข้อมูลและฝึกโมเดล

@@ -4,10 +4,11 @@
 > **สถานะ:** Draft Mockup — เป็น static HTML ไฟล์เดียว ข้อมูลทั้งหมดเป็น mock data
 > ที่สุ่มขึ้นในเบราว์เซอร์ **ยังไม่ได้เชื่อมต่อโมเดล YOLOv8, API หรือฐานข้อมูลจริง**
 >
-> **หมายเหตุ Schema:** Mockup นี้ยังใช้ schema 4 คลาสเดิมเพื่อสาธิต UI เท่านั้น
-> AI baseline ปัจจุบันใช้ schema 7 คลาสใน `docs/data_schema_7classes.md` และคำนวณ
-> `no_helmet`/`no_vest` ด้วย post-processing ห้ามใช้คำว่า `ppe` ใน mockup เป็นผล
-> การไม่สวมอุปกรณ์โดยตรง
+> **หมายเหตุ Schema:** Mockup นี้ใช้ประเภทเหตุการณ์จำลอง 4 กลุ่มเพื่อสาธิต UI
+> เท่านั้น ไม่ใช่ class list ของโมเดล ปัจจุบัน Stage 1 ใช้ detector schema v2
+> จำนวน 6 spatial classes ใน `../docs/data_schema_6classes.md` และคำนวณ
+> `no_helmet`/`no_vest` ด้วย post-processing ส่วน `fight` เป็น Stage 2 temporal
+> event ที่ยังถูกบล็อก ดังนั้น mock data ไม่ใช่ผล inference จริง
 
 ---
 
@@ -81,5 +82,4 @@ mockup/
 | ปุ่ม "รับทราบเหตุการณ์" ไม่ทำอะไร | `PATCH /api/v1/events/{id}` | 
 
 ---
-
 

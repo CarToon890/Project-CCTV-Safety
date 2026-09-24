@@ -26,7 +26,16 @@ class PpeAssociationTests(unittest.TestCase):
         self.assertIn("no_helmet", results[0]["alerts"])
         self.assertNotIn("no_helmet", results[1]["alerts"])
 
+    def test_regions_are_configurable_and_validated(self):
+        detections = [
+            Detection("person", 0.9, (0, 0, 100, 200)),
+            Detection("helmet", 0.9, (40, 70, 60, 90)),
+        ]
+        result = assess_ppe(detections, head_region=(0.0, 0.5))
+        self.assertTrue(result[0]["has_helmet"])
+        with self.assertRaises(ValueError):
+            assess_ppe(detections, head_region=(0.5, 0.5))
+
 
 if __name__ == "__main__":
     unittest.main()
-

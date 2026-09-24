@@ -1,8 +1,8 @@
-# YOLOv8 Dataset Configuration — 7 Classes CCTV
+# YOLOv8 Dataset Configuration — Detector Schema v2 (6 spatial classes)
 path: ../dataset          # root directory ของ dataset
 train: images/train       # path รูป train (เทียบกับ 'path')
 val: images/val           # path รูป validation
 test: images/test         # path รูป test
 
-nc: 7                     # จำนวน class
-names: ['person', 'helmet', 'vest', 'fall', 'fire', 'smoke', 'fight']
+nc: 6                     # จำนวน spatial detector classes
+names: ['person', 'helmet', 'vest', 'fall', 'fire', 'smoke']

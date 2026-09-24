@@ -15,9 +15,10 @@ datasets. Credentials for Kaggle or other services remain outside the repo.
 
 Convert each source to YOLO format in a source-local directory. Each source must
 have a `metadata.csv` with `image,label,group_id`. `group_id` is a video, scene or
-camera session—not a frame. Review every image against all seven canonical
+camera session—not a frame. Review every image against all six canonical spatial
 classes and mark `exhaustive_labels: true` only when missing-label penalties have
-been addressed.
+been addressed. A source mapping to `fight` must be rejected because Fight is a
+Stage 2 temporal event, not a detector label.
 
 Recommended hard negatives include normal walking, sitting, maintenance on the
 floor, steam, fog, orange lighting, hugs, sports and collaborative work.
@@ -46,9 +47,9 @@ as the primary objective.
 
 `scripts/infer.py` emits detector boxes and derived `no_helmet`/`no_vest` states.
 The geometric PPE association is an explicit baseline and must be evaluated on
-crowded and occluded scenes. Fall and Fight results are frame-level hypotheses;
-tracking and temporal confirmation remain future production work.
+crowded and occluded scenes. Fall detections are frame-level hypotheses and need
+temporal confirmation. Fight is not emitted by this detector; its Stage 2
+temporal pipeline remains blocked pending an approved video dataset.
 
 This workflow uses public data only until a target-camera holdout set exists.
 Reports must carry that limitation and must not claim production readiness.
-

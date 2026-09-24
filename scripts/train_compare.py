@@ -6,12 +6,37 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import sys
 from pathlib import Path
 from time import perf_counter
 
 import torch
 import yaml
 from ultralytics import YOLO
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from cctv_safety.dataset import validate_dataset
+from cctv_safety.schema import CLASS_NAMES
+
+
+def validate_training_contract(training_config: dict) -> None:
+    data_path = Path(training_config["data"])
+    data_config = yaml.safe_load(data_path.read_text(encoding="utf-8"))
+    configured_names = data_config["names"]
+    if isinstance(configured_names, dict):
+        configured_names = [configured_names[index] for index in sorted(configured_names)]
+    if data_config.get("nc") != len(CLASS_NAMES) or list(configured_names) != list(CLASS_NAMES):
+        raise ValueError(
+            f"Training data schema mismatch: expected {list(CLASS_NAMES)}, "
+            f"got nc={data_config.get('nc')} names={configured_names}"
+        )
+    dataset_root = Path(data_config["path"])
+    if not dataset_root.is_absolute():
+        dataset_root = (data_path.parent / dataset_root).resolve()
+    report = validate_dataset(dataset_root)
+    if not report["valid"]:
+        errors = [issue for issue in report["issues"] if issue["severity"] == "error"]
+        raise ValueError(f"Dataset validation failed with {len(errors)} error(s): {errors[:5]}")
 
 
 def main() -> int:
@@ -20,6 +45,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=Path("reports/model_comparison"))
     args = parser.parse_args()
     config = yaml.safe_load(args.config.read_text(encoding="utf-8"))
+    validate_training_contract(config)
     args.output.mkdir(parents=True, exist_ok=True)
     rows = []
     augmentation = config.get("augmentations", {})
@@ -36,6 +62,9 @@ def main() -> int:
             name=run_name, exist_ok=True, **augmentation,
         )
         best = YOLO(args.output / "runs" / run_name / "weights" / "best.pt")
+        trained_names = list(best.names.values()) if isinstance(best.names, dict) else list(best.names)
+        if trained_names != list(CLASS_NAMES):
+            raise ValueError(f"Trained model schema mismatch: expected {list(CLASS_NAMES)}, got {trained_names}")
         metrics = best.val(data=config["data"], split="test")
         elapsed = perf_counter() - started
         measured = {int(class_id): position for position, class_id in enumerate(metrics.box.ap_class_index)}

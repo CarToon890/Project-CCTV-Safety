@@ -1,5 +1,11 @@
 # Data Schema — 7 Classes (YOLO Format)
 
+> **Deprecated historical schema (v1).** Do not use this schema to prepare,
+> train or run the current detector. The active contract is
+> [Detector Data Schema v2 — 6 Spatial Classes](data_schema_6classes.md).
+> Class `fight` moved to the Stage 2 temporal pipeline, which is currently
+> `BLOCKED / PENDING DATA APPROVAL`.
+
 ## Canonical class mapping
 
 | ID | Class | Annotation target |
@@ -12,8 +18,8 @@
 | 5 | `smoke` | Visible smoke plume |
 | 6 | `fight` | One group box covering the people actively involved |
 
-The ID order is a public contract and must match `configs/classes.yaml` and
-`configs/data.yaml`.
+This ID order documents the retired v1 contract only. It intentionally does not
+match the active v2 configuration.
 
 ## Annotation rules
 
@@ -55,4 +61,3 @@ dataset/
 The metadata CSV records at least `image`, `source_id`, and `group_id`.
 `group_id` represents the source video, scene, or camera session and must occur
 in only one split to prevent leakage.
-

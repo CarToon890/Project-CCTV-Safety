@@ -14,7 +14,7 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from cctv_safety.dataset import assign_group_splits, copy_prepared_sample, parse_yolo_label
-from cctv_safety.schema import CLASS_TO_ID, IMAGE_SUFFIXES
+from cctv_safety.schema import CLASS_TO_ID, DETECTOR_SCHEMA_VERSION, IMAGE_SUFFIXES
 
 
 def resolve_image(root: Path, relative: str) -> Path:
@@ -74,6 +74,11 @@ def main() -> int:
             canonical_name = mapping.get(source_name)
             if canonical_name is None:
                 continue
+            if canonical_name == "fight":
+                raise ValueError(
+                    f"{source['id']}: fight is a temporal event and cannot be mapped "
+                    "into detector schema v2"
+                )
             if canonical_name not in CLASS_TO_ID:
                 raise ValueError(f"{source['id']}: unknown canonical class {canonical_name}")
             class_id = CLASS_TO_ID[canonical_name]
@@ -90,7 +95,8 @@ def main() -> int:
             writer.writeheader()
             writer.writerows(rows)
     summary = {
-        "schema_version": 1,
+        "detector_schema_version": DETECTOR_SCHEMA_VERSION,
+        "class_names": list(CLASS_TO_ID),
         "seed": args.seed,
         "source_manifest": str(args.manifest),
         "images_by_split": {key: len(value) for key, value in metadata_rows.items()},

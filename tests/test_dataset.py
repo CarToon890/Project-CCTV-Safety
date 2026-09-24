@@ -6,6 +6,7 @@ from pathlib import Path
 from PIL import Image
 
 from cctv_safety.dataset import assign_group_splits, validate_dataset
+from cctv_safety.schema import CLASS_NAMES, DETECTOR_SCHEMA_VERSION
 
 
 class DatasetTests(unittest.TestCase):
@@ -50,7 +51,22 @@ class DatasetTests(unittest.TestCase):
         self.assertEqual(set(first), set(groups))
         self.assertTrue(set(first.values()).issubset({"train", "val", "test"}))
 
+    def test_detector_schema_v2_has_six_spatial_classes(self):
+        self.assertEqual(DETECTOR_SCHEMA_VERSION, 2)
+        self.assertEqual(CLASS_NAMES, ("person", "helmet", "vest", "fall", "fire", "smoke"))
+        self.assertNotIn("fight", CLASS_NAMES)
+
+    def test_class_six_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self.make_dataset(root)
+            (root / "labels" / "train" / "train.txt").write_text(
+                "6 0.5 0.5 0.5 0.5\n", encoding="utf-8"
+            )
+            report = validate_dataset(root)
+            self.assertFalse(report["valid"])
+            self.assertIn("invalid_class", {issue["code"] for issue in report["issues"]})
+
 
 if __name__ == "__main__":
     unittest.main()
-

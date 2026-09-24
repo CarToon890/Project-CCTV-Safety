@@ -1,12 +1,17 @@
 # รายงานการประเมินชุดข้อมูลปฐมภูมิ (Primary Source Dataset Evaluation)
-## โครงการ Project CCTV Safety — 7-Class AI Baseline
+## โครงการ Project CCTV Safety — Dataset Candidate Evaluation
+
+> **สถานะปัจจุบัน:** ตารางและคะแนนบางส่วนด้านล่างถูกจัดทำภายใต้ detector
+> schema v1 จำนวน 7 คลาสและเก็บไว้เป็นประวัติการตัดสินใจเท่านั้น สัญญาที่ใช้งาน
+> ปัจจุบันคือ [Detector Schema v2 จำนวน 6 Spatial Classes](data_schema_6classes.md);
+> `fight` ย้ายไป Stage 2 และยัง `BLOCKED / PENDING DATA APPROVAL`.
 
 > **วันที่ประเมิน:** 24 กันยายน 2026  
-> **เป้าหมาย:** ประเมิน Candidate Datasets ทั้งหมด 21 รายการจาก `docs/dataset.md` ตามข้อมูลจากแหล่งปฐมภูมิ (Official Repository, Dataset Card, Original Paper, LICENSE file) เพื่อคัดกรองเข้าสู่โครงสร้าง 7 คลาสมาตรฐาน (Canonical 7-Classes) ตาม [docs/data_schema_7classes.md](data_schema_7classes.md)
+> **เป้าหมายเดิมของรายงาน:** ประเมิน Candidate Datasets ทั้งหมด 21 รายการจาก `docs/dataset.md` ตามข้อมูลจากแหล่งปฐมภูมิ โดยผลสำหรับ 6 spatial classes ใช้ประกอบการคัดเลือก Stage 1 ส่วนผล Fight เป็นประวัติและต้องอ่านร่วมกับ [fight_dataset_evaluation.md](fight_dataset_evaluation.md)
 
 ---
 
-### นิยาม Canonical 7-Classes (Public Contract)
+### นิยาม Historical Schema v1 (ไม่ใช่ Active Contract)
 * `0: person` — ลำตัวคนทั้งตัวที่มองเห็น
 * `1: helmet` — หมวกนิรภัยที่กำลังสวมใส่
 * `2: vest` — เสื้อสะท้อนแสง/เสื้อนิรภัยที่กำลังสวมใส่
@@ -81,7 +86,7 @@
 * **Class ต้นฉบับ & การ Mapping:**
   * Source Class 0: `smoke` $\rightarrow$ Canonical Class `5: smoke`
   * Source Class 1: `fire` $\rightarrow$ Canonical Class `4: fire`
-* **การแยกไฟและควัน:** **แยกเดี่ยวอย่างสมบูรณ์** ตรงตามข้อกำหนดใน [data_schema_7classes.md](data_schema_7classes.md) บรรทัดที่ 29
+* **การแยกไฟและควัน:** **แยกเดี่ยวอย่างสมบูรณ์** ตรงตามข้อกำหนดใน [Detector Schema v2](data_schema_6classes.md)
 * **Missing-label Penalty:** ในภาพไฟไหม้บางภาพที่มีคนหรือรถยนต์อยู่เบื้องหลัง วัตถุเหล่านั้นไม่ได้ถูก Label หากนำไปรวมกับชุด PPE/Person ต้องตรวจทานเพื่อหลีกเลี่ยง Negative Penalty ต่อคลาส `person`
 * **ความใกล้เคียง CCTV:** มีมุมกล้องหลากหลาย รวมถึงภาพจากกล้องวงจรปิดในโกดัง อาคาร ทางเดิน และกลางแจ้ง
 * **คะแนน Rubric (89/100):** License (15) | Bbox (15) | 7-Class (14) | Completeness (12) | CCTV (11) | Diversity (9) | Negative (4) | Leakage (4) | Cost (5)
@@ -269,7 +274,7 @@
 
 ---
 
-## ส่วน C: จัดอันดับ Candidate ที่ดีที่สุดแยกตาม 7 คลาส
+## ส่วน C: จัดอันดับ Candidate สำหรับ 6 Spatial Classes และ Fight Research เดิม
 
 ### 1. หมวด Person & PPE (Classes 0, 1, 2)
 1. **อันดับ 1: `beyzakucuk/ppe-detection-v1` (89 คะแนน)** — CC0 Public Domain, มี Person+Helmet+Vest ครบในภาพเดียวแบบ YOLOv8
@@ -297,7 +302,7 @@
   * **Permission candidate:** **TNUE-Fight Detection** (สถานะ OPTIONAL FUTURE CANDIDATE รอการติดต่อขอสิทธิ์เป็นลายลักษณ์อักษร 4 ประการสำหรับงานวิจัย Stage 2 ในอนาคต โดย**ไม่ถือเป็น Dependency ของ Stage 1**)
   * **Yash Combined (`yash07yadav`):** **HOLD pending provenance audit** (ห้ามนำมาสกัดเฟรมหรือฝึกโมเดลจนกว่าจะตรวจสิทธิ์วิดีโอรายแหล่งสำเร็จ)
   * **Roboflow datasets (เช่น `street-fight`, `ezgis-workspace`):** **ไม่ใช้เป็น Primary Dataset** เนื่องจากขาดเอกสาร Provenance ที่น่าเชื่อถือและมีปัญหาคุณภาพ Annotation
-  * *เอกสารอ้างอิงฉบับเต็ม:* [docs/fight_dataset_evaluation.md](fight_dataset_evaluation.md), [reports/simuletic_fight_validation.md](../reports/simuletic_fight_validation.md), และ [docs/two_stage_architecture_migration.md](two_stage_architecture_migration.md)
+  * *เอกสารอ้างอิงฉบับเต็ม:* [fight_dataset_evaluation.md](fight_dataset_evaluation.md) และ [two_stage_architecture_migration.md](two_stage_architecture_migration.md) (รายงานตรวจ Simuletic ฉบับละเอียดเก็บเป็น local audit artifact ภายใต้ `reports/` ซึ่งไม่ถูก commit)
 
 ---
 

@@ -31,13 +31,13 @@ YOLOv8 (Ultralytics, 2023) เป็น single-stage object detector แบบ *
 
 ## ทำไมแนะนำ yolov8n / yolov8s สำหรับ Real-time CCTV?
 1. **Latency ต่ำ** — yolov8n ทำได้ >100 FPS บน GPU ทั่วไป, yolov8s ~60-80 FPS
-2. **Transfer learning ดี** — pretrained COCO weights มี person class อยู่แล้ว ช่วยงาน fall/fight/ppe
+2. **Transfer learning ดี** — pretrained COCO weights มี person class อยู่แล้ว ช่วยงาน fall และ PPE; Fight ไม่ใช่คลาสของ detector
 3. **Deploy ง่าย** — export เป็น ONNX/TensorRT ได้ทันที รองรับ Jetson/CPU inference
 4. **เทรนเร็ว** — เหมาะกับ baseline iteration เร็วๆ ก่อน scale ขึ้น
 
 ## แนวทาง Baseline Pipeline
 
-    Pretrained yolov8n.pt → Fine-tune บน custom 4-class dataset → Evaluate → Export ONNX
+    Pretrained yolov8n.pt → Fine-tune บน custom 6-class spatial dataset → Evaluate → Export ONNX
 
 ## Hyperparameters แนะนำเริ่มต้น
 - imgsz: 640 (CCTV ควรลอง 1280 ถ้าวัตถุเล็ก)

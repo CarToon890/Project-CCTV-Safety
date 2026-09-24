@@ -12,7 +12,7 @@ Project CCTV Safety พัฒนาขึ้นเพื่อช่วยตร
 
 ## 2. สถานการณ์ที่ตรวจจับ (Detection Scenarios)
 
-โมเดลตรวจจับ 7 คลาสหลัก และสร้างสถานะการไม่สวม PPE ด้วย post-processing:
+Stage 1 ใช้โมเดลตรวจจับ 6 คลาสเชิงพื้นที่ และสร้างสถานะการไม่สวม PPE ด้วย post-processing:
 
 | ID | Class | เป้าหมาย Bounding Box |
 |---:|---|---|
@@ -22,10 +22,12 @@ Project CCTV Safety พัฒนาขึ้นเพื่อช่วยตร
 | 3 | fall | ร่างกายของบุคคลที่ล้มหรือนอนผิดปกติ |
 | 4 | fire | บริเวณเปลวไฟ |
 | 5 | smoke | บริเวณกลุ่มควัน |
-| 6 | fight | กลุ่มบุคคลที่กำลังต่อสู้ |
 
 `no_helmet` และ `no_vest` ไม่ใช่คลาสของโมเดล แต่คำนวณจากความสัมพันธ์ระหว่าง
-`person`, `helmet` และ `vest` ดูกติกาฉบับเต็มใน `docs/data_schema_7classes.md`
+`person`, `helmet` และ `vest` ดูกติกาฉบับเต็มใน `docs/data_schema_6classes.md`
+
+`fight` ถูกย้ายไป Stage 2 Temporal Event Classification และยังมีสถานะ
+`BLOCKED / PENDING DATA APPROVAL`; ไม่ใช่ YOLO bounding-box class ใน Stage 1
 
 ---
 
@@ -51,7 +53,8 @@ Project-CCTV-Safety/
 │   └── thresholds.yaml            # Confidence threshold แยกรายคลาส
 ├── cctv_safety/                   # Dataset validation และ PPE association library
 ├── docs/
-│   ├── data_schema_7classes.md    # Canonical schema และ annotation policy
+│   ├── data_schema_6classes.md    # Canonical detector schema v2
+│   ├── data_schema_7classes.md    # Deprecated detector schema v1
 │   ├── evaluation.md              # Metrics และ error-analysis protocol
 │   └── workflow.md                # End-to-end reproducible workflow
 ├── mockup/
@@ -72,7 +75,7 @@ Project-CCTV-Safety/
 ## 5. การเริ่มต้นใช้งาน (Getting Started)
 
 ### ข้อกำหนดเบื้องต้น (Prerequisites)
-- Python 3.8 หรือสูงกว่า
+- Python 3.10 หรือสูงกว่า (โค้ดใช้ type syntax แบบ `X | None`)
 - แนะนำสภาพแวดล้อมที่มี GPU (CUDA) หรือใช้งานผ่าน Google Colab / Kaggle
 
 ### ขั้นตอนการติดตั้งและเตรียมการ
@@ -114,10 +117,10 @@ Project-CCTV-Safety/
 
 ## 6. แผนการดำเนินงาน (Roadmap & Milestones)
 
-- [x] ออกแบบ Data Schema 7 Classes และ PPE association baseline
+- [x] ปรับเป็น Detector Schema v2 จำนวน 6 Spatial Classes และ PPE association baseline
 - [x] จัดทำ reproducible data/training/evaluation pipeline
 - [ ] ตรวจ license, ดาวน์โหลด และทำ exhaustive annotation ของ Dataset จริง
 - [ ] ฝึกและเปรียบเทียบ YOLOv8n กับ YOLOv8s บน Colab
 - [ ] ทดสอบกับข้อมูลกล้อง CCTV เป้าหมายเมื่อมีข้อมูล
 > ข้อจำกัด: ผลจาก public datasets ยังไม่ใช่หลักฐานว่าโมเดลพร้อมใช้งานกับกล้องจริง
-> Fall และ Fight ยังต้องมี tracking/temporal filtering ในระบบ production
+> Fall ต้องมี temporal confirmation ในระบบจริง ส่วน Fight แยกอยู่ใน Stage 2 ซึ่งยังถูกบล็อกจนกว่าจะมีข้อมูลวิดีโอที่ผ่านการอนุมัติ

@@ -13,7 +13,7 @@
 | License + URL | ตรวจสิทธิ์ใช้งาน ดัดแปลง และแจกจ่าย |
 | Annotation format | YOLO/COCO/VOC/video-level หรือไม่มี annotation |
 | Original classes | บันทึกลำดับ class ID ต้นทาง |
-| Canonical mapping | map ไปยัง 7 คลาส หรือกำหนดให้ทิ้ง |
+| Canonical mapping | map ไปยัง 6 spatial classes หรือกำหนดให้ทิ้ง; ห้าม map เป็น `fight` |
 | Group identity | video/scene/camera session สำหรับป้องกัน split leakage |
 | Exhaustive review | ตรวจและเติมทุก canonical class ที่ปรากฏในภาพ |
 | Domain notes | CCTV/stock/movie, day/night, resolution, viewpoint |
@@ -28,7 +28,7 @@ video-level labels; หากไม่มี bbox ต้อง extract frames �
 
 **dataset**
 
-**DATASET(FIRE, FALL, PPE, Fight)**
+**DATASET(FIRE, FALL, PPE และ Fight candidates สำหรับ Stage 2)**
 
 
 
@@ -115,6 +115,10 @@ https://www.kaggle.com/datasets/mugheesahmad/sh17-dataset-for-ppe-detection
 
 
 **Fight**
+
+> รายการส่วนนี้เป็น candidate สำหรับ Stage 2 temporal research เท่านั้น ไม่ใช่
+> แหล่ง label ของ Stage 1 และยังห้ามใช้งานจนกว่าจะผ่าน Entry Gate ด้านสิทธิ์,
+> provenance, Human QA และ video/scene-level split
 
 https://www.kaggle.com/datasets/anbumalar1991/fight-dataset
 
