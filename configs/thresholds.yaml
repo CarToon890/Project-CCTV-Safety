@@ -1,0 +1,10 @@
+# Validation-tuned thresholds belong here. Initial values are deliberately
+# recall-oriented and must not be tuned on the test split.
+person: 0.25
+helmet: 0.20
+vest: 0.20
+fall: 0.20
+fire: 0.20
+smoke: 0.20
+fight: 0.20
+

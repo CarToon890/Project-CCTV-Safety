@@ -1,0 +1,21 @@
+# Copy to configs/datasets.local.yaml and fill in facts verified from each source.
+# Only entries with license_approved=true may be downloaded/prepared.
+sources:
+  - id: example_yolo_source
+    name: Replace with verified dataset name
+    homepage: https://example.com/dataset
+    download:
+      type: manual          # manual | direct | git | kaggle
+      value: https://example.com/dataset
+    license: UNKNOWN
+    license_url: ""
+    license_approved: false
+    annotation_format: yolo
+    exhaustive_labels: false
+    # Source class name -> canonical class name. Use null to drop a source class.
+    class_mapping:
+      worker: person
+      hardhat: helmet
+      safety_vest: vest
+    notes: Verify license and complete all missing canonical labels before use.
+

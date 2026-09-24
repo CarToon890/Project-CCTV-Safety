@@ -6,6 +6,9 @@ runs/
 *.pt
 *.onnx
 dataset/
+data/raw/
+reports/
+configs/datasets.local.yaml
 .env
 .venv/
 venv/

@@ -3,6 +3,11 @@
 
 > **สถานะ:** Draft Mockup — เป็น static HTML ไฟล์เดียว ข้อมูลทั้งหมดเป็น mock data
 > ที่สุ่มขึ้นในเบราว์เซอร์ **ยังไม่ได้เชื่อมต่อโมเดล YOLOv8, API หรือฐานข้อมูลจริง**
+>
+> **หมายเหตุ Schema:** Mockup นี้ยังใช้ schema 4 คลาสเดิมเพื่อสาธิต UI เท่านั้น
+> AI baseline ปัจจุบันใช้ schema 7 คลาสใน `docs/data_schema_7classes.md` และคำนวณ
+> `no_helmet`/`no_vest` ด้วย post-processing ห้ามใช้คำว่า `ppe` ใน mockup เป็นผล
+> การไม่สวมอุปกรณ์โดยตรง
 
 ---
 
@@ -76,6 +81,5 @@ mockup/
 | ปุ่ม "รับทราบเหตุการณ์" ไม่ทำอะไร | `PATCH /api/v1/events/{id}` | 
 
 ---
-
 
 

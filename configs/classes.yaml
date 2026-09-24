@@ -1,0 +1,15 @@
+version: 1
+names:
+  0: person
+  1: helmet
+  2: vest
+  3: fall
+  4: fire
+  5: smoke
+  6: fight
+derived_events:
+  no_helmet:
+    requires: [person, helmet]
+  no_vest:
+    requires: [person, vest]
+

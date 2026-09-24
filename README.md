@@ -1,6 +1,6 @@
 # Project CCTV Safety
 
-ระบบตรวจจับความปลอดภัยและแจ้งเตือนเหตุการณ์ผิดปกติจากกล้องวงจรปิดแบบ Real-time ด้วยโมเดล Deep Learning (YOLOv8)
+Public-dataset AI baseline สำหรับตรวจจับเหตุความปลอดภัยจากภาพ CCTV ด้วย YOLOv8
 
 ---
 
@@ -12,14 +12,20 @@ Project CCTV Safety พัฒนาขึ้นเพื่อช่วยตร
 
 ## 2. สถานการณ์ที่ตรวจจับ (Detection Scenarios)
 
-โมเดลได้รับการฝึกสอนให้ตรวจจับ 4 สถานการณ์หลัก:
+โมเดลตรวจจับ 7 คลาสหลัก และสร้างสถานะการไม่สวม PPE ด้วย post-processing:
 
-| ID | Class Name | คำอธิบาย | ขอบเขตการตรวจจับ (Bounding Box) |
-|:---|:---|:---|:---|
-| 0 | fall | บุคคลหกล้ม หรือนอนหมดสติผิดปกติบนพื้น | ตรวจจับบุคคลทั้งตัว (Full Body) |
-| 1 | fire_smoke | เปลวไฟ หรือกลุ่มควันหนาแน่น | ขอบเขตเปลวไฟและกลุ่มควันที่มองเห็น |
-| 2 | ppe | อุปกรณ์ป้องกันส่วนบุคคล (เช่น หมวกนิรภัย, เสื้อสะท้อนแสง) | ชิ้นอุปกรณ์ป้องกันแต่ละชิ้น |
-| 3 | fight | การทะเลาะวิวาท การทำร้ายร่างกาย หรือการปะทะกัน | ครอบคลุมกลุ่มบุคคลที่เกี่ยวข้องทั้งหมด |
+| ID | Class | เป้าหมาย Bounding Box |
+|---:|---|---|
+| 0 | person | บุคคลทั้งตัว |
+| 1 | helmet | หมวกนิรภัยที่สวมอยู่ |
+| 2 | vest | เสื้อสะท้อนแสง/เสื้อนิรภัยที่สวมอยู่ |
+| 3 | fall | ร่างกายของบุคคลที่ล้มหรือนอนผิดปกติ |
+| 4 | fire | บริเวณเปลวไฟ |
+| 5 | smoke | บริเวณกลุ่มควัน |
+| 6 | fight | กลุ่มบุคคลที่กำลังต่อสู้ |
+
+`no_helmet` และ `no_vest` ไม่ใช่คลาสของโมเดล แต่คำนวณจากความสัมพันธ์ระหว่าง
+`person`, `helmet` และ `vest` ดูกติกาฉบับเต็มใน `docs/data_schema_7classes.md`
 
 ---
 
@@ -27,8 +33,9 @@ Project CCTV Safety พัฒนาขึ้นเพื่อช่วยตร
 
 - AI Model: YOLOv8 (เริ่มต้นด้วย `yolov8n` สำหรับ Low-latency Inference และเปรียบเทียบกับ `yolov8s`)
 - Frameworks & Libraries: PyTorch, Ultralytics YOLO, OpenCV, Roboflow
-- Web & Dashboard: Frontend Monitoring Dashboard และ Backend API
-- Deployment & Infra: Database (MySQL / PostgreSQL), Server Hosting & FileZilla (FTP)
+- Experiment: YOLOv8n เป็น baseline และ YOLOv8s เป็นตัวเปรียบเทียบภายใต้ config เดียวกัน
+- Runtime target: Google Colab GPU; export ผลเป็น ONNX
+- Web mockup อยู่นอกขอบเขต AI baseline และยังไม่เชื่อมต่อโมเดล/API
 
 ---
 
@@ -37,15 +44,23 @@ Project CCTV Safety พัฒนาขึ้นเพื่อช่วยตร
 ```text
 Project-CCTV-Safety/
 ├── configs/
-│   └── data.yaml                  # การตั้งค่า Dataset สำหรับ YOLOv8 (Path, Classes)
+│   ├── classes.yaml               # Canonical schema และ derived PPE events
+│   ├── data.yaml                  # Dataset config สำหรับ YOLOv8
+│   ├── datasets.example.yaml      # Template inventory/license/provenance
+│   ├── training.yaml              # Shared config สำหรับ YOLOv8n/yolov8s
+│   └── thresholds.yaml            # Confidence threshold แยกรายคลาส
+├── cctv_safety/                   # Dataset validation และ PPE association library
 ├── docs/
-│   ├── data_schema_4classes.md    # รายละเอียด Data Schema และแนวทางการ Label ข้อมูล
-│   └── yolov8_architecture.md     # เอกสารสรุปสถาปัตยกรรมโมเดลและพารามิเตอร์
+│   ├── data_schema_7classes.md    # Canonical schema และ annotation policy
+│   ├── evaluation.md              # Metrics และ error-analysis protocol
+│   └── workflow.md                # End-to-end reproducible workflow
 ├── mockup/
 │   ├── index.html                 # UI Mockup (Dashboard, Live Monitoring, Alert Logs)
 │   └── README.md                  # คำอธิบาย Mockup และ Code Map
 ├── notebooks/
 │   └── yolov8_baseline.ipynb      # Jupyter Notebook สำหรับ Pipeline การเทรนและประเมินผล
+├── scripts/                        # Download, prepare, validate, train และ inference CLIs
+├── tests/                          # Unit tests สำหรับ leakage/labels/PPE association
 ├── Project-Plan.jpg               # แผนการดำเนินงานโครงการ
 ├── SWOT.jpg                       # การวิเคราะห์ SWOT ของโครงการ
 ├── requirements.txt               # รายการ Dependencies สำหรับติดตั้งระบบ
@@ -73,28 +88,36 @@ Project-CCTV-Safety/
    pip install -r requirements.txt
    ```
 
-3. การเทรนโมเดล (Model Training):
-   - กำหนดโฟลเดอร์ Dataset ตามโครงสร้างใน `configs/data.yaml`
-   - เปิดและรันสคริปต์ใน `notebooks/yolov8_baseline.ipynb` เพื่อเริ่มต้นการ Fine-tune และประเมินค่าความแม่นยำ (mAP)
+3. สร้าง source manifest จาก template และกรอกข้อมูลที่ตรวจสอบแล้ว:
+   ```bash
+   cp configs/datasets.example.yaml configs/datasets.local.yaml
+   python scripts/download_datasets.py --manifest configs/datasets.local.yaml
+   ```
 
-4. การนำโมเดลไปใช้งาน (Inference):
-   ```python
-   from ultralytics import YOLO
+4. หลังอนุมัติ license และทำ annotation ครบทุกคลาสแล้ว จึงเตรียมและตรวจ Dataset:
+   ```bash
+   python scripts/prepare_dataset.py --manifest configs/datasets.local.yaml
+   python scripts/validate_dataset.py dataset --near-duplicates
+   ```
 
-   # โหลดโมเดลที่ผ่านการเทรน
-   model = YOLO("runs/detect/train/weights/best.pt")
+5. เทรนและเปรียบเทียบโมเดลบน Colab GPU:
+   ```bash
+   python scripts/train_compare.py --config configs/training.yaml
+   ```
 
-   # ทดสอบกับวิดีโอหรือกล้อง CCTV
-   results = model.predict(source=0, conf=0.25, show=True)
+6. รัน inference พร้อม PPE association:
+   ```bash
+   python scripts/infer.py reports/model_comparison/runs/yolov8n/weights/best.pt sample.mp4 --save
    ```
 
 ---
 
 ## 6. แผนการดำเนินงาน (Roadmap & Milestones)
 
-- [x] ออกแบบ Data Schema และกำหนด 4 Classes
-- [x] จัดทำเอกสารสถาปัตยกรรม YOLOv8 และจัดเตรียม Baseline Notebook
-- [ ] รวบรวม Dataset และดำเนินการเทรนโมเดล YOLOv8n
-- [ ] พัฒนาระบบ Web Dashboard และหน้าจอ CCTV Monitoring
-- [ ] เชื่อมต่อระบบฐานข้อมูลและการแจ้งเตือนเหตุการณ์
-- [ ] ทดสอบและ Deploy ระบบขึ้นสู่สภาพแวดล้อมจริง
+- [x] ออกแบบ Data Schema 7 Classes และ PPE association baseline
+- [x] จัดทำ reproducible data/training/evaluation pipeline
+- [ ] ตรวจ license, ดาวน์โหลด และทำ exhaustive annotation ของ Dataset จริง
+- [ ] ฝึกและเปรียบเทียบ YOLOv8n กับ YOLOv8s บน Colab
+- [ ] ทดสอบกับข้อมูลกล้อง CCTV เป้าหมายเมื่อมีข้อมูล
+> ข้อจำกัด: ผลจาก public datasets ยังไม่ใช่หลักฐานว่าโมเดลพร้อมใช้งานกับกล้องจริง
+> Fall และ Fight ยังต้องมี tracking/temporal filtering ในระบบ production
