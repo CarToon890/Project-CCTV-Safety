@@ -2,9 +2,12 @@
 
 ## Project CCTV Safety — Spatial Detector (6 Classes)
 
-> **Audit date:** 25 September 2026  
-> **Scope:** Candidate datasets for `person`, `helmet`, `vest`, `fall`, `fire`, and `smoke`  
-> **Method:** Read-only review of publisher-owned dataset cards, repositories, license files, and official documentation. No dataset archive or image was downloaded.  
+> **Audit date:** 25 September 2026
+>
+> **Scope:** Candidate datasets for `person`, `helmet`, `vest`, `fall`, `fire`, and `smoke`
+>
+> **Method:** Read-only review of publisher-owned dataset cards, repositories, license files, and official documentation. No dataset archive or image was downloaded.
+>
 > **Important:** This is a technical provenance screen, not legal advice.
 
 > **Project-owner usage decision (25 September 2026):** This baseline is for

@@ -1,8 +1,11 @@
 # Construction-PPE Sample Audit
 
-> Audit date: 25 September 2026  
-> Scope: local technical and visual audit only; no model training performed  
-> Source: official Ultralytics release referenced by `construction-ppe.yaml`  
+> Audit date: 25 September 2026
+>
+> Scope: local technical and visual audit only; no model training performed
+>
+> Source: official Ultralytics release referenced by `construction-ppe.yaml`
+>
 > Usage policy: education/research only
 
 ## Decision
