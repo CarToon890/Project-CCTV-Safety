@@ -5,6 +5,11 @@
 > schema v1 จำนวน 7 คลาสและเก็บไว้เป็นประวัติการตัดสินใจเท่านั้น สัญญาที่ใช้งาน
 > ปัจจุบันคือ [Detector Schema v2 จำนวน 6 Spatial Classes](data_schema_6classes.md);
 > `fight` ย้ายไป Stage 2 และยัง `BLOCKED / PENDING DATA APPROVAL`.
+>
+> **ขอบเขตการใช้งานที่เจ้าของโครงการกำหนด (25 ก.ย. 2026):** เพื่อการศึกษาและ
+> วิจัยเท่านั้น ไม่ใช้เชิงพาณิชย์ จึงอนุญาตให้ชุด Non-commercial เข้าสู่รอบ
+> sample audit ได้ แต่ยังต้องปฏิบัติตาม attribution/share-alike, provenance,
+> likeness/privacy และ Human QA ก่อน Training
 
 > **วันที่ประเมิน:** 24 กันยายน 2026  
 > **เป้าหมายเดิมของรายงาน:** ประเมิน Candidate Datasets ทั้งหมด 21 รายการจาก `docs/dataset.md` ตามข้อมูลจากแหล่งปฐมภูมิ โดยผลสำหรับ 6 spatial classes ใช้ประกอบการคัดเลือก Stage 1 ส่วนผล Fight เป็นประวัติและต้องอ่านร่วมกับ [fight_dataset_evaluation.md](fight_dataset_evaluation.md)
@@ -30,18 +35,18 @@
 |---|---|---|---|---|---|---|---|---|---|---|:---:|:---:|
 | 1 | `phylake1337/fire-dataset` | Fire | CC0: Public Domain | ใช้/แจกจ่าย/พาณิชย์ได้ | รูปภาพ (999 รูป) | Classification | ไม่มี (แยกโฟลเดอร์) | ❌ ไม่มี Bbox | ต่ำ (ไม่แยกควัน) | ต่ำ (ภาพธรรมชาติ) | 35 | **Blocked (No Bbox)** |
 | 2 | `iStock Factory Fire` | Fire | All Rights Reserved | ❌ ห้ามแจกจ่าย/มีลิขสิทธิ์ | รูปภาพสต็อก | Discovery Lead | ไม่มี | ❌ ไม่มี | N/A | ปานกลาง | 0 | **REJECTED (License)** |
-| 3 | **`gaiasd/DFireDataset`** | Fire/Smoke | **CC BY 4.0** | ใช้/ดัดแปลง/แจกจ่ายได้ | รูปภาพ (21,527 รูป) | Object Detection | **YOLO (.txt)** | ✅ ดีเยี่ยม | ✅ ดีเยี่ยม (fire+smoke) | สูง (อุตสาหกรรม/CCTV) | **89** | **APPROVED (Primary Fire/Smoke)** |
+| 3 | **`gaiasd/DFireDataset`** | Fire/Smoke | **CC0 collection; source-image rights disclaimed** | ⚠️ ผู้รวบรวมระบุว่าไม่ได้เป็นเจ้าของภาพต้นฉบับ | รูปภาพ (21,527 รูป) | Object Detection | **YOLO (.txt)** | ✅ ดีเยี่ยม | ✅ ดีเยี่ยม (fire+smoke) | สูง (อุตสาหกรรม/CCTV) | — | **HOLD — source-rights audit required** |
 | 4 | `ritupande/fire-detection-from-cctv` | Fire | **Unknown** | ❌ ไม่ระบุสิทธิ์ชัดเจน | รูปภาพ | Classification | ไม่มี | ❌ ไม่มี Bbox | ต่ำ | สูง (CCTV) | 18 | **REJECTED (License Unknown)** |
-| 5 | **`simuletic/cctv-smoke-and-fire`** | Fire/Smoke | **CC BY 4.0** | ใช้/ดัดแปลง/วิจัยได้ | รูปภาพสังเคราะห์ | Object Detection | **YOLO (.txt)** | ✅ ดีมาก | ✅ ดี (จุดไฟ/ควันเริ่มแรก) | ✅ สูงมาก (CCTV Angle) | **86** | **APPROVED (Supplementary Fire)** |
-| 6 | `ironwolf437/fire-detection-dataset` | Fire/Smoke | Apache 2.0 / CC BY 4.0 | ใช้วิจัย/ดัดแปลงได้ | รูปภาพ | Object Detection | YOLO (.txt) | ✅ มี Bbox | ปานกลาง (4 คลาส) | สูง (กล้องวงจรปิด) | **78** | **APPROVED (Hard-Negative Light)** |
-| 7 | **`uttejkumarkandagatla/fall-detection`** | Fall | **ODbL (Open Database)** | ใช้วิจัย/ดัดแปลงได้ | รูปภาพ (485 รูป) | Object Detection | **YOLO (.txt)** | ✅ มี Bbox | ✅ ดี (Fall/Walk/Sit) | ปานกลาง (Indoor Cam) | **78** | **APPROVED (Baseline Fall/Neg)** |
+| 5 | **`simuletic/cctv-smoke-and-fire`** | Fire/Smoke | **Conflicting: CC BY-NC-SA / CC BY-NC / CC BY** | ❌ สิทธิ์ขัดแย้งกันระหว่างแหล่ง | รูปภาพที่อ้างว่าสังเคราะห์ | Object Detection/JSONL (ขัดแย้ง) | ต้องตรวจไฟล์จริง | ดีเชิงแนวคิด | สูง | — | **HOLD — license/format/provenance conflict** |
+| 6 | `ironwolf437/fire-detection-dataset` | Fire/Smoke | Apache 2.0 | ⚠️ ไม่พบ source-footage authority | รูปภาพ | ระบุ 4 คลาส; format ต้องตรวจ | ต้องตรวจ | ปานกลาง | สูง | — | **HOLD — provenance/format audit required** |
+| 7 | **`uttejkumarkandagatla/fall-detection`** | Fall | **Open Database; contents © original authors** | ❌ ไม่ครอบคลุมสิทธิ์ภาพทั้งหมด | รูปภาพ (485 รูป) | Object Detection | **YOLO (.txt)** | ✅ มี Bbox | ✅ ดี (Fall/Walk/Sit) | ปานกลาง | — | **HOLD — source permissions required** |
 | 8 | `Adobe Stock Fall Accident` | Fall | All Rights Reserved | ❌ ห้ามแจกจ่าย/มีลิขสิทธิ์ | ภาพสต็อก | Discovery Lead | ไม่มี | ❌ ไม่มี | N/A | ปานกลาง | 0 | **REJECTED (License)** |
 | 9 | `soumicksarker/multiple-cameras-fall` | Fall | **Unknown / Other** | ❌ ไม่ระบุสิทธิ์ชัดเจน | วิดีโอ (8 มุมกล้อง) | Video Action | ไม่มี Bbox | ❌ ไม่มี Bbox | ปานกลาง | สูง (Multi-camera) | 15 | **REJECTED (License Unknown)** |
-| 10 | **`simuletic/cctv-incident-fall`** | Fall | **CC BY 4.0** | ใช้วิจัย/ดัดแปลงได้ | รูปภาพสังเคราะห์ (100+) | Object Detection | **YOLO (.txt)** | ✅ มี Bbox | ✅ ดี (Fall/Lying down) | ✅ สูงมาก (CCTV Synthetic) | **83** | **APPROVED (Supplementary Fall)** |
+| 10 | **`simuletic/cctv-incident-fall`** | Fall | **Conflicting: CC BY-NC-SA / CC BY** | ❌ License conflict | รูปภาพที่อ้างว่าสังเคราะห์ (113-image sample) | YOLO Pose | Bbox + keypoints | ดีเชิงแนวคิด | สูง | — | **HOLD — written clarification and QA required** |
 | 11 | `payutch/fall-video-dataset` | Fall | CC0: Public Domain | ใช้/ดัดแปลง/พาณิชย์ได้ | วิดีโอ + CSV Keypoints | Pose Estimation | CSV (2D Keypoints) | ❌ ไม่มี Bbox | ปานกลาง | ปานกลาง (Indoor) | 40 | **Blocked (Needs Frame Bbox)** |
-| 12 | **`shlokraval/ppe-dataset`** | PPE | **Apache 2.0** | ใช้/แจกจ่าย/พาณิชย์ได้ | รูปภาพ | Object Detection | **YOLOv8 & COCO** | ✅ ดีเยี่ยม | ✅ ดี (Helmet/Vest/Gear) | ปานกลาง (โรงงาน) | **82** | **APPROVED (Supplementary PPE)** |
+| 12 | **`shlokraval/ppe-dataset`** | PPE | **Apache 2.0 metadata** | ⚠️ ไม่พบ source-image provenance/authority | รูปภาพ | Object Detection | COCO (ตาม card) | ✅ มี Bbox | ต้องตรวจ person completeness | ปานกลาง | — | **HOLD — provenance and sample audit required** |
 | 13 | `ndomalau/ppe-dataset` | PPE | **Unknown / Ambiguous** | ❌ สิทธิ์ไม่ชัดเจน | รูปภาพ (4,000+) | Object Detection | YOLO (.txt) | ✅ มี Bbox | ปานกลาง | ปานกลาง | 55 | **Blocked (License Audit Req.)** |
-| 14 | **`beyzakucuk/ppe-detection-v1`** | PPE/Person | **CC0: Public Domain** | ใช้/ดัดแปลง/พาณิชย์ได้ | รูปภาพ (Roboflow) | Object Detection | **YOLO (.txt)** | ✅ ดีเยี่ยม | ✅ ดีเยี่ยม (Person, Helmet, Vest) | สูง (ไซต์งานก่อสร้าง) | **89** | **APPROVED (Primary Person/PPE)** |
+| 14 | **`beyzakucuk/ppe-detection-v1`** | PPE/Person | **MIT metadata; upstream prose says CC0** | ❌ License authority/provenance ไม่ชัด | รูปภาพ (Roboflow copy) | Object Detection | **YOLO (.txt)** | ✅ มี Bbox | Person/Helmet/Vest | สูง | — | **HOLD — upstream version and rights required** |
 | 15 | `niravnaik/safety-helmet-vest` | PPE | Apache 2.0 | ใช้/ดัดแปลง/แจกจ่ายได้ | รูปภาพ (10,500 รูป) | Object Detection | YOLOv7 (.txt) | ✅ มี Bbox | ปานกลาง (ขาด Person) | ปานกลาง (งานช่าง) | **75** | **Hold (Missing-label penalty)** |
 | 16 | `mugheesahmad/sh17-dataset` | PPE | **CC BY-NC-SA 4.0** | ⚠️ เฉพาะการศึกษา/ห้ามพาณิชย์ | รูปภาพ (8,099 รูป) | Object Detection | YOLO & VOC | ✅ ดีเยี่ยม | ✅ ดีมาก (17 คลาส) | ปานกลาง (ภาพถ่าย Pexels) | **76** | **Restricted (Non-Commercial Only)** |
 | 17 | `anbumalar1991/fight-dataset` | Fight | **Other / Unknown** | ❌ ไม่ระบุสิทธิ์ชัดเจน | รูปภาพ (224x224) | Classification | CSV | ❌ ไม่มี Bbox | ต่ำ (Binary) | ต่ำ (ตัดจาก HMDB51) | 20 | **REJECTED (No Bbox & License)** |
@@ -79,8 +84,8 @@
 #### 3. `gaiasd/DFireDataset` (D-Fire Dataset) ⭐ [PRIMARY RECOMMENDATION]
 * **ข้อมูลทั่วไป:** D-Fire: An Image Dataset for Fire and Smoke Detection โดย Gaia Solutions on Demand (gaiasd)
 * **Official URL:** `https://github.com/gaiasd/DFireDataset`
-* **License:** **Creative Commons Attribution 4.0 International (CC BY 4.0)** (ยืนยันจากไฟล์ LICENSE และ README.md บน GitHub Repository)
-* **สิทธิ์การใช้งาน:** อนุญาตให้ดาวน์โหลด ดัดแปลง ฝึกโมเดล แจกจ่ายต่อ และใช้งานเชิงพาณิชย์ได้โดยต้องระบุที่มา (Attribution)
+* **License:** **CC0 1.0 สำหรับตัว collection** ไม่ใช่ CC BY 4.0
+* **ข้อจำกัดสิทธิ์:** LICENSE ระบุว่าผู้ดูแลไม่ได้เป็นเจ้าของลิขสิทธิ์ภาพต้นฉบับและไม่ได้รับรองสิทธิ์ของบุคคลที่สาม จึงยังไม่อนุมัติให้เทรนจนกว่าจะตรวจ source-level rights
 * **ประเภทข้อมูล & ขนาด:** รูปภาพนิ่งจำนวน **21,527 ภาพ** (Train ~14,123, Val ~3,099, Test ~4,306)
 * **ประเภทงาน & Format:** **Object Detection** ในฟอร์แมต **YOLO (.txt)** พิกัดแบบ Normalized
 * **Class ต้นฉบับ & การ Mapping:**
@@ -90,7 +95,7 @@
 * **Missing-label Penalty:** ในภาพไฟไหม้บางภาพที่มีคนหรือรถยนต์อยู่เบื้องหลัง วัตถุเหล่านั้นไม่ได้ถูก Label หากนำไปรวมกับชุด PPE/Person ต้องตรวจทานเพื่อหลีกเลี่ยง Negative Penalty ต่อคลาส `person`
 * **ความใกล้เคียง CCTV:** มีมุมกล้องหลากหลาย รวมถึงภาพจากกล้องวงจรปิดในโกดัง อาคาร ทางเดิน และกลางแจ้ง
 * **คะแนน Rubric (89/100):** License (15) | Bbox (15) | 7-Class (14) | Completeness (12) | CCTV (11) | Diversity (9) | Negative (4) | Leakage (4) | Cost (5)
-* **สรุปสถานะ:** **APPROVED — แนะนำเป็น Primary Dataset สำหรับ Fire (4) และ Smoke (5)**
+* **สรุปสถานะ:** **HOLD/BLOCKED — เทคนิคเหมาะสม แต่ต้องผ่าน source-rights audit ก่อน**
 
 #### 4. `ritupande/fire-detection-from-cctv`
 * **ข้อมูลทั่วไป:** Fire Detection from CCTV โดย Ritu Pande บน Kaggle
@@ -103,23 +108,23 @@
 #### 5. `simuletic/cctv-smoke-and-fire-emergency-detection-dataset` ⭐ [SUPPLEMENTARY]
 * **ข้อมูลทั่วไป:** CCTV Smoke & Fire Emergency Detection Dataset โดย Simuletic
 * **Official URL:** `https://www.kaggle.com/datasets/simuletic/cctv-smoke-and-fire-emergency-detection-dataset`
-* **License:** **CC BY 4.0** (ยืนยันจาก Simuletic Dataset Documentation)
+* **License:** **ขัดแย้งกัน**: Kaggle metadata ระบุ CC BY-NC-SA 4.0, Hugging Face metadata ระบุ CC BY-NC 4.0 และข้อความผู้เผยแพร่บางแห่งระบุ CC BY 4.0
 * **ประเภทข้อมูล:** รูปภาพสังเคราะห์ (Synthetic CCTV) จำลองเหตุการณ์จุดไฟ ควัน และไฟไหม้ขนาดเล็ก
 * **ประเภทงาน & Format:** **Object Detection** ในฟอร์แมต **YOLO (.txt)**
 * **Mapping เข้า 7 คลาส:** ไฟขนาดเล็ก $\rightarrow$ `fire` (4), ควัน $\rightarrow$ `smoke` (5)
 * **ความใกล้เคียง CCTV:** ดีเยี่ยม ออกแบบมาเพื่อมุมมองกล้องวงจรปิดมุมสูง (High-angle Surveillance) โดยเฉพาะ
 * **คะแนน Rubric (86/100):** License (15) | Bbox (14) | 7-Class (13) | Completeness (12) | CCTV (14) | Diversity (7) | Negative (3) | Leakage (4) | Cost (4)
-* **สรุปสถานะ:** **APPROVED — แนะนำเป็น Supplementary Dataset เสริมมุมมอง CCTV**
+* **สรุปสถานะ:** **HOLD — ต้องได้คำชี้แจง license, ตรวจ format จริง และทำ provenance/Human QA**
 
 #### 6. `ironwolf437/fire-detection-dataset` ⭐ [HARD-NEGATIVE SOURCE]
 * **ข้อมูลทั่วไป:** Fire Detection Dataset โดย ironwolf437 บน Kaggle
 * **Official URL:** `https://www.kaggle.com/datasets/ironwolf437/fire-detection-dataset`
-* **License:** **Apache 2.0 / CC BY 4.0** (Open Source)
+* **License:** Kaggle metadata ระบุ **Apache 2.0 เท่านั้น**; ยังไม่พบหลักฐานสิทธิ์เหนือ footage ต้นฉบับ
 * **ประเภทงาน & Format:** Object Detection (YOLO format)
 * **Class ต้นทาง:** `Fire`, `Smoke`, `Light`, `Non-Fire`
 * **จุดเด่นพิเศษ:** มีคลาส `Light` (แสงไฟนีออน ไฟหน้ารถ แสงสะท้อน) ซึ่งทำหน้าที่เป็น **Hard Negative ชั้นยอด** เพื่อป้องกันโมเดลสับสนระหว่างเปลวไฟกับหลอดไฟ
 * **คะแนน Rubric (78/100):** License (13) | Bbox (12) | 7-Class (12) | Completeness (10) | CCTV (12) | Diversity (7) | Negative (5) | Leakage (3) | Cost (4)
-* **สรุปสถานะ:** **APPROVED — แนะนำนำเข้าเพื่อใช้คลาส `Light` เป็น Hard Negative สำหรับ Fire**
+* **สรุปสถานะ:** **HOLD — มีศักยภาพเป็น hard negative แต่ต้องตรวจ provenance และ annotation format ก่อน**
 
 ---
 
@@ -128,15 +133,15 @@
 #### 7. `uttejkumarkandagatla/fall-detection-dataset` ⭐ [PRIMARY FALL BASELINE]
 * **ข้อมูลทั่วไป:** Fall Detection Dataset โดย Uttej Kumar Kandagatla บน Kaggle
 * **Official URL:** `https://www.kaggle.com/datasets/uttejkumarkandagatla/fall-detection-dataset`
-* **License:** **Open Database License (ODbL) / Attribution**
-* **สิทธิ์การใช้งาน:** ใช้วิจัย ดัดแปลง และเทรนโมเดลได้
+* **License:** Kaggle ระบุ **Database: Open Database, Contents: © Original Authors** จึงไม่ใช่ blanket permission สำหรับภาพทั้งหมด
+* **สิทธิ์การใช้งาน:** ผู้เผยแพร่ระบุว่ารวบรวมภาพจากหลายแหล่งโดยไม่แจกแจง จึงต้องตรวจสิทธิ์ระดับแหล่งก่อน
 * **ประเภทข้อมูล:** รูปภาพนิ่ง 485 ภาพ (Train: 374, Val: 111) ทำ Annotation ผ่าน makesense.ai
 * **ประเภทงาน & Format:** **Object Detection** แบบ **YOLO Bounding Box (.txt)**
 * **Class ต้นฉบับ & การ Mapping:**
   * `Fall Detected` $\rightarrow$ Map เป็น **`fall` (ID 3)** และต้องสร้างคู่กรอบ **`person` (ID 0)** ซ้อนทับตามกฎข้อ 25 ของ Schema
   * `Walking`, `Sitting` $\rightarrow$ Map เป็น **`person` (ID 0)** และใช้เป็น **Hard Negative สำหรับ `fall`**
 * **คะแนน Rubric (78/100):** License (13) | Bbox (14) | 7-Class (13) | Completeness (10) | CCTV (10) | Diversity (6) | Negative (5) | Leakage (3) | Cost (4)
-* **สรุปสถานะ:** **APPROVED — แนะนำเป็น Primary Baseline สำหรับ Fall + Hard Negatives**
+* **สรุปสถานะ:** **HOLD/BLOCKED — รูปแบบเหมาะ แต่ยังไม่มี source-level permission**
 
 #### 8. `Adobe Stock Fall Down Accident Search Page`
 * **ข้อมูลทั่วไป:** หน้าเว็บค้นหาภาพสต็อกของ Adobe Stock
@@ -155,12 +160,12 @@
 #### 10. `simuletic/cctv-incident-dataset-fall-and-lying-down-detection` ⭐ [SUPPLEMENTARY FALL]
 * **ข้อมูลทั่วไป:** CCTV Incident Dataset - Fall & Lying Down โดย Simuletic
 * **Official URL:** `https://www.kaggle.com/datasets/simuletic/cctv-incident-dataset-fall-and-lying-down-detection`
-* **License:** **CC BY 4.0**
+* **License:** Kaggle metadata ระบุ **CC BY-NC-SA 4.0** แต่ข้อความ card ระบุ CC BY 4.0 จึงขัดแย้งกัน
 * **ประเภทข้อมูล:** รูปภาพสังเคราะห์ CCTV มุมสูง คนล้ม/นอนหมดสติกว่า 100+ ซีน
 * **ประเภทงาน & Format:** Object Detection / Pose (YOLO format)
 * **Mapping เข้า 7 คลาส:** กรอบคนล้ม $\rightarrow$ `fall` (3) และ `person` (0)
 * **คะแนน Rubric (83/100):** License (15) | Bbox (14) | 7-Class (12) | Completeness (11) | CCTV (14) | Diversity (7) | Negative (3) | Leakage (4) | Cost (3)
-* **สรุปสถานะ:** **APPROVED — แนะนำเป็น Supplementary Dataset สำหรับ Fall บนมุมกล้อง CCTV**
+* **สรุปสถานะ:** **HOLD — ต้องได้คำชี้แจงเป็นลายลักษณ์อักษรและผ่าน provenance/Human QA**
 
 #### 11. `payutch/fall-video-dataset`
 * **ข้อมูลทั่วไป:** Fall Video Dataset โดย Payut Ch. บน Kaggle
@@ -175,17 +180,17 @@
 
 ### หมวด 3: PPE (อุปกรณ์ความปลอดภัย & บุคคล)
 
-#### 12. `shlokraval/ppe-dataset` ⭐ [SUPPLEMENTARY PPE]
+#### 12. `shlokraval/ppe-dataset`
 * **ข้อมูลทั่วไป:** PPE Dataset (YOLOv8 & COCO) โดย Shlok Raval บน Kaggle
 * **Official URL:** `https://www.kaggle.com/datasets/shlokraval/ppe-dataset`
-* **License:** **Apache 2.0** (Open Source)
-* **ประเภทงาน & Format:** **Object Detection** พร้อมใช้งานทั้ง **YOLOv8 (.txt)** และ COCO JSON
+* **License:** Kaggle metadata ระบุ **Apache 2.0** แต่ card ไม่แจกแจงที่มาภาพหรือ authority ของผู้เผยแพร่
+* **ประเภทงาน & Format:** Card ยืนยัน COCO JSON; ต้องตรวจ file inventory ก่อนสรุปว่ามี YOLOv8 พร้อมใช้
 * **Class ต้นฉบับ & การ Mapping:**
   * `helmet` $\rightarrow$ `helmet` (1)
   * `safety vest` $\rightarrow$ `vest` (2)
   * `gloves`, `goggles`, `face shield` $\rightarrow$ `null` (Drop ทิ้ง)
 * **คะแนน Rubric (82/100):** License (15) | Bbox (15) | 7-Class (13) | Completeness (12) | CCTV (9) | Diversity (8) | Negative (3) | Leakage (3) | Cost (4)
-* **สรุปสถานะ:** **APPROVED — แนะนำเป็น Supplementary Dataset สำหรับ PPE**
+* **สรุปสถานะ:** **HOLD — ต้องตรวจ provenance, category list และ person-label completeness**
 
 #### 13. `ndomalau/personal-protective-equipment-ppe-dataset`
 * **ข้อมูลทั่วไป:** PPE Dataset โดย Fransiscus Rolanda Malau บน Kaggle
@@ -197,8 +202,8 @@
 #### 14. `beyzakucuk/ppe-detection-v1` ⭐ [PRIMARY PERSON & PPE]
 * **ข้อมูลทั่วไป:** PPE Detection V1 โดย Beyza Kucuk บน Kaggle (จัดทำผ่าน Roboflow)
 * **Official URL:** `https://www.kaggle.com/datasets/beyzakucuk/ppe-detection-v1`
-* **License:** **CC0: Public Domain** (ยืนยันจากหน้า Dataset Card)
-* **สิทธิ์การใช้งาน:** ดาวน์โหลด ใช้งาน วิจัย ดัดแปลง และใช้เชิงพาณิชย์ได้อย่างเสรี
+* **License:** Kaggle metadata ระบุ **MIT** แต่ข้อความอ้าง upstream Roboflow เป็น CC0 จึงต้องยืนยัน exact upstream version และสิทธิ์ภาพ
+* **สิทธิ์การใช้งาน:** ยังไม่อนุมัติ เพราะ license ของ copy ไม่พิสูจน์ authority เหนือภาพต้นฉบับ
 * **ประเภทข้อมูล:** รูปภาพนิ่ง แบ่ง Train/Valid/Test พร้อมไฟล์ Annotation แบบ **YOLOv8 (.txt)**
 * **Class ต้นฉบับ & การ Mapping:**
   * `Person` $\rightarrow$ **`person` (ID 0)**
@@ -207,7 +212,7 @@
   * `No-Helmet`, `No-Goggles`, `Goggles` $\rightarrow$ **`null` (Drop ทิ้ง)**
 * **จุดเด่นพิเศษ:** มีคลาส `Person`, `Helmet`, `Vest` อยู่ในภาพเดียวกันอย่างสมบูรณ์แบบ ทำให้ตรงกับโมดูล [cctv_safety/ppe.py](../cctv_safety/ppe.py) โดยไม่เกิด Missing-label penalty ต่อคลาส person!
 * **คะแนน Rubric (89/100):** License (15) | Bbox (15) | 7-Class (15) | Completeness (13) | CCTV (10) | Diversity (8) | Negative (4) | Leakage (4) | Cost (5)
-* **สรุปสถานะ:** **APPROVED — แนะนำเป็น Primary Dataset สำหรับ Person (0), Helmet (1), และ Vest (2)**
+* **สรุปสถานะ:** **HOLD — ต้องตรวจ upstream Roboflow version, provenance และ license authority**
 
 #### 15. `niravnaik/safety-helmet-and-reflective-jacket`
 * **ข้อมูลทั่วไป:** Safety Helmet and Reflective Jacket โดย Nirav B. Naik บน Kaggle
@@ -277,18 +282,15 @@
 ## ส่วน C: จัดอันดับ Candidate สำหรับ 6 Spatial Classes และ Fight Research เดิม
 
 ### 1. หมวด Person & PPE (Classes 0, 1, 2)
-1. **อันดับ 1: `beyzakucuk/ppe-detection-v1` (89 คะแนน)** — CC0 Public Domain, มี Person+Helmet+Vest ครบในภาพเดียวแบบ YOLOv8
-2. **อันดับ 2: `shlokraval/ppe-dataset` (82 คะแนน)** — Apache 2.0, YOLOv8/COCO annotations คุณภาพสูง
-3. **อันดับ 3: `niravnaik/safety-helmet-and-reflective-jacket` (75 คะแนน)** — Apache 2.0 (ต้องเติม Person Bbox ก่อนใช้)
+1. **Ultralytics Construction-PPE — SAMPLE AUDITED → HOLD FOR TRAINING**: พบ actor/scene leakage ข้าม split, orphan labels 10 ไฟล์ และ provenance ยังไม่ครบ ดู [รายงาน sample audit](construction_ppe_sample_audit.md)
+2. **SH17 — GO สำหรับ research-only sample audit**: มีข้อมูลจากผู้เขียนชัดกว่า แต่ติด CC BY-NC-SA และข้อกำหนด Pexels
+3. **Beyza / Shlok / Nirav — HOLD**: รูปแบบข้อมูลน่าสนใจ แต่ license authority, provenance หรือ person-label completeness ยังไม่ผ่าน
 
 ### 2. หมวด Fall (Class 3)
-1. **อันดับ 1: `simuletic/cctv-incident-dataset-fall-and-lying-down-detection` (83 คะแนน)** — CC BY 4.0, มุมกล้อง CCTV โดยตรง มี YOLO Bbox
-2. **อันดับ 2: `uttejkumarkandagatla/fall-detection-dataset` (78 คะแนน)** — ODbL, มีทั้งท่า Fall, Sitting, Walking ครบ
+ยังไม่มีชุดที่ผ่านสิทธิ์สำหรับ Training: **Uttej HOLD** เพราะสิทธิ์ฐานข้อมูลไม่ครอบคลุมภาพต้นฉบับ และ **Simuletic HOLD** เพราะ license ขัดแย้งพร้อมความเสี่ยง provenance
 
 ### 3. หมวด Fire (Class 4) & Smoke (Class 5)
-1. **อันดับ 1: `gaiasd/DFireDataset` (89 คะแนน)** — CC BY 4.0, แยกคลาส Fire และ Smoke ออกจากกันอย่างเด็ดขาด มีภาพกว่า 21k+ รูป
-2. **อันดับ 2: `simuletic/cctv-smoke-and-fire-emergency-detection-dataset` (86 คะแนน)** — CC BY 4.0, เน้นไฟ/ควันขนาดเล็กมุมมอง CCTV
-3. **อันดับ 3 (Hard Negative): `ironwolf437/fire-detection-dataset` (78 คะแนน)** — มีคลาส `Light` ป้องกัน False Alarm แสงสะท้อน
+ยังไม่มีชุดที่ผ่านสิทธิ์สำหรับ Training: **D-Fire HOLD** แม้รูปแบบดีเพราะผู้รวบรวมไม่รับรองสิทธิ์ภาพ, **Simuletic HOLD** เพราะ license/format ขัดแย้ง และ **Ironwolf HOLD** เพราะ provenance/format ยังไม่ยืนยัน
 
 ### 4. หมวด Fight (Class 6 ในสถาปัตยกรรมเดิม -> ย้ายไป Stage 2 Temporal Classifier)
 > ⚠️ **หมายเหตุสำคัญและเอกสารอ้างอิงหลัก:** การประเมินและสถานะของชุดข้อมูลในหมวด Fight ได้รับการตรวจสอบและวิจัยเชิงลึกแยกเฉพาะในเอกสาร **[docs/fight_dataset_evaluation.md](fight_dataset_evaluation.md)** และแผนการย้ายระบบใน **[docs/two_stage_architecture_migration.md](two_stage_architecture_migration.md)** โดย **รายละเอียดและสถานะในรายงานดังกล่าวมีอำนาจเหนือข้อความสรุปเดิมในส่วนนี้**
@@ -308,20 +310,16 @@
 
 ## ส่วน D: การจัดกลุ่มเพื่อนำไปใช้งาน (Categorical Recommendation)
 
-### 1. Primary Datasets (ชุดหลักสำหรับสร้าง Stage 1 Spatial Baseline 6 คลาส)
-1. `beyzakucuk/ppe-detection-v1` $\rightarrow$ สอนคลาส `0: person`, `1: helmet`, `2: vest`
-2. `gaiasd/DFireDataset` $\rightarrow$ สอนคลาส `4: fire`, `5: smoke`
-3. `uttejkumarkandagatla/fall-detection-dataset` $\rightarrow$ สอนคลาส `3: fall` (ควบคู่ `0: person`)
+### 1. Primary Datasets
+**ยังไม่มีชุดใดได้รับอนุมัติสำหรับ Full Download หรือ Training** รายละเอียดหลักฐานปฐมภูมิอยู่ใน [stage1_dataset_primary_source_audit.md](stage1_dataset_primary_source_audit.md)
 
-### 2. Supplementary Datasets (ชุดเสริมความแข็งแกร่งของมุมมอง CCTV)
-1. `simuletic/cctv-incident-dataset-fall-and-lying-down-detection` (เสริมมุมมองกล้อง CCTV มุมสูงสำหรับ Fall)
-2. `simuletic/cctv-smoke-and-fire-emergency-detection-dataset` (เสริมภาพไฟ/ควันระยะไกลใน CCTV)
-3. `shlokraval/ppe-dataset` (เสริมความหลากหลายของอุปกรณ์ PPE)
+### 2. Sample-audit Candidates
+1. **Ultralytics Construction-PPE:** sample audit เสร็จแล้วและเป็น HOLD จนกว่าจะ regroup split ระดับ scene, แก้ orphan labels และผ่าน provenance/Human QA
+2. **SH17:** GO เฉพาะ research-only sample audit; เจ้าของโครงการยอมรับขอบเขต Non-commercial แล้ว แต่ยังต้องรักษา CC BY-NC-SA/Pexels constraints
+3. Candidate อื่นทั้งหมดคงสถานะ HOLD จนกว่าจะได้หลักฐานสิทธิ์และ provenance เพิ่มเติม
 
-### 3. Hard-Negative Sources (ชุดภาพสภาวะปกติ ป้องกันแจ้งเตือนมั่ว)
-1. `ironwolf437/fire-detection-dataset` (คลาส `Light` และ `Non-Fire` ป้องกันไฟลวง)
-2. `uttejkumarkandagatla/fall-detection-dataset` (คลาส `Walking` และ `Sitting` ป้องกันคนนั่ง/เดินถูกจำสับสนเป็นคนล้ม)
-3. `phylake1337/fire-dataset` (โฟลเดอร์ `non_fire_images` เป็น Background เปล่า)
+### 3. Hard-Negative Sources
+ยังไม่มีชุดใดได้รับอนุมัติ การใช้เฉพาะ negative images ก็ต้องผ่านสิทธิ์ภาพ, provenance และ exhaustive-label QA เช่นเดียวกับ positive images
 
 ### 4. Rejected Datasets (ชุดที่ต้องคัดทิ้งออกจากระบบ)
 * `iStock Factory Fire` และ `Adobe Stock Fall` (ติดลิขสิทธิ์ All Rights Reserved)
@@ -333,17 +331,11 @@
 
 ## ส่วน E: รายการ Dataset ที่ควรดาวน์โหลด Sample 50–200 ภาพเพื่อตรวจรอบต่อไป
 
-ตามข้อกำหนด ให้ทำการดาวน์โหลดเฉพาะชุดตัวอย่างเพื่อตรวจสอบคุณภาพ Bounding Box และสัดส่วนวัตถุ:
+ยังไม่อนุญาต Full Download ให้เริ่มได้เฉพาะ metadata/file-inventory review และ sample audit ของ:
 
-1. **`beyzakucuk/ppe-detection-v1` (100 ภาพ):**
-   * ตรวจสอบ: การทับซ้อนระหว่างกรอบ `Person` กับ `Helmet`/`Vest` และตรวจว่าคนงานที่ยืนไกลๆ ถูกตีกรอบครบหรือไม่
-2. **`gaiasd/DFireDataset` (100 ภาพ):**
-   * ตรวจสอบ: ความแม่นยำของกรอบควัน (Smoke Bbox) ว่าหลวมเกินไปหรือไม่ และมีคนงานที่ไม่ถูก Label อยู่ในฉากหรือไม่
-3. **`uttejkumarkandagatla/fall-detection-dataset` (50 ภาพ):**
-   * ตรวจสอบ: พิกัดกรอบคนล้มว่าครอบคลุมทั้งตัว (Full Body) หรือไม่
-4. **`simuletic/cctv-incident-dataset-fall-and-lying-down-detection` (50 ภาพ):**
-   * ตรวจสอบ: รูปแบบ Label ว่ามีทั้ง `person` และ `fall` คู่กันหรือไม่
-5. **`Simuletic CCTV Aggressive Poses & Fight Detection Dataset` (103 ภาพ):**
+1. **Ultralytics Construction-PPE:** ตรวจ sample แล้ว; ห้าม Training ด้วย split เดิมเพราะพบ scene leakage ดู [construction_ppe_sample_audit.md](construction_ppe_sample_audit.md)
+2. **SH17:** อนุญาตให้ตรวจ sample ในขอบเขต research-only; ต้องเก็บ attribution, share-alike, Pexels source records และตรวจ likeness/privacy
+3. **`Simuletic CCTV Aggressive Poses & Fight Detection Dataset` (ประวัติการตัดสิน):**
    * *สถานะผลการตรวจล่าสุด:* **NO-GO FOR PHASE 3 / CLOSED (Project Owner Approved Approach A: Two-Stage Pipeline)**
    * *สรุปผลการ Audit:* คำกล่าวอ้างสังเคราะห์ขัดแย้งกับภาพคนจริง/CCTV จริง, สิทธิ์ CC BY 4.0 เหนือภาพต้นฉบับยังไม่ได้รับการยืนยัน, มี Active Fight เพียง 48 ภาพ, ขาด Human QA และมี Overfitting จากเฟรมต่อเนื่องสูง
    * *คำสั่งการ:* **ยุติ Track 1 ถาวร, ห้ามสร้าง Training labels และห้ามเทรนโมเดลจากชุดข้อมูลนี้โดยเด็ดขาด**
@@ -357,7 +349,7 @@
    * **Stage 1 Spatial Detector:** กำหนดเป้าหมายตรวจจับ **6 Spatial Classes** (`0: person`, `1: helmet`, `2: vest`, `3: fall`, `4: fire`, `5: smoke`)
    * **Stage 2 Temporal Fight Detection:** แยกการตรวจจับ `fight` ออกไปเป็นโมดูล Temporal Action Classifier (ByteTrack + Multi-signal Trigger + Video Buffer 1.5–3.0s + X3D/VideoMAE)
    * **สถานะ Dataset:** Simuletic ปิดเป็น NO-GO ถาวร (ห้ามสร้าง labels หรือเทรน, Human QA ยังไม่ได้เริ่ม), TNUE-Fight เป็น optional candidate สำหรับงานวิจัย Stage 2 ในอนาคต (ไม่บล็อก Stage 1)
-   * **รอบการทำงานปัจจุบัน:** จัดทำ Migration Plan ([docs/two_stage_architecture_migration.md](two_stage_architecture_migration.md)) โดย**ยังไม่แก้ไข `configs/data.yaml` หรือ `configs/classes.yaml`, ยังไม่แก้โค้ด, ยังไม่ดาวน์โหลดข้อมูลเพิ่ม, ยังไม่เทรน และไม่มีการ commit/push**
+   * **สถานะปัจจุบัน:** Migration สู่ Detector Schema v2 จำนวน 6 คลาสและการปรับ Code/Config เสร็จแล้ว แต่ยังไม่ได้ดาวน์โหลด Candidate Dataset หรือเริ่ม Training; Stage 2 ยังคง `BLOCKED / PENDING DATA APPROVAL`
 2. **การทำ Exhaustive Annotation สำหรับคลาส Person ในชุด DFire:**
    - ในชุด `DFireDataset` มีภาพบางส่วนที่มีนักผจญเพลิงหรือประชาชนยืนอยู่ หากนำเข้าเทรนโมเดลรวม อาจทำให้โมเดลคิดว่าคนคือ Background (Missing-label penalty) แนะนำให้รันโมเดล YOLOv8x ตรวจจับ Person ซ้อนเข้าไปก่อนหรือไม่?
 3. **การอนุมัติไฟล์คอนฟิก `configs/datasets.local.yaml`:**
