@@ -10,10 +10,16 @@
 >
 > **Important:** This is a technical provenance screen, not legal advice.
 
-> **Project-owner usage decision (25 September 2026):** This baseline is for
-> education and research only. Commercial use is out of scope. Non-commercial
-> candidates may therefore enter sample audit, but their attribution,
-> share-alike, source-platform, and likeness restrictions remain mandatory.
+> **Project-owner usage decision (25 September 2026):** This baseline is for a
+> non-commercial university course project submitted to an instructor. Dataset
+> originals will not be redistributed in Git, public model weights will not be
+> released, sources and licenses will be cited, identifiable faces in reports
+> and presentations must be blurred, and unresolved upstream-rights limitations
+> must be disclosed.
+>
+> **Important legal principle:** Non-commercial education does not automatically
+> cure copyright or license issues. Explicit source license terms still control.
+> Unverified or contradictory license terms remain HOLD/BLOCKED.
 
 ## Executive decision
 
@@ -29,9 +35,10 @@ The most important corrections are:
 
 ### Status vocabulary
 
-- **GO — sample audit only:** It is reasonable to inspect a small, non-training sample after the project owner accepts the stated license constraints. This does **not** authorize training.
-- **HOLD:** Do not download the full dataset or train. Resolve license authority/provenance and then conduct sample annotation QA.
-- **REJECT:** Do not use for the Stage 1 detector because of a blocking license, availability, task-format, or scope mismatch.
+- **GO — sample audit only:** Authorizes small-scale sample audit or bounded educational prototype evaluation only after the project owner accepts stated license constraints. This does **not** authorize unrestricted training.
+- **CONDITIONAL GO — educational prototype/sample audit only:** Authorizes sample audit or bounded educational prototype evaluation for a dataset whose explicit operative license permits this non-commercial research/education use, subject to strict educational constraints (no Git redistribution, no public weights, citation, face blurring, upstream rights disclosure, no commercial deployment, no clean provenance claim). Never unrestricted training approval.
+- **HOLD:** Do not download the full dataset or train. Unverified or contradictory license terms, split leakage, or format/provenance issues require resolution.
+- **REJECT:** Do not use for the Stage 1 detector because of a blocking license (commercial stock, unknown license), availability, task-format, or scope mismatch.
 
 ## Recommended shortlist
 
@@ -39,9 +46,11 @@ The most important corrections are:
 |---:|---|---|---|---|
 | 1 | Ultralytics Construction-PPE | PPE | **SAMPLE AUDITED → HOLD FOR TRAINING** | Structure and labels parse, but related frames from the same actor/scene cross train/val/test; 10 orphan labels and unresolved source-image provenance also require remediation. |
 | 2 | SH17 | PPE | **GO — research-only sample audit (owner accepted non-commercial scope)** | Author repository and paper document 8,099 images, 75,994 instances, 17 classes, and source URLs; CC BY-NC-SA 4.0, attribution/share-alike and Pexels terms remain binding. |
-| 3 | D-Fire | Fire/Smoke | **HOLD** | Excellent detection format and scale, but the official license explicitly says the publisher does not own the source images and does not clear third-party rights. |
-| 4 | Uttej Fall Detection | Fall | **HOLD** | Useful YOLO boxes and three postures, but image contents remain © original authors and were gathered from unspecified sources. |
-| 5 | Shlok PPE COCO | PPE | **HOLD** | Apache 2.0 is stated on Kaggle, but the card provides no source-image provenance or license authority. |
+| 3 | Fall Detection Dataset (State-to-Fall + ADL) | Fall | **GO — sample audit only** | First-party creator publication under CC BY-NC 4.0; 54 clips with 8 CVAT XML annotated clips mapped in `annotation_manifest.csv`. Sample audit only; training blocked. |
+| 4 | Boreal Forest Fire — Subset A | Smoke | **GO — sample audit only** | First-party prescribed-burn UAV capture under CC BY 4.0; smoke only (zero fire boxes); aerial domain; sample audit only. |
+| 5 | D-Fire | Fire/Smoke | **CONDITIONAL GO — educational prototype/sample audit only** | 21,527 images in YOLO format; operative CC0 1.0 license covers collection and annotations; upstream image rights disclaimed; bounded educational prototype only under strict safeguards. |
+| 6 | Uttej Fall Detection | Fall | **HOLD** | Useful YOLO boxes and three postures, but image contents remain © original authors and were gathered from unspecified sources. |
+| 7 | Shlok PPE COCO | PPE | **HOLD** | Apache 2.0 is stated on Kaggle, but the card provides no source-image provenance or license authority. |
 
 **Training gate:** A candidate may move from this shortlist to training only after (1) primary license/authority verification, (2) source provenance review, (3) sample annotation audit, (4) duplicate/sequence-leakage audit, and (5) confirmation that every visible canonical class is labeled or remediated.
 
@@ -135,9 +144,10 @@ The most important corrections are:
 - **Official sources:** [Publisher repository](https://github.com/gaia-solutions-on-demand/DFireDataset), [README](https://github.com/gaia-solutions-on-demand/DFireDataset/blob/master/README.md), and [LICENSE](https://github.com/gaia-solutions-on-demand/DFireDataset/blob/master/LICENSE)
 - **Availability/size:** Available through links maintained in the official repository; 21,527 images.
 - **Format/classes:** YOLO bounding boxes; 1,164 fire-only images, 5,867 smoke-only, 4,658 with both, and 9,838 negatives; 14,692 fire boxes and 11,865 smoke boxes.
-- **License evidence:** **CC0 1.0**, not CC BY 4.0.
-- **Critical authority blocker:** The LICENSE says the maintainers do not own copyright in the images, applies CC0 to their collection, and disclaims responsibility for clearing third-party rights. This is not sufficient evidence that every source image is reusable.
-- **Decision:** **HOLD/BLOCKED** pending an image-source manifest or a defensible source-level rights audit. Do not approve full training solely because the repository contains a CC0 file.
+- **License evidence:** **CC0 1.0 Universal** on collection structure and annotations.
+- **Upstream authority limitation:** The LICENSE explicitly states that the maintainers do not own copyright in the underlying web images and disclaim third-party rights clearance. Non-commercial education does not cure this underlying limitation.
+- **Careful status model & educational prototype policy (25 September 2026):** Because its explicit operative license permits non-commercial research/education use, D-Fire is conditionally eligible for sample audit and bounded educational prototype training in this non-commercial university course project submitted to an instructor.
+- **Decision:** **CONDITIONAL GO — educational prototype/sample audit only.** Authorizes local sample audit and bounded educational prototype evaluation only; **never unrestricted training, public weight release, commercial deployment, or clean provenance claims**. Must satisfy strict safeguards: raw images excluded from Git, model weights private, source cited, identifiable faces blurred, and upstream-rights limitations disclosed in reports/presentations. See [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md).
 
 #### 11. `simuletic/cctv-smoke-and-fire-emergency-detection-dataset`
 
@@ -183,7 +193,7 @@ Before the next dataset decision, [dataset_evaluation.md](dataset_evaluation.md)
 
 | Current claim | Required correction |
 |---|---|
-| D-Fire: CC BY 4.0 and `APPROVED` | CC0 collection; underlying-image authority expressly not established; **HOLD/BLOCKED**. |
+| D-Fire: CC BY 4.0 and `APPROVED` | Operative CC0 collection/annotations; upstream image rights disclaimed; under 25 Sep 2026 binding owner decision for university course project, enters as **CONDITIONAL GO — educational prototype/sample audit only** under strict safeguards. |
 | Beyza PPE: CC0 and `APPROVED` | Kaggle metadata is MIT while upstream prose says CC0; authority unclear; **HOLD**. |
 | Uttej Fall: ODbL and `APPROVED` | Database is open but image contents are © original authors; unspecified sources; **HOLD/BLOCKED**. |
 | Simuletic Fall/Fire: CC BY 4.0 and `APPROVED` | Kaggle metadata is CC BY-NC-SA 4.0 and conflicts with prose; **HOLD**. |
@@ -194,9 +204,9 @@ Before the next dataset decision, [dataset_evaluation.md](dataset_evaluation.md)
 ## Recommended next action
 
 1. Keep the corrected `HOLD`/`REJECT` statuses in [dataset_evaluation.md](dataset_evaluation.md) synchronized with future audit evidence.
-2. Apply the recorded education/research-only policy: non-commercial datasets may enter sample audit, but each resulting artifact must retain its license and attribution obligations and must not be represented as commercially reusable.
-3. Start with a **metadata and small-sample audit**, not a full download:
+2. Apply the binding owner risk posture (25 September 2026): non-commercial datasets may enter sample audit or bounded educational prototype evaluation, but non-commercial education does not automatically cure copyright or license issues; explicit source terms still control. Dataset originals must not be redistributed in Git, public model weights will not be released, sources and licenses will be cited, identifiable faces in reports/presentations must be blurred, and unresolved upstream-rights limitations must be disclosed.
+3. Start with a **metadata and small-sample audit**, not a full download or unrestricted training:
    - PPE: Construction-PPE has been sampled and is now HOLD pending scene regrouping/provenance; SH17 is the next research-only sample-audit candidate.
-   - Fall: no candidate is cleared; seek a first-party academic dataset with explicit content rights or obtain written permission.
-   - Fire/Smoke: request D-Fire's source manifest/rights explanation; in parallel search for a first-party dataset with captured/owned imagery and explicit detection annotations.
+   - Fall: candidate search and sample-audit protocol established in [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md); Fall Detection Dataset (State-to-Fall + ADL) enters research sample audit only; unrestricted training remains blocked.
+   - Fire/Smoke: D-Fire enters as CONDITIONAL GO — educational prototype/sample audit only under explicit safeguards; Boreal Forest Fire (Subset A) enters research sample audit for smoke only. See [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md).
 4. Do not use pseudo-labeling to cure license uncertainty. Pseudo-labeling may accelerate annotation only after image rights are established and must still receive human QA.

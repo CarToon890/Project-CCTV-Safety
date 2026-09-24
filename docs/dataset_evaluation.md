@@ -287,10 +287,14 @@
 3. **Beyza / Shlok / Nirav — HOLD**: รูปแบบข้อมูลน่าสนใจ แต่ license authority, provenance หรือ person-label completeness ยังไม่ผ่าน
 
 ### 2. หมวด Fall (Class 3)
-ยังไม่มีชุดที่ผ่านสิทธิ์สำหรับ Training: **Uttej HOLD** เพราะสิทธิ์ฐานข้อมูลไม่ครอบคลุมภาพต้นฉบับ และ **Simuletic HOLD** เพราะ license ขัดแย้งพร้อมความเสี่ยง provenance
+ยังไม่มีชุดที่ผ่านสิทธิ์สำหรับ Training แบบไร้เงื่อนไข: **Uttej HOLD** เพราะสิทธิ์ฐานข้อมูลไม่ครอบคลุมภาพต้นฉบับ และ **Simuletic HOLD** เพราะ license ขัดแย้งพร้อมความเสี่ยง provenance; ชุดข้อมูลสำรวจใหม่ **Fall Detection Dataset (State-to-Fall + ADL)** ได้สถานะ **GO สำหรับ sample audit เท่านั้น** ดู [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md)
 
 ### 3. หมวด Fire (Class 4) & Smoke (Class 5)
-ยังไม่มีชุดที่ผ่านสิทธิ์สำหรับ Training: **D-Fire HOLD** แม้รูปแบบดีเพราะผู้รวบรวมไม่รับรองสิทธิ์ภาพ, **Simuletic HOLD** เพราะ license/format ขัดแย้ง และ **Ironwolf HOLD** เพราะ provenance/format ยังไม่ยืนยัน
+ปรับเปลี่ยนจากนโยบาย absolute fire BLOCKED สู่แบบจำลองสถานะอย่างรอบคอบ (Careful Status Model):
+- **D-Fire:** ได้รับสถานะ **CONDITIONAL GO — educational prototype/sample audit only** (มี operative CC0 1.0 license ครอบคลุมชุดข้อมูลและกรอบ Bbox; เข้าสู่การประเมินได้ภายใต้ข้อตกลงโครงการรายวิชามหาวิทยาลัยแบบไม่แสวงหากำไร โดยห้าม commit ข้อมูลดิบเข้า Git, ห้ามเผยแพร่น้ำหนักโมเดลสู่สาธารณะ, อ้างอิงสิทธิ์, เบลอใบหน้าบุคคลในรายงาน, และเปิดเผยข้อจำกัดสิทธิ์ภาพต้นฉบับ; ไม่ใช่การอนุมัติเทรนแบบไร้เงื่อนไขหรือการใช้งานเชิงพาณิชย์)
+- **Boreal Forest Fire (Subset A):** ได้สถานะ **GO สำหรับ sample audit เฉพาะควัน (smoke only)** (CC BY 4.0 โดรนป่าไม้ฟินแลนด์ ไม่มีกรอบ fire)
+- **ชุดข้อมูลที่มีสิทธิ์ไม่ชัดเจนหรือขัดแย้ง:** **Simuletic HOLD/BLOCKED** (license ขัดแย้งกัน), **CQU และ Indoor Fire Smoke HOLD/BLOCKED** (สิทธิ์ภาพต้นฉบับไม่ได้รับการรับรอง), และ **Ironwolf HOLD** (provenance/format ยังไม่ยืนยัน)
+- ดูรายละเอียดใน [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md) และ [stage1_dataset_primary_source_audit.md](stage1_dataset_primary_source_audit.md)
 
 ### 4. หมวด Fight (Class 6 ในสถาปัตยกรรมเดิม -> ย้ายไป Stage 2 Temporal Classifier)
 > ⚠️ **หมายเหตุสำคัญและเอกสารอ้างอิงหลัก:** การประเมินและสถานะของชุดข้อมูลในหมวด Fight ได้รับการตรวจสอบและวิจัยเชิงลึกแยกเฉพาะในเอกสาร **[docs/fight_dataset_evaluation.md](fight_dataset_evaluation.md)** และแผนการย้ายระบบใน **[docs/two_stage_architecture_migration.md](two_stage_architecture_migration.md)** โดย **รายละเอียดและสถานะในรายงานดังกล่าวมีอำนาจเหนือข้อความสรุปเดิมในส่วนนี้**
@@ -311,12 +315,15 @@
 ## ส่วน D: การจัดกลุ่มเพื่อนำไปใช้งาน (Categorical Recommendation)
 
 ### 1. Primary Datasets
-**ยังไม่มีชุดใดได้รับอนุมัติสำหรับ Full Download หรือ Training** รายละเอียดหลักฐานปฐมภูมิอยู่ใน [stage1_dataset_primary_source_audit.md](stage1_dataset_primary_source_audit.md)
+**ยังไม่มีชุดใดได้รับอนุมัติสำหรับ Full Download หรือ Training แบบไร้เงื่อนไข** รายละเอียดหลักฐานปฐมภูมิอยู่ใน [stage1_dataset_primary_source_audit.md](stage1_dataset_primary_source_audit.md)
 
 ### 2. Sample-audit Candidates
 1. **Ultralytics Construction-PPE:** sample audit เสร็จแล้วและเป็น HOLD จนกว่าจะ regroup split ระดับ scene, แก้ orphan labels และผ่าน provenance/Human QA
 2. **SH17:** GO เฉพาะ research-only sample audit; เจ้าของโครงการยอมรับขอบเขต Non-commercial แล้ว แต่ยังต้องรักษา CC BY-NC-SA/Pexels constraints
-3. Candidate อื่นทั้งหมดคงสถานะ HOLD จนกว่าจะได้หลักฐานสิทธิ์และ provenance เพิ่มเติม
+3. **Fall Detection Dataset (State-to-Fall + ADL):** GO สำหรับ sample audit เท่านั้น (CC BY-NC 4.0 บันทึกจำลองการล้มโดยนักวิจัยปฐมภูมิ)
+4. **Boreal Forest Fire (Subset A):** GO สำหรับ sample audit เฉพาะควัน (smoke only; CC BY 4.0)
+5. **D-Fire:** CONDITIONAL GO สำหรับ educational prototype / sample audit ภายใต้ข้อจำกัดโครงการการศึกษาแบบไม่แสวงหากำไรอย่างเข้มงวด
+6. Candidate อื่นทั้งหมดที่มีสิทธิ์ไม่ชัดเจนหรือขัดแย้งคงสถานะ HOLD หรือ HOLD/BLOCKED จนกว่าจะได้หลักฐานสิทธิ์และ provenance เพิ่มเติม (การศึกษาไม่ลบล้างเงื่อนไขลิขสิทธิ์)
 
 ### 3. Hard-Negative Sources
 ยังไม่มีชุดใดได้รับอนุมัติ การใช้เฉพาะ negative images ก็ต้องผ่านสิทธิ์ภาพ, provenance และ exhaustive-label QA เช่นเดียวกับ positive images
@@ -335,7 +342,10 @@
 
 1. **Ultralytics Construction-PPE:** ตรวจ sample แล้ว; ห้าม Training ด้วย split เดิมเพราะพบ scene leakage ดู [construction_ppe_sample_audit.md](construction_ppe_sample_audit.md)
 2. **SH17:** อนุญาตให้ตรวจ sample ในขอบเขต research-only; ต้องเก็บ attribution, share-alike, Pexels source records และตรวจ likeness/privacy
-3. **`Simuletic CCTV Aggressive Poses & Fight Detection Dataset` (ประวัติการตัดสิน):**
+3. **Fall Detection Dataset (State-to-Fall + ADL):** สุ่มตรวจ 10 คลิป (~410–700 เฟรม) ตาม Protocol ใน [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md) เพื่อตรวจ CVAT XML mapping, dual-box fall, ความสมบูรณ์ของคน และ actor grouping
+4. **Boreal Forest Fire (Subset A):** สุ่มตรวจ 80 ภาพแบบ stratified sample สำหรับ smoke only ตาม Protocol ใน [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md) เพื่อตรวจคุณภาพกรอบควันและการปนเปื้อนของไฟ (flame contamination)
+5. **D-Fire:** สุ่มตรวจ 80 ภาพแบบ stratified sample สำหรับ fire/smoke ภายใต้ CONDITIONAL GO ตาม Protocol ใน [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md) เพื่อตรวจความกระชับของกรอบไฟ, แสงไฟลวง, unboxed persons, และ web burst grouping
+6. **`Simuletic CCTV Aggressive Poses & Fight Detection Dataset` (ประวัติการตัดสิน):**
    * *สถานะผลการตรวจล่าสุด:* **NO-GO FOR PHASE 3 / CLOSED (Project Owner Approved Approach A: Two-Stage Pipeline)**
    * *สรุปผลการ Audit:* คำกล่าวอ้างสังเคราะห์ขัดแย้งกับภาพคนจริง/CCTV จริง, สิทธิ์ CC BY 4.0 เหนือภาพต้นฉบับยังไม่ได้รับการยืนยัน, มี Active Fight เพียง 48 ภาพ, ขาด Human QA และมี Overfitting จากเฟรมต่อเนื่องสูง
    * *คำสั่งการ:* **ยุติ Track 1 ถาวร, ห้ามสร้าง Training labels และห้ามเทรนโมเดลจากชุดข้อมูลนี้โดยเด็ดขาด**
@@ -351,6 +361,6 @@
    * **สถานะ Dataset:** Simuletic ปิดเป็น NO-GO ถาวร (ห้ามสร้าง labels หรือเทรน, Human QA ยังไม่ได้เริ่ม), TNUE-Fight เป็น optional candidate สำหรับงานวิจัย Stage 2 ในอนาคต (ไม่บล็อก Stage 1)
    * **สถานะปัจจุบัน:** Migration สู่ Detector Schema v2 จำนวน 6 คลาสและการปรับ Code/Config เสร็จแล้ว แต่ยังไม่ได้ดาวน์โหลด Candidate Dataset หรือเริ่ม Training; Stage 2 ยังคง `BLOCKED / PENDING DATA APPROVAL`
 2. **การทำ Exhaustive Annotation สำหรับคลาส Person ในชุด DFire:**
-   - ในชุด `DFireDataset` มีภาพบางส่วนที่มีนักผจญเพลิงหรือประชาชนยืนอยู่ หากนำเข้าเทรนโมเดลรวม อาจทำให้โมเดลคิดว่าคนคือ Background (Missing-label penalty) แนะนำให้รันโมเดล YOLOv8x ตรวจจับ Person ซ้อนเข้าไปก่อนหรือไม่?
+   - ในชุด `DFireDataset` มีภาพบางส่วนที่มีนักผจญเพลิงหรือประชาชนยืนอยู่ หากนำเข้าเทรนโมเดลรวม อาจทำให้โมเดลคิดว่าคนคือ Background (Missing-label penalty) **การใช้ pseudo-labeling เพียงอย่างเดียวไม่สามารถอนุมัติข้อมูลสำหรับฝึกสอนได้** ต้องมีการตรวจสอบและตีกรอบ bounding box โดยมนุษย์ (Human QA) อย่างครบถ้วนทุกกรณี
 3. **การอนุมัติไฟล์คอนฟิก `configs/datasets.local.yaml`:**
-   - เมื่อตรวจสอบ License ปฐมภูมิแล้ว ต้องให้ผู้รับผิดชอบโครงการลงลายมือชื่อ/กำหนดค่า `license_approved: true` ในระบบตามระเบียบของ [docs/workflow.md](workflow.md)
+   - เมื่อตรวจสอบ License ปฐมภูมิแล้ว ต้องให้ผู้รับผิดชอบโครงการลงลายมือชื่อ/กำหนดค่า `license_approved: true` ในระบบตามระเบียบของ [docs/workflow.md](workflow.md) โดยเป็นการอนุมัติเฉพาะ bounded educational prototype หรือ sample audit เท่านั้น ไม่ใช่การอนุมัติเทรนแบบไร้เงื่อนไข

@@ -6,7 +6,7 @@
 >
 > Source: official Ultralytics release referenced by `construction-ppe.yaml`
 >
-> Usage policy: education/research only
+> Usage policy: Non-commercial university course project (education/research only; raw data excluded from Git; model weights private; explicit source license terms control)
 
 ## Decision
 
