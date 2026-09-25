@@ -1,0 +1,11 @@
+clip_id,relative_path,class_label,split,actor_group,resolution,fps,raw_frames,retained_frames,completed_labels,pending_frames,description
+FD0001,data/adl_no_fall/video_20260216_151903.mp4,adl_no_fall,train,grp_session_20260216_actorA_dark_top,1920x1080,60.02,326,19,2,17,"Female Actor A sitting in chair, talking, then rising and walking"
+FD0002,data/adl_no_fall/video_20260216_152523.mp4,adl_no_fall,train,grp_session_20260216_actor_session1_classroom,1920x1080,58.85,101,6,2,4,"Female actor in pink top standing, talking, and bending down"
+FD0003,data/adl_no_fall/video_20260216_152939.mp4,adl_no_fall,train,grp_session_20260216_actor_session1_classroom,1080x1920,50.00,93,4,1,3,Multi-person classroom scene (portrait 1080x1920) with 2 actors standing and gesturing
+FD0004,data/adl_no_fall/video_20260216_154339.mp4,adl_no_fall,train,grp_session_20260216_actor_session1_classroom,1920x1080,60.02,166,11,2,9,"Male actor in black shirt sitting in chair, leaning forward, and rising"
+FD0005,data/adl_no_fall/video_20260223_151242.mp4,adl_no_fall,val,grp_session_20260223_actorE_black_graphic_top,1920x1080,59.88,448,25,2,23,"Female Actor E in studio lying down on bed, sitting upright, and stretching"
+FD0006,data/adl_no_fall/video_20260223_151533.mp4,adl_no_fall,test,grp_session_20260223_actor_session2_studio,1920x1080,50.00,223,15,2,13,"Female actor in plaid shirt sitting on bed edge, bending forward, and returning upright"
+FD0007,data/sitting_to_fall/video_20260216_151241.mp4,sitting_to_fall,train,grp_session_20260216_actorB_green_polo,1920x1080,59.55,384,27,3,24,"Female Actor B sitting in plastic classroom chair, falling forward/right onto floor"
+FD0010,data/sitting_to_fall/video_20260216_151650.mp4,sitting_to_fall,val,grp_session_20260216_actorC_male_glasses,1920x1080,59.62,301,26,3,23,"Male Actor C sitting in plastic classroom chair, slipping backward/left onto floor"
+FD0014,data/sitting_to_fall/video_20260223_151341.mp4,sitting_to_fall,test,grp_session_20260223_actor_session2_studio,1920x1080,60.02,362,18,2,16,"Female actor in plaid shirt sitting on studio cot/bed edge, falling forward onto mattress"
+FD0020,data/sitting_to_fall/video_20260223_153406.mp4,sitting_to_fall,val,grp_session_20260223_actorE_black_graphic_top,1080x1920,60.02,425,25,1,24,"Female Actor E sitting on studio bed edge in portrait orientation (1080x1920), toppling forward"
