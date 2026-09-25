@@ -1,0 +1,21 @@
+{
+  "total_images": 21527,
+  "total_groups": 10010,
+  "sequence_continuity_unions": 10482,
+  "exact_dhash_unions": 4135,
+  "upstream_leaking_groups_count": 762,
+  "upstream_leaking_images_count": 10504,
+  "upstream_leaking_images_pct": 48.79,
+  "upstream_leak_splits_distribution": {
+    "('test', 'train', 'val')": 140,
+    "('train', 'val')": 541,
+    "('test', 'train')": 76,
+    "('test', 'val')": 5
+  },
+  "proposed_group_isolated_splits": {
+    "train": 17248,
+    "test": 2791,
+    "val": 1488
+  },
+  "cross_split_leakage_after_grouping": 0
+}

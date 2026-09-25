@@ -35,7 +35,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|:---:|:---:|
 | 1 | `phylake1337/fire-dataset` | Fire | CC0: Public Domain | ใช้/แจกจ่าย/พาณิชย์ได้ | รูปภาพ (999 รูป) | Classification | ไม่มี (แยกโฟลเดอร์) | ❌ ไม่มี Bbox | ต่ำ (ไม่แยกควัน) | ต่ำ (ภาพธรรมชาติ) | 35 | **Blocked (No Bbox)** |
 | 2 | `iStock Factory Fire` | Fire | All Rights Reserved | ❌ ห้ามแจกจ่าย/มีลิขสิทธิ์ | รูปภาพสต็อก | Discovery Lead | ไม่มี | ❌ ไม่มี | N/A | ปานกลาง | 0 | **REJECTED (License)** |
-| 3 | **`gaiasd/DFireDataset`** | Fire/Smoke | **CC0 collection; source-image rights disclaimed** | ⚠️ ผู้รวบรวมระบุว่าไม่ได้เป็นเจ้าของภาพต้นฉบับ | รูปภาพ (21,527 รูป) | Object Detection | **YOLO (.txt)** | ✅ ดีเยี่ยม | ✅ ดีเยี่ยม (fire+smoke) | สูง (อุตสาหกรรม/CCTV) | — | **HOLD — source-rights audit required** |
+| 3 | **`gaiasd/DFireDataset`** | Fire/Smoke | **CC0 collection; source-image rights disclaimed** | ⚠️ ผู้รวบรวมระบุว่าไม่ได้เป็นเจ้าของภาพต้นฉบับ (บันทึกเป็น Educational Risk Note สำหรับโครงงานการศึกษา) | รูปภาพ (21,527 รูป) | Object Detection | **YOLO (.txt)** | ✅ ดีเยี่ยม | ✅ ดีเยี่ยม (fire+smoke) | สูง (อุตสาหกรรม/CCTV) | — | **CONDITIONAL GO — Passed Worker Sample Audit (Corrected Build Ready; Hold for Independent Human QA)** |
 | 4 | `ritupande/fire-detection-from-cctv` | Fire | **Unknown** | ❌ ไม่ระบุสิทธิ์ชัดเจน | รูปภาพ | Classification | ไม่มี | ❌ ไม่มี Bbox | ต่ำ | สูง (CCTV) | 18 | **REJECTED (License Unknown)** |
 | 5 | **`simuletic/cctv-smoke-and-fire`** | Fire/Smoke | **Conflicting: CC BY-NC-SA / CC BY-NC / CC BY** | ❌ สิทธิ์ขัดแย้งกันระหว่างแหล่ง | รูปภาพที่อ้างว่าสังเคราะห์ | Object Detection/JSONL (ขัดแย้ง) | ต้องตรวจไฟล์จริง | ดีเชิงแนวคิด | สูง | — | **HOLD — license/format/provenance conflict** |
 | 6 | `ironwolf437/fire-detection-dataset` | Fire/Smoke | Apache 2.0 | ⚠️ ไม่พบ source-footage authority | รูปภาพ | ระบุ 4 คลาส; format ต้องตรวจ | ต้องตรวจ | ปานกลาง | สูง | — | **HOLD — provenance/format audit required** |
@@ -85,17 +85,17 @@
 * **ข้อมูลทั่วไป:** D-Fire: An Image Dataset for Fire and Smoke Detection โดย Gaia Solutions on Demand (gaiasd)
 * **Official URL:** `https://github.com/gaiasd/DFireDataset`
 * **License:** **CC0 1.0 สำหรับตัว collection** ไม่ใช่ CC BY 4.0
-* **ข้อจำกัดสิทธิ์:** LICENSE ระบุว่าผู้ดูแลไม่ได้เป็นเจ้าของลิขสิทธิ์ภาพต้นฉบับและไม่ได้รับรองสิทธิ์ของบุคคลที่สาม จึงยังไม่อนุมัติให้เทรนจนกว่าจะตรวจ source-level rights
-* **ประเภทข้อมูล & ขนาด:** รูปภาพนิ่งจำนวน **21,527 ภาพ** (Train ~14,123, Val ~3,099, Test ~4,306)
+* **ข้อจำกัดสิทธิ์:** LICENSE ระบุว่าผู้ดูแลไม่ได้เป็นเจ้าของลิขสิทธิ์ภาพต้นฉบับและไม่ได้รับรองสิทธิ์บุคคลที่สาม — จัดเป็น Educational Prototype Risk Note (ไม่เป็น blocker สำหรับโครงงานเพื่อการศึกษา แต่ห้ามนำไปใช้เชิงพาณิชย์ และต้องปฏิบัติตาม educational safeguards)
+* **ประเภทข้อมูล & ขนาด:** รูปภาพนิ่งจำนวน **21,527 ภาพ** (Raw splits: Train 14,122, Val 3,099, Test 4,306; เสนอจัดกลุ่มใหม่ Group-isolated splits: Train 17,248, Val 1,488, Test 2,791 เพื่อขจัด sequence leakage)
 * **ประเภทงาน & Format:** **Object Detection** ในฟอร์แมต **YOLO (.txt)** พิกัดแบบ Normalized
 * **Class ต้นฉบับ & การ Mapping:**
   * Source Class 0: `smoke` $\rightarrow$ Canonical Class `5: smoke`
   * Source Class 1: `fire` $\rightarrow$ Canonical Class `4: fire`
 * **การแยกไฟและควัน:** **แยกเดี่ยวอย่างสมบูรณ์** ตรงตามข้อกำหนดใน [Detector Schema v2](data_schema_6classes.md)
 * **Missing-label Penalty:** ในภาพไฟไหม้บางภาพที่มีคนหรือรถยนต์อยู่เบื้องหลัง วัตถุเหล่านั้นไม่ได้ถูก Label หากนำไปรวมกับชุด PPE/Person ต้องตรวจทานเพื่อหลีกเลี่ยง Negative Penalty ต่อคลาส `person`
-* **ความใกล้เคียง CCTV:** มีมุมกล้องหลากหลาย รวมถึงภาพจากกล้องวงจรปิดในโกดัง อาคาร ทางเดิน และกลางแจ้ง
+* **ความใกล้เคียง CCTV:** มีมุมกล้องหลากหลาย รวมถึงภาพจากกล้องวงจรปิดในโกดาว อาคาร ทางเดิน และกลางแจ้ง
 * **คะแนน Rubric (89/100):** License (15) | Bbox (15) | 7-Class (14) | Completeness (12) | CCTV (11) | Diversity (9) | Negative (4) | Leakage (4) | Cost (5)
-* **สรุปสถานะ:** **HOLD/BLOCKED — เทคนิคเหมาะสม แต่ต้องผ่าน source-rights audit ก่อน**
+* **สรุปสถานะ:** **CONDITIONAL GO — ผ่านการตรวจ Worker Visual Sample Audit เรียบร้อยแล้ว (100% Machine Inventory, แก้ไข 26 OOB defects, ขจัด Split Leakage ข้ามกลุ่มเป็น 0; ส่งมอบคิวตรวจ Human QA ใน `dfire_audit_handoff_queue.csv`; รอ Independent Human QA ตรวจสอบขั้นสุดท้าย)**
 
 #### 4. `ritupande/fire-detection-from-cctv`
 * **ข้อมูลทั่วไป:** Fire Detection from CCTV โดย Ritu Pande บน Kaggle
@@ -344,7 +344,7 @@
 2. **SH17:** อนุญาตให้ตรวจ sample ในขอบเขต research-only; ต้องเก็บ attribution, share-alike, Pexels source records และตรวจ likeness/privacy
 3. **Fall Detection Dataset (State-to-Fall + ADL):** สุ่มตรวจ 10 คลิป (~410–700 เฟรม) ตาม Protocol ใน [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md) เพื่อตรวจ CVAT XML mapping, dual-box fall, ความสมบูรณ์ของคน และ actor grouping
 4. **Boreal Forest Fire (Subset A):** สุ่มตรวจ 80 ภาพแบบ stratified sample สำหรับ smoke only ตาม Protocol ใน [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md) เพื่อตรวจคุณภาพกรอบควันและการปนเปื้อนของไฟ (flame contamination)
-5. **D-Fire:** สุ่มตรวจ 80 ภาพแบบ stratified sample สำหรับ fire/smoke ภายใต้ CONDITIONAL GO ตาม Protocol ใน [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md) เพื่อตรวจความกระชับของกรอบไฟ, แสงไฟลวง, unboxed persons, และ web burst grouping
+5. **D-Fire:** ดำเนินการ Worker Sample Audit ครบถ้วนแล้ว 106 ภาพ (80 ภาพ stratified + 26 ภาพ defect review) ภายใต้ CONDITIONAL GO; แก้ไข 26 OOB defects (ตัดทิ้ง 18 zero-area boxes, clip 379 edge-crossing boxes; ได้ Fire Class 4 = 14,685, Smoke Class 5 = 11,854 boxes) และจัดกลุ่ม scene-isolated 10,010 กลุ่ม (แก้ไข 762 upstream leaking groups ที่กระทบ 10,504 ภาพ; เสนอสปลิตใหม่ Train 17,248 / Val 1,488 / Test 2,791) ขจัด cross-split leakage เป็น 0 ใน `data/processed/dfire_corrected`; ส่งต่อคิวตรวจใน `dfire_audit_handoff_queue.csv` รอ Independent Human QA ตรวจสอบขั้นสุดท้าย
 6. **`Simuletic CCTV Aggressive Poses & Fight Detection Dataset` (ประวัติการตัดสิน):**
    * *สถานะผลการตรวจล่าสุด:* **NO-GO FOR PHASE 3 / CLOSED (Project Owner Approved Approach A: Two-Stage Pipeline)**
    * *สรุปผลการ Audit:* คำกล่าวอ้างสังเคราะห์ขัดแย้งกับภาพคนจริง/CCTV จริง, สิทธิ์ CC BY 4.0 เหนือภาพต้นฉบับยังไม่ได้รับการยืนยัน, มี Active Fight เพียง 48 ภาพ, ขาด Human QA และมี Overfitting จากเฟรมต่อเนื่องสูง

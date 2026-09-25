@@ -1,0 +1,63 @@
+{
+  "total_images": 21527,
+  "splits": {
+    "train": 14122,
+    "val": 3099,
+    "test": 4306
+  },
+  "empty_labels": {
+    "train": 6458,
+    "val": 1375,
+    "test": 2005
+  },
+  "source_classes": {
+    "1": 14692,
+    "0": 11865
+  },
+  "source_classes_per_split": {
+    "train": {
+      "1": 9638,
+      "0": 7794
+    },
+    "val": {
+      "0": 1756,
+      "1": 2176
+    },
+    "test": {
+      "0": 2315,
+      "1": 2878
+    }
+  },
+  "categories": {
+    "negative": 9838,
+    "fire_only": 1164,
+    "smoke_only": 5867,
+    "both": 4658
+  },
+  "categories_per_split": {
+    "train": {
+      "negative": 6458,
+      "fire_only": 770,
+      "smoke_only": 3836,
+      "both": 3058
+    },
+    "val": {
+      "negative": 1375,
+      "smoke_only": 845,
+      "both": 705,
+      "fire_only": 174
+    },
+    "test": {
+      "negative": 2005,
+      "smoke_only": 1186,
+      "both": 895,
+      "fire_only": 220
+    }
+  },
+  "syntax_errors_count": 0,
+  "oob_boxes_count": 26,
+  "edge_crossings_count": 379,
+  "corrupt_images_count": 0,
+  "exact_duplicate_groups_count": 0,
+  "cross_split_exact_duplicate_groups": 0
+}

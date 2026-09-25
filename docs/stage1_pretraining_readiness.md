@@ -22,7 +22,7 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
 
 1. **PPE (`person`, `helmet`, `vest`):** Ultralytics Construction-PPE has completed 100% machine inventory and a 42-image stratified human visual QA sample. All 88 defect rows (85 unique images) cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv) have undergone 100% worker visual QA remediation. The complete corrected dataset has been generated at `data/processed/construction_ppe_corrected` (1,416 paired images: train 1,151 / val 129 / test 136; Person 2,379, Helmet 1,733, Vest 1,626; zero instances of classes 3, 4, 5). Zero group leakage across splits is verified. A concise human QA review queue ([remediation_qa_queue.csv](audit_artifacts/construction_ppe/remediation_qa_queue.csv)) and QA overlays have been emitted. The verdict is **`WORKER_REMEDIATION_COMPLETE` / `PENDING_INDEPENDENT_HUMAN_QA`**.
 2. **Fall (`fall`):** The Fall Detection Dataset ([samruddhi-2308/FallDetectionDataset](https://github.com/samruddhi-2308/FallDetectionDataset)) has completed its 8-clip CVAT pilot (227 pairs) and the 10-clip targeted annotation campaign across 10 selected clips (all 6 ADL negative controls plus 4 diverse sitting-to-fall clips: `FD0007`, `FD0010`, `FD0014`, `FD0020`). Across the 10 campaign clips, all 176 retained review frames were visually inspected and annotated via worker visual QA, resulting in **176 completed frames and 0 pending frames (`PENDING_MANUAL_BBOX: 0`)**. The pilot extension dataset yields class counts: **`Person 185`**, **`Fall 60`**, with classes 1/2/4/5 strictly `0`, across splits **train: 67, val: 76, test: 33**. Actor-group regrouping in `fall_actor_grouping.csv` confirms zero actor-group split leakage across 9 groups. The campaign verdict is **`FALL_CAMPAIGN_COMPLETE` / `FALL_REMEDIATION_COMPLETE`**. Model training remains on hold pending independent human sign-off (open governance gate) and non-fall pre-training gates. Provenance and upstream CC BY-NC 4.0 licensing are documented as a course-project risk note (under owner educational prototype baseline), not the present execution blocker.
-3. **Fire & Smoke (`fire`, `smoke`):** The shortlisted supplementary smoke candidate ([Boreal Forest Fire — Subset A](https://doi.org/10.23729/fd-72c6cf74-b8eb-3687-860d-bf93a1ab94c9)) is approved under **GO — sample audit only** (CC BY 4.0), and the primary fire/smoke candidate ([DFireDataset](https://github.com/gaia-solutions-on-demand/DFireDataset)) is conditionally approved under **CONDITIONAL GO — educational prototype/sample audit only** (CC0 1.0 annotations). Both datasets are **absent locally** and their 80-image sample audits have **not yet been executed on disk**.
+3. **Fire & Smoke (`fire`, `smoke`):** D-Fire (`gaia-solutions-on-demand/DFireDataset`) has completed 100% machine inventory (21,527 image-label pairs; 0 corrupt images, 0 syntax errors, 26 OOB defects resolved: 18 zero-dimension dropped, 379 clipped to bounds) and a 106-frame worker visual sample audit (80 stratified web/incident scenes + 26 defect reviews). The complete immutable-raw corrected dataset has been built at `data/processed/dfire_corrected` (21,527 paired images: train 17,248 / val 1,488 / test 2,791; raw splits: train 14,122 / val 3,099 / test 4,306; Fire 14,685, Smoke 11,854; zero instances of classes 0, 1, 2, 3). Zero group leakage across splits is verified across 10,010 scene groups (eliminating 762 upstream leaking groups affecting 10,504 images). A concise human QA handoff queue ([dfire_audit_handoff_queue.csv](audit_artifacts/dfire/dfire_audit_handoff_queue.csv)) across all 106 rows and QA overlays/contact sheets have been generated. The verdict is **`WORKER_AUDIT_COMPLETE` / `PENDING_INDEPENDENT_HUMAN_QA`** (governance gate: independent human QA remains final approval gate across all 106 rows; educational prototype risk note documented). Boreal Forest Fire — Subset A remains shortlisted for supplementary smoke.
 
 ### Class-by-Class Readiness Summary
 
@@ -32,8 +32,8 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
 | **`1`** | **`helmet`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,734 paired instances cataloged; mapped to canonical ID 1; bucket hats, police caps, racing helmets removed; unboxed helmets added; 1,733 instances in corrected dataset | Independent human sign-off on 85 remediated images (`remediation_qa_queue.csv`); non-PPE pretraining gates | **WORKER_REMEDIATION_COMPLETE → HOLD FOR HUMAN SIGN-OFF** |
 | **`2`** | **`vest`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,618 paired instances cataloged; mapped to canonical ID 2; jumpsuits removed; unboxed vests added; source class 5 `none` discarded; 1,626 instances in corrected dataset | Independent human sign-off on 85 remediated images (`remediation_qa_queue.csv`); non-PPE pretraining gates | **WORKER_REMEDIATION_COMPLETE → HOLD FOR HUMAN SIGN-OFF** |
 | **`3`** | **`fall`** | Fall Detection Dataset (State-to-Fall + ADL) | CC BY-NC 4.0 (course-project risk note, not execution blocker) | 8 CVAT clips built into 227-pair pilot; 10 targeted campaign clips (6 ADL + FD0007/FD0010/FD0014/FD0020) with 176 retained review frames; 176 completed worker visual QA frames (Person 185, Fall 60, classes 1/2/4/5: 0; train 67, val 76, test 33); 0 pending; 0 actor-group split leakage | Independent human sign-off pending (governance gate); loose bounding box tightening needed on 8 original pilot clips | **FALL_CAMPAIGN_COMPLETE / FALL_REMEDIATION_COMPLETE → HOLD FOR HUMAN SIGN-OFF & NON-FALL GATES** |
-| **`4`** | **`fire`** | D-Fire (`DFireDataset`) | CC0 1.0 (annotations); source rights disclaimed | Desk review of 21,527 YOLO images; 80-image stratified sample audit protocol approved; educational constraints bound | Dataset absent locally; 80-image visual audit not executed; unboxed person review and ambient glare checks pending | **SHORTLISTED (CONDITIONAL GO: Educational Prototype) → HOLD PENDING LOCAL AUDIT** |
-| **`5`** | **`smoke`** | Boreal Forest Fire — Subset A / D-Fire | CC BY 4.0 (Boreal) / CC0 1.0 (D-Fire) | Desk review of *Nature Sci Data* (2025) paper & D-Fire; 80-image sample audit protocols approved | Datasets absent locally; 80-image visual audits not executed; flame contamination check in smoke plumes pending | **SHORTLISTED (GO / CONDITIONAL GO: Sample Audit Only) → HOLD PENDING LOCAL AUDIT** |
+| **`4`** | **`fire`** | D-Fire (`DFireDataset`) | CC0 1.0 (annotations); source rights disclaimed (educational risk note) | 100% machine inventory (21,527 pairs; raw fire: 14,692, corrected fire: 14,685); 106-frame worker visual sample audit executed; 26 OOB defects resolved; group isolation manifest (10,010 groups, 0 leakage; train 17,248 / val 1,488 / test 2,791; raw splits: train 14,122 / val 3,099 / test 4,306); corrected build at `data/processed/dfire_corrected` | Independent human sign-off on handoff queue for all 106 rows (`dfire_audit_handoff_queue.csv`) | **WORKER_AUDIT_COMPLETE → HOLD FOR HUMAN SIGN-OFF** |
+| **`5`** | **`smoke`** | D-Fire / Boreal Forest Fire — Subset A | CC0 1.0 (D-Fire) / CC BY 4.0 (Boreal) | D-Fire: 100% machine inventory (raw smoke: 11,865, corrected smoke: 11,854); 106-frame worker visual audit executed; 11,854 smoke boxes in `dfire_corrected`; 0 cross-split leakage across 10,010 groups; Boreal: 80-image sample protocol approved | Independent human sign-off on D-Fire handoff queue for all 106 rows (`dfire_audit_handoff_queue.csv`); Boreal physical audit pending | **WORKER_AUDIT_COMPLETE (D-Fire) → HOLD FOR HUMAN SIGN-OFF** |
 
 ---
 
@@ -114,7 +114,7 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
   - **Verdict:** **FALL_CAMPAIGN_COMPLETE** (176/176 frames annotated and verified; 0 pending frames); **FALL_REMEDIATION_COMPLETE**. Model training remains on hold pending independent human sign-off and non-fall pre-training gates.
   - **Independent Human Sign-Off (Governance Gate):** Worker visual annotations have been verified via automated and visual QA, but formal independent human auditor sign-off has not yet occurred and remains an open governance gate.
   - **Loose / Oversized Bounding Boxes:** Original upstream CVAT keyframes in clips `FD0044`, `FD0049`, `FD0035`, etc. span > 1000px in width. Coordinates are preserved without synthetic distortion per policy, but require polygon contour clamping or manual tightening before final training.
-  - **Owner Sign-off (Gate 5):** Bounded prototype training requires formal `license_approved: true` in `configs/datasets.local.yaml`.
+  - **Owner Training Authorization (Gate 5):** License/provenance is retained as an educational-project risk note under the owner's decision. Training remains prohibited until the owner separately authorizes training.
 
 ### Class 4: `fire`
 - **Candidate:** D-Fire (`gaia-solutions-on-demand/DFireDataset`) ([fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md)).
@@ -122,38 +122,38 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
   - Primary-source desk review of publisher repository, LICENSE file, and dataset cards.
   - Verified operative license: **CC0 1.0 Universal** on dataset collection and bounding-box annotations.
   - Applied owner-binding educational prototype policy: CONDITIONAL GO under strict safeguards (no Git commit of raw images, private model weights, creator citation, face blurring, upstream rights disclaimer).
-  - Inventory documented: 21,527 images in YOLO format (14,692 fire boxes, 11,865 smoke boxes).
-  - Decision-complete 80-image stratified sample audit protocol designed (Section 7 of replacement search doc).
+  - 100% machine inventory executed across all 21,527 images and labels via `scripts/inventory_dfire.py`: 0 corrupt images, 0 syntax errors, 0 exact duplicate groups.
+  - 26 bounding box defects fully cataloged (18 zero-dimension degenerate boxes dropped; 8 OOB boxes with $w, h > 1.0$ and 379 boundary edge crossings clipped to $[0.0, 1.0]$).
+  - Upstream split leakage diagnosed (762 upstream leaking groups affecting 10,504 images) and resolved: 10,010 scene groups clustered via sequence continuity and 64-bit dHash; group manifest (`dfire_group_leakage_manifest.csv`) eliminates all cross-split leakage.
+  - Immutable-raw corrected dataset built at `data/processed/dfire_corrected` (21,527 paired images: train 17,248 / val 1,488 / test 2,791; raw splits: train 14,122 / val 3,099 / test 4,306; Fire 14,685, Smoke 11,854; zero instances of classes 0, 1, 2, 3).
+  - 106-frame worker visual sample audit executed via `scripts/audit_dfire_samples.py` (80 stratified web/incident scenes + 26 defect cases); QA overlays, contact sheets, and PASS/FIX handoff queue emitted in `dfire_audit_handoff_queue.csv`.
 - **Current Limitations & Unfinished Work:**
-  - **Archive absent locally:** Dataset has not been downloaded to `data/raw/fire/`.
-  - **Sample audit unexecuted:** Physical screening of 80 images across categories (fire-only, fire+smoke, hard negatives) has not been performed on disk.
-  - **Confounder review:** Tightness of flame boundaries, screening against sodium-vapor lamps / sun glare, and exhaustive inspection for unboxed firefighters or bystanders remain pending physical audit.
+  - **Independent Human QA Sign-Off (Governance Gate):** Worker visual annotations and defect remediations have been verified, but formal independent human sign-off on all 106 rows in `dfire_audit_handoff_queue.csv` remains the required final gate before training ingestion. Provenance and upstream rights disclaimer are documented as an educational prototype risk note under the owner's course-project baseline, not an execution blocker.
 
 ### Class 5: `smoke`
-- **Candidates:** Boreal Forest Fire — Subset A (Primary clean candidate for outdoor smoke) and D-Fire (Supplementary indoor/industrial smoke).
+- **Candidates:** D-Fire (Primary indoor/industrial smoke) and Boreal Forest Fire — Subset A (Supplementary clean candidate for outdoor smoke).
 - **Completed Evidence:**
-  - Primary-source desk review of peer-reviewed data descriptor (*Nature Scientific Data*, 2025), Fairdata IDA DOI, and Aalto University records.
-  - Verified operative license: **CC BY 4.0** (National Land Survey of Finland / Maanmittauslaitos).
+  - D-Fire: 100% machine inventory and worker visual audit completed; 11,854 smoke boxes mapped to canonical class 5; 0 cross-split leakage across 10,010 groups in `data/processed/dfire_corrected`.
+  - Boreal Forest Fire — Subset A: Primary-source desk review of peer-reviewed data descriptor (*Nature Scientific Data*, 2025), Fairdata IDA DOI, and Aalto University records under **CC BY 4.0** (National Land Survey of Finland / Maanmittauslaitos).
   - Inventory documented: 4,954 4K images across 4 burn locations (Evo, Ruokolahti, Karkkila, Heinola), including 256 negative images.
   - Validated large-box annotation methodology (smoke plume + immediate context).
   - Decision-complete 80-image stratified sample audit protocol designed (Section 6 of replacement search doc).
 - **Current Limitations & Unfinished Work:**
-  - **Archive absent locally:** Dataset has not been downloaded to `data/raw/smoke/`.
-  - **Sample audit unexecuted:** Physical inspection of 80 stratified drone images has not been performed on disk.
-  - **Flame contamination check:** Critical inspection gate to ensure smoke plumes do not contain visible unboxed flames (which would penalize class 4) remains pending physical audit.
+  - **Independent Human QA Sign-Off:** Independent human sign-off on D-Fire handoff queue across all 106 rows (`dfire_audit_handoff_queue.csv`) pending.
+  - **Boreal Physical Acquisition:** Boreal Forest Fire dataset has not yet been downloaded to `data/raw/smoke/` for supplementary outdoor audit.
 
 ---
 
 ## 3. Approved Sample Sizes & Sampling Protocols Table
 
-The table below defines the formal, approved sample sizes and selection criteria across all candidate datasets. All sample audits are decision-complete protocols; execution awaits physical file acquisition.
+The table below defines the formal, approved sample sizes and selection criteria across all candidate datasets.
 
 | Candidate Dataset | Canonical Class(es) | Total Archive Scale | Approved Audit Sample Size | Stratification & Sampling Protocol | Status of Physical Audit |
 |---|---|---|---|---|:---:|
 | **Ultralytics Construction-PPE** | `0: person`<br/>`1: helmet`<br/>`2: vest` | 1,416 images<br/>(1,132 train, 143 val, 141 test)<br/>1,426 label files | **1,416 images (100% Machine Inventory)**<br/>+ **42 images (Stratified Human QA)** | • Machine check: 100% paired image/label parsing.<br/>• Human QA: 42 images across original splits (22 train, 8 val, 12 test), all multi-frame sequences, and negative portraits.<br/>• Remediation scope: **All 77 zero-Person files** (58 context-evidenced + 19 machine-only) + **11 other evidenced defects** = **88 data rows** in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv). | **EXECUTED**<br/>(Yielded 77 zero-Person & 11 visual defect findings) |
 | **Fall Detection Dataset (State-to-Fall + ADL)** | `3: fall`<br/>(`0: person`) | 54 MP4 video clips<br/>(~3,000–5,000 frames) | **18 video clips audited**<br/>(8 CVAT pilot + 10 campaign clips;<br/>176 retained review frames) | • Initial pilot: 8 CVAT clips (227 pairs; 227 person, 141 fall).<br/>• Targeted campaign: 10 clips (6 ADL + FD0007/FD0010/FD0014/FD0020), 176 retained frames inspected.<br/>• 176 completed worker visual QA frames (0 pending).<br/>• Extension counts: Person 185, Fall 60, others 0; splits train 67 / val 76 / test 33.<br/>• 9 actor groups with zero split leakage. | **FALL_CAMPAIGN_COMPLETE / FALL_REMEDIATION_COMPLETE**<br/>(176 completed labels verified;<br/>0 pending frames;<br/>Hold for human sign-off & non-fall gates) |
 | **Boreal Forest Fire — Subset A** | `5: smoke` | 4,954 4K images<br/>(4 burn locations,<br/>256 negative images) | **80 images**<br/>(stratified drone frames) | • 20 images from Ruokolahti (15 smoke, 5 negative).<br/>• 20 images from Karkkila (15 smoke, 5 negative).<br/>• 20 images from Heinola (15 smoke, 5 negative).<br/>• 20 images from Evo (15 smoke, 5 negative).<br/>• Grouping by flight sequence / burn event. | **PENDING**<br/>(Dataset absent locally; protocol approved) |
-| **D-Fire (`DFireDataset`)** | `4: fire`<br/>`5: smoke`<br/>(`0: person`) | 21,527 images<br/>(14,692 fire boxes,<br/>11,865 smoke boxes) | **80 images**<br/>(stratified web scenes) | • 25 Fire-only images.<br/>• 25 Fire + Smoke co-occurring images.<br/>• 15 Smoke-only images.<br/>• 15 Hard negatives (lamps, sun glare, reflections).<br/>• Grouping by web burst / scene background. | **PENDING**<br/>(Dataset absent locally; protocol approved) |
+| **D-Fire (`DFireDataset`)** | `4: fire`<br/>`5: smoke`<br/>(`0: person`) | 21,527 images<br/>(14,692 fire boxes,<br/>11,865 smoke boxes) | **106 images audited**<br/>(80 stratified web scenes +<br/>26 defect review frames) | • 25 Fire-only images.<br/>• 25 Fire + Smoke co-occurring images.<br/>• 15 Smoke-only images.<br/>• 15 Hard negatives (lamps, sun glare, reflections).<br/>• 26 defect cases (18 zero-dimension dropped + 8 OOB clipped).<br/>• Grouping by sequence continuity + 64-bit dHash (10,010 groups, 0 leakage; train 17,248 / val 1,488 / test 2,791; raw splits: train 14,122 / val 3,099 / test 4,306). | **WORKER_AUDIT_COMPLETE**<br/>(106 frames visually inspected;<br/>Corrected dataset built at `dfire_corrected`;<br/>Hold for human sign-off across all 106 rows) |
 
 ---
 
@@ -255,7 +255,7 @@ Stage 1 model training is authorized to begin **if and only if** all of the foll
 
 ```mermaid
 flowchart TD
-    Cond1["1. Owner Approval Signed<br/>(license_approved: true in config)"] --> Check{"All Conditions<br/>Satisfied?"}
+    Cond1["1. Owner Training Approval<br/>(explicit authorization to start training)"] --> Check{"All Conditions<br/>Satisfied?"}
     Cond2["2. Local Data Acquired<br/>(Fall, Smoke, Fire under data/raw/)"] --> Check
     Cond3["3. Sample Audits Executed<br/>(Fall 10-clip, Smoke 80-img, Fire 80-img)"] --> Check
     Cond4["4. PPE Remediation Verified<br/>(Pass 1 complete + Pass 2 QA passed)"] --> Check
@@ -268,7 +268,7 @@ flowchart TD
 ```
 
 ### The Seven Mandatory Gates:
-1. `OWNER_LICENSE_SIGNOFF == TRUE`: Explicit acceptance of educational prototype constraints and recorded configuration setting (`license_approved: true`) in `configs/datasets.local.yaml`.
+1. `OWNER_TRAINING_AUTHORIZATION == TRUE`: Explicit owner authorization to begin training. License and provenance remain documented educational-project risk notes and are not execution blockers under the current owner decision.
 2. `LOCAL_DATA_ACQUIRED == TRUE`: Physical retrieval of Fall Detection Dataset (54 clips), Boreal Forest Fire Subset A (4,954 images), and D-Fire (21,527 images) into local `.gitignore`-protected directories.
 3. `LOCAL_SAMPLE_AUDITS_PASSED == TRUE`: Physical execution of the 10-clip Fall audit, 80-image Smoke audit, and 80-image Fire audit with documented QA overlay artifacts and zero blocking defects.
 4. `PPE_REMEDIATION_ACCEPTED == TRUE`: Completion of all edits in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv) and 100% verification by the Pass 2 independent reviewer meeting quantitative thresholds (GATE-Q1 through GATE-Q9).
@@ -348,9 +348,9 @@ The following sequential, decision-free task queue specifies the exact order of 
            Action: Execute data preparation pipeline in dry-run mode. Validate generated split
                    directories, box coordinates, and instance count distributions.
 
-[QUEUE-10] SECURE FORMAL OWNER AUTHORIZATION & INITIATE TRAINING
-           Action: Record license_approved: true in configs/datasets.local.yaml and initiate
-                   Stage 1 YOLOv8 training with private checkpoint logging.
+[QUEUE-10] SECURE EXPLICIT OWNER TRAINING AUTHORIZATION & INITIATE TRAINING
+           Action: Obtain explicit authorization to begin Stage 1 YOLOv8 training with private
+                   checkpoint logging. Do not infer training permission from dataset-audit approval.
 ```
 
 ---

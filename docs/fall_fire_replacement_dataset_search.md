@@ -54,7 +54,7 @@ A desk review of the raw InvenioRDM metadata on Zenodo revealed that earlier eva
 |:---:|---|:---:|:---:|:---:|---|
 | **1** | **Fall Detection Dataset (State-to-Fall + ADL)** | `fall` (and `person`) | **GO — Passed Sample Audit (Build Corrected Labels Only)** | CC BY-NC 4.0 | Sample audit completed 25 Sep 2026. 100% XML-to-video mapping confirmed (8/8 clips, diff=0). 487 stratified frames inspected across 10 clips. Actor grouping defined. Discrepancies cataloged for label remediation; unrestricted training remains gated. |
 | **2** | **Boreal Forest Fire — Subset A** | `smoke` | **GO — sample audit only** | CC BY 4.0 | First-party prescribed-burn UAV capture by Finnish research institutes; CC BY 4.0; human-reviewed YOLO smoke boxes; aerial domain; covers smoke only (zero fire boxes). Sample audit only. |
-| **3** | **D-Fire** | `fire`, `smoke` | **CONDITIONAL GO — educational prototype/sample audit only** | CC0 1.0 (annotations/collection); upstream web images unverified | 21,527 images in YOLO format (14,692 fire boxes, 11,865 smoke boxes). Operative CC0 license on annotations/structure; upstream image rights disclaimed. Bounded educational prototype only; Git redistribution barred, weights private, faces blurred, upstream rights disclosed. |
+| **3** | **D-Fire** | `fire`, `smoke` | **CONDITIONAL GO — Passed Worker Sample Audit (Corrected Build Ready; Hold for Independent Human QA)** | CC0 1.0 (annotations/collection); upstream web images unverified | 21,527 images in YOLO format (14,692 fire boxes, 11,865 smoke boxes). 100% machine inventory complete (0 corrupt, 0 syntax errors, 26 OOB defects cataloged). 106-frame worker visual audit executed. Immutable raw corrected build created at `data/processed/dfire_corrected` with 0 cross-split leakage across 10,010 scene groups (train 17,248 / val 1,488 / test 2,791). Handoff queue in `dfire_audit_handoff_queue.csv`. Bounded educational prototype only; Git redistribution barred, weights private, faces blurred, upstream rights disclosed. |
 | **4** | **TsetFall** | `fall` | **HOLD** | GPL-3.0 (repo) | Provides human bbox CSV and sequence IDs, but GPL-3.0 is a software license whose scope over media/likenesses is ambiguous; distributed via MEGA with a Google Form key requirement. |
 | **5** | **GMDCSA-24** | `fall` | **HOLD** | CC BY 4.0 (Zenodo) | First-party recordings of 4 actors across 3 homes; Zenodo metadata specifies CC BY 4.0, but data contains only action video clips without Stage 1 bounding boxes; requires complete relabeling. |
 | **6** | **EDF / OCCU** | `fall` | **HOLD** | CC BY 4.0 (Zenodo) | 26.9 GB Kinect depth + synchronized RGB archive from 5 subjects; Zenodo metadata specifies CC BY 4.0, but contains no Stage 1 bounding boxes and depth domain diverges from surveillance RGB. |
@@ -411,6 +411,34 @@ Under the 25 September 2026 binding owner decision:
   - Systematic false positives on ambient lighting.
   - Intractable privacy or copyright objections that cannot be mitigated within the educational prototype framework.
 
+### 7.9 Executed Sample Audit Outcome & Findings (25 September 2026)
+
+The D-Fire worker sample audit and defect remediation pipeline was formally executed on 25 September 2026 using `scripts/inventory_dfire.py`, `scripts/analyze_dfire_leakage.py`, `scripts/build_dfire_corrected.py`, `scripts/audit_dfire_samples.py`, and `scripts/validate_dfire.py`.
+
+- **Audit Decision:** **CONDITIONAL GO — PASSED WORKER SAMPLE AUDIT (Corrected Dataset Built; Handoff Queue Ready; Hold for Independent Human QA)**.
+- **Machine QA Coverage (100%):** 21,527 / 21,527 images readable and decodable via PIL; 1:1 image-to-label pairing confirmed (diff = 0); 0 syntax errors; 0 corrupt files; 0 exact duplicate image groups.
+- **Defect Remediation Summary:**
+  1. *26 Out-of-Bounds Defects Cataloged:* 18 degenerate zero-area boxes ($w=0.0$ or $h=0.0$) dropped non-destructively; 8 out-of-bounds boxes with $w, h > 1.0$ and 379 boundary edge crossings clipped strictly to $[0.0, 1.0]$.
+  2. *Canonical Class Remapping:* Source 0 (`smoke`) remapped to canonical 5 (`smoke`); Source 1 (`fire`) remapped to canonical 4 (`fire`). Zero non-target classes (0, 1, 2, 3) generated.
+  3. *Upstream Split Leakage Resolved:* Identified 762 upstream leaking groups affecting 10,504 images across splits in raw D-Fire (raw splits: train 14,122 / val 3,099 / test 4,306). Clustered 21,527 images into 10,010 scene groups via sequence continuity and 64-bit dHash; partitioned entire groups into `train` (17,248), `val` (1,488), and `test` (2,791), achieving **exactly 0 cross-split group leakage**.
+- **Worker Visual QA Coverage (106 Frames):**
+  - 80 stratified frames (25 fire-only, 25 fire+smoke, 15 smoke-only, 15 hard negatives) + 26 defect cases visually inspected.
+  - Color-coded QA overlays rendered under `data/processed/dfire_corrected/qa_overlays/` and multi-frame contact sheets rendered under `data/processed/dfire_corrected/qa_contact_sheets/`.
+  - Zero unboxed visible humans in critical flame regions; hard negatives (floodlights, headlights, campfire ash, sunsets) confirmed free of false flame/smoke boxes.
+- **Independent Human QA Handoff:**
+  - Complete handoff queue logged in [`docs/audit_artifacts/dfire/dfire_audit_handoff_queue.csv`](audit_artifacts/dfire/dfire_audit_handoff_queue.csv) (status `WORKER_VISUAL_QA_VERIFIED`, verdict `PENDING_HUMAN_QA` for all 106 rows).
+  - Independent human QA sign-off across all 106 rows remains the required final gate before training ingestion.
+- **Educational Prototype Risk Note:**
+  - Upstream source image rights disclaimed by maintainers; CC0 1.0 covers annotations/structure only. Documented as an educational prototype risk note under the owner's non-commercial course project baseline (Git exclusion active, model weights private, citations required, faces blurred, commercial claims barred).
+- **Committed Audit Artifacts:**
+  - Machine Inventory: [`dfire_machine_inventory.json`](audit_artifacts/dfire/dfire_machine_inventory.json)
+  - Group Leakage Report: [`dfire_group_leakage_report.json`](audit_artifacts/dfire/dfire_group_leakage_report.json)
+  - Group Manifest: [`dfire_group_leakage_manifest.csv`](audit_artifacts/dfire/dfire_group_leakage_manifest.csv)
+  - Sample Inventory: [`dfire_sample_inventory.csv`](audit_artifacts/dfire/dfire_sample_inventory.csv)
+  - Handoff Queue: [`dfire_audit_handoff_queue.csv`](audit_artifacts/dfire/dfire_audit_handoff_queue.csv)
+  - Discrepancy Log: [`dfire_discrepancy_log.md`](audit_artifacts/dfire/dfire_discrepancy_log.md)
+  - QA Report: [`dfire_pilot_qa_report.md`](audit_artifacts/dfire/dfire_pilot_qa_report.md)
+
 ---
 
 ## 8. Multi-Dataset Training Gate Requirements
@@ -429,8 +457,8 @@ flowchart TD
     Gate3 -- Yes --> Gate4{"Gate 4: Leakage-Free Splitting<br/>Actor/session/event/burst groups isolated?"}
     Gate4 -- No --> Recluster["Re-cluster into strict Group Splits"]
     Recluster --> Gate4
-    Gate4 -- Yes --> Gate5{"Gate 5: Project Owner Approval<br/>license_approved: true in configs/datasets.local.yaml?"}
-    Gate5 -- No --> AwaitOwner["Await Formal Owner Approval"]
+    Gate4 -- Yes --> Gate5{"Gate 5: Project Owner Training Authorization<br/>Has training been explicitly authorized?"}
+    Gate5 -- No --> AwaitOwner["Await Explicit Training Authorization"]
     Gate5 -- Yes --> Training["Authorized for Bounded Educational Prototype Training Only"]
 ```
 
@@ -438,7 +466,7 @@ flowchart TD
 2. **Sample Audit Protocol QA:** Completion of the decision-complete sample audit protocols (Section 5 for Fall, Section 6 for Smoke, Section 7 for Fire) with documented QA artifacts.
 3. **Exhaustive Six-Class Annotation Completeness:** Confirmation that every visible instance of `person`, `helmet`, `vest`, `fall`, `fire`, and `smoke` is labeled. Unlabeled instances must be corrected through human annotation—**pseudo-labeling alone cannot approve training data**.
 4. **Group-Level Leakage Isolation:** Strict partitioning by actor, recording session, camera viewpoint, burn event, or web burst. Random image-level splits are prohibited.
-5. **Formal Owner Authorization:** Formal signature and configuration setting (`license_approved: true`) recorded in `configs/datasets.local.yaml`. Authorizes bounded educational prototype training only; never unrestricted or commercial use.
+5. **Formal Owner Training Authorization:** Obtain explicit owner authorization before starting training. License and provenance remain documented educational-project risk notes under the current owner decision; audit approval does not itself authorize training.
 
 ---
 
@@ -460,5 +488,5 @@ This replacement search has been cross-checked for absolute consistency against 
 
 1. **Fall Sample Audit Executed (Completed 25 Sep 2026):** 10-clip sample audit successfully completed with **GO** decision to proceed to corrected label generation. Next action: implement programmatic CVAT-to-YOLO dual-box conversion script, truncate unannotated tail frames, and tighten loose bounding boxes.
 2. **Execute Smoke Sample Audit in Parallel:** Sample exactly 80 images from Boreal Forest Fire — Subset A across all four locations. Pay particular attention to detecting and logging any unboxed flames within smoke plumes.
-3. **Execute Fire Sample Audit & Safeguards Verification:** Sample exactly 80 images from D-Fire under the CONDITIONAL GO educational prototype framework. Verify flame bounding-box tightness, screen against ambient light false positives, audit for unboxed persons, and verify face-blurring and Git-exclusion safeguards.
+3. **D-Fire Worker Audit & Corrected Build Completed (25 Sep 2026):** 100% machine inventory and 106-frame worker visual audit executed; immutable raw corrected build `data/processed/dfire_corrected` created with zero cross-split group leakage across 10,010 groups (splits: train 17,248 / val 1,488 / test 2,791; raw splits: train 14,122 / val 3,099 / test 4,306); 26 OOB defects resolved (18 zero-dimension dropped, 379 clipped); PASS/FIX handoff queue logged in `dfire_audit_handoff_queue.csv`. Next action: await independent human QA sign-off across all 106 rows for bounded educational prototype training (license/provenance documented as educational risk note, not execution blocker).
 4. **Preserve Documentation Integrity:** Maintain all findings under version control in `docs/` without downloading raw datasets to the repository or modifying files outside `docs/`.
