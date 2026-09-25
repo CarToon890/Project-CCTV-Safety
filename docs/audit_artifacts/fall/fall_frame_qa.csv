@@ -1,0 +1,488 @@
+clip_id,frame_idx,time_sec,class_label,cvat_label,stage1_classes,dual_box_status,bbox_coordinates,box_count,notes
+FD0035,0,0.0,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,10,0.167,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,20,0.333,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,30,0.5,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,40,0.666,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,50,0.833,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,60,1.0,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,70,1.166,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,80,1.333,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,90,1.5,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,100,1.666,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,110,1.833,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,115,1.916,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,120,1.999,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,130,2.166,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,140,2.333,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,150,2.499,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,160,2.666,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,170,2.833,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,180,2.999,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,190,3.166,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,200,3.332,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,210,3.499,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,220,3.666,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,230,3.832,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,231,3.849,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,240,3.999,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,250,4.166,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,260,4.332,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,270,4.499,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,280,4.665,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,290,4.832,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,300,4.999,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,310,5.165,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,320,5.332,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,330,5.498,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,340,5.665,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,347,5.782,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,350,5.832,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,360,5.998,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,370,6.165,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,380,6.332,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,390,6.498,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,400,6.665,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,410,6.831,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,420,6.998,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,430,7.165,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,440,7.331,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,450,7.498,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,460,7.665,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,463,7.715,standing_to_fall,standing,0:person,pre-fall (person only),"[0.0,4.0,1295.7,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0035,464,7.731,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0035,465,7.748,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,470,7.831,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,477,7.948,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,480,7.998,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,489,8.148,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,490,8.164,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,500,8.331,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,501,8.348,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,510,8.498,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,513,8.548,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[180.2,0.0,1896.3,1080.0]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,514,8.564,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0035,515,8.581,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[374.4,347.3,1729.2,1056.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,520,8.664,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[374.4,347.3,1729.2,1056.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,523,8.714,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[374.4,347.3,1729.2,1056.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,530,8.831,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[374.4,347.3,1729.2,1056.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,531,8.848,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[374.4,347.3,1729.2,1056.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,539,8.981,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[374.4,347.3,1729.2,1056.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,540,8.998,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[374.4,347.3,1729.2,1056.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,548,9.131,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[374.4,347.3,1729.2,1056.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0035,549,9.147,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0035,550,9.164,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0035,560,9.331,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0035,563,9.381,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0035,570,9.497,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0035,578,9.631,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,0,0.0,standing_to_fall,standing,0:person,pre-fall (person only),"[338.9,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,10,0.167,standing_to_fall,standing,0:person,pre-fall (person only),"[323.8,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,20,0.334,standing_to_fall,standing,0:person,pre-fall (person only),"[308.7,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,30,0.501,standing_to_fall,standing,0:person,pre-fall (person only),"[293.7,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,40,0.668,standing_to_fall,standing,0:person,pre-fall (person only),"[278.6,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,50,0.835,standing_to_fall,standing,0:person,pre-fall (person only),"[263.6,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,54,0.902,standing_to_fall,standing,0:person,pre-fall (person only),"[257.5,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,60,1.002,standing_to_fall,standing,0:person,pre-fall (person only),"[248.5,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,70,1.169,standing_to_fall,standing,0:person,pre-fall (person only),"[233.4,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,80,1.336,standing_to_fall,standing,0:person,pre-fall (person only),"[218.4,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,90,1.503,standing_to_fall,standing,0:person,pre-fall (person only),"[203.3,144.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,100,1.67,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,137.0,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,108,1.803,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,129.5,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,110,1.837,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,127.6,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,120,2.004,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,118.2,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,130,2.171,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,108.7,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,140,2.338,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,99.3,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,150,2.505,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,89.9,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,160,2.672,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,80.4,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,162,2.705,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,78.5,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,170,2.839,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,71.0,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,180,3.006,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,62.5,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,190,3.173,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,62.5,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,200,3.34,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,62.5,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,210,3.506,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,62.5,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,217,3.623,standing_to_fall,standing,0:person,pre-fall (person only),"[200.3,62.5,1899.2,1078.7]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0044,218,3.64,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,219,3.657,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,220,3.673,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,230,3.84,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,239,3.991,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,240,4.007,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,250,4.174,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,260,4.341,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,270,4.508,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,280,4.675,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,281,4.692,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,290,4.842,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,300,5.009,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,302,5.043,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[567.2,70.2,1920.0,1078.7]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,303,5.059,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,304,5.076,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,310,5.176,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,320,5.343,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,330,5.51,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,340,5.677,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,350,5.844,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,356,5.944,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,360,6.011,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,370,6.178,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,380,6.345,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,382,6.378,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,390,6.512,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,400,6.679,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,408,6.813,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[682.7,539.8,1920.0,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0044,409,6.829,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,410,6.846,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,420,7.013,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,430,7.18,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,440,7.347,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,441,7.364,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,450,7.514,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,460,7.681,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,470,7.848,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0044,473,7.898,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0049,0,0.0,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,10,0.2,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,20,0.4,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,28,0.56,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,30,0.6,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,40,0.8,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,50,1.0,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,56,1.12,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,60,1.2,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,70,1.4,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,80,1.6,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,84,1.68,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,90,1.8,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,100,2.0,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,110,2.2,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,113,2.26,standing_to_fall,standing,0:person,pre-fall (person only),"[132.0,3.2,1162.5,1080.0]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0049,114,2.28,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[276.5,37.5,1620.3,1060.5]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,120,2.4,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[276.5,37.5,1620.3,1060.5]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,121,2.42,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[276.5,37.5,1620.3,1060.5]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,128,2.56,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[276.5,37.5,1620.3,1060.5]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,130,2.6,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[276.5,37.5,1620.3,1060.5]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,135,2.7,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[276.5,37.5,1620.3,1060.5]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,140,2.8,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[276.5,37.5,1620.3,1060.5]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,143,2.86,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[276.5,37.5,1620.3,1060.5]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,144,2.88,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0049,145,2.9,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[125.0,488.4,1552.5,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,150,3.0,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[125.0,488.4,1552.5,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,154,3.08,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[125.0,488.4,1552.5,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,160,3.2,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[125.0,488.4,1552.5,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,164,3.28,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[125.0,488.4,1552.5,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,170,3.4,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[125.0,488.4,1552.5,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,174,3.48,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[125.0,488.4,1552.5,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,180,3.6,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[125.0,488.4,1552.5,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,184,3.68,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[125.0,488.4,1552.5,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0049,185,3.7,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0049,190,3.8,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0049,196,3.92,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,0,0.0,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,10,0.167,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,20,0.333,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,30,0.5,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,40,0.666,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,50,0.833,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,60,1.0,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,70,1.166,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,80,1.333,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,90,1.5,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,100,1.666,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,110,1.833,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,120,1.999,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[246.6,218.9,1675.4,950.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0024,121,2.016,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,130,2.166,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,138,2.299,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,140,2.333,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,150,2.499,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,155,2.583,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,160,2.666,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,170,2.833,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,172,2.866,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,180,2.999,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,190,3.166,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[177.9,266.1,1746.0,1045.4]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,191,3.183,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,200,3.332,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,206,3.432,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,210,3.499,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,220,3.666,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,221,3.682,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,230,3.832,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,236,3.932,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,240,3.999,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,250,4.166,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,251,4.182,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[200.2,392.2,1827.6,1064.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0024,252,4.199,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,260,4.332,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,270,4.499,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,280,4.665,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,290,4.832,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,298,4.965,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,300,4.999,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,310,5.165,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,320,5.332,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,330,5.499,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,340,5.665,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0024,345,5.749,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,0,0.0,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,2,0.033,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,3,0.05,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,10,0.167,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,20,0.333,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,30,0.5,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,40,0.666,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,47,0.783,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,50,0.833,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,60,1.0,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,70,1.166,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,80,1.333,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,90,1.5,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,91,1.516,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,100,1.666,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,110,1.833,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,120,1.999,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,130,2.166,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,135,2.249,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,140,2.333,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,150,2.499,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,160,2.666,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,170,2.833,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,180,2.999,sleeping_to_fall,Sleeping,0:person,pre-fall (person only),"[298.5,317.3,1790.5,1065.1]",1,Pre-fall state; requires 0:person box only | WARNING: loose/oversized bounding box
+FD0027,181,3.016,sleeping_to_fall,Falling;Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3];[216.9,228.2,1697.7,1044.7]",2,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,182,3.033,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,190,3.166,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,194,3.232,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,200,3.332,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,207,3.449,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,210,3.499,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,220,3.666,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,230,3.832,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,234,3.899,sleeping_to_fall,Falling,"0:person,3:fall",active transition (dual-box required),"[216.9,224.5,1699.6,1050.3]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,235,3.916,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,236,3.932,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[222.4,311.7,1723.7,1033.6]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,238,3.966,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[222.4,311.7,1723.7,1033.6]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,240,3.999,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[222.4,311.7,1723.7,1033.6]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,241,4.016,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[222.4,311.7,1723.7,1033.6]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,243,4.049,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[222.4,311.7,1723.7,1033.6]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,246,4.099,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[222.4,311.7,1723.7,1033.6]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,247,4.116,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,250,4.166,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,260,4.332,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,270,4.499,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,280,4.665,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,290,4.832,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,300,4.999,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,310,5.165,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,320,5.332,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,330,5.499,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,340,5.665,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,350,5.832,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,351,5.848,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[242.9,304.3,1744.1,1024.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,360,5.998,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[242.9,304.3,1744.1,1024.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,363,6.048,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[242.9,304.3,1744.1,1024.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,370,6.165,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[242.9,304.3,1744.1,1024.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,375,6.248,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[242.9,304.3,1744.1,1024.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,380,6.332,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[242.9,304.3,1744.1,1024.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,387,6.448,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[242.9,304.3,1744.1,1024.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,390,6.498,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[242.9,304.3,1744.1,1024.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,400,6.665,sleeping_to_fall,Fallen,"0:person,3:fall",resting post-fall (dual-box required),"[242.9,304.3,1744.1,1024.3]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0027,401,6.682,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,410,6.832,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,418,6.965,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,420,6.998,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,430,7.165,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0027,436,7.265,sleeping_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0051,0,0.0,standing_to_fall,standing,0:person,pre-fall (person only),"[190.9,3.6,775.5,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0051,10,0.2,standing_to_fall,standing,0:person,pre-fall (person only),"[190.9,3.6,775.5,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0051,20,0.4,standing_to_fall,standing,0:person,pre-fall (person only),"[190.9,3.6,775.5,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0051,30,0.6,standing_to_fall,standing,0:person,pre-fall (person only),"[190.9,3.6,775.5,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0051,40,0.8,standing_to_fall,standing,0:person,pre-fall (person only),"[190.9,3.6,775.5,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0051,50,1.0,standing_to_fall,standing,0:person,pre-fall (person only),"[190.9,3.6,775.5,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0051,60,1.2,standing_to_fall,standing,0:person,pre-fall (person only),"[190.9,3.6,775.5,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0051,70,1.4,standing_to_fall,standing,0:person,pre-fall (person only),"[190.9,3.6,775.5,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0051,80,1.6,standing_to_fall,standing,0:person,pre-fall (person only),"[190.9,3.6,775.5,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0051,81,1.62,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0051,82,1.64,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,90,1.8,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,100,2.0,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,110,2.2,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,118,2.36,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,120,2.4,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,130,2.6,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,136,2.72,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,140,2.8,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,150,3.0,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,155,3.1,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[212.3,7.2,1757.5,1072.9]",1,Active falling motion; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,156,3.12,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0051,157,3.14,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[173.9,320.8,1867.8,1062.8]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,160,3.2,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[173.9,320.8,1867.8,1062.8]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,161,3.22,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[173.9,320.8,1867.8,1062.8]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,166,3.32,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[173.9,320.8,1867.8,1062.8]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,170,3.4,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[173.9,320.8,1867.8,1062.8]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,175,3.5,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[173.9,320.8,1867.8,1062.8]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0051,176,3.52,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,0,0.0,standing_to_fall,standing,0:person,pre-fall (person only),"[82.2,3.6,672.1,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0052,9,0.15,standing_to_fall,standing,0:person,pre-fall (person only),"[82.2,3.6,672.1,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0052,10,0.167,standing_to_fall,standing,0:person,pre-fall (person only),"[82.2,3.6,672.1,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0052,18,0.3,standing_to_fall,standing,0:person,pre-fall (person only),"[82.2,3.6,672.1,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0052,20,0.333,standing_to_fall,standing,0:person,pre-fall (person only),"[82.2,3.6,672.1,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0052,27,0.45,standing_to_fall,standing,0:person,pre-fall (person only),"[82.2,3.6,672.1,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0052,30,0.5,standing_to_fall,standing,0:person,pre-fall (person only),"[82.2,3.6,672.1,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0052,36,0.6,standing_to_fall,standing,0:person,pre-fall (person only),"[82.2,3.6,672.1,1076.5]",1,Pre-fall state; requires 0:person box only
+FD0052,37,0.617,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,38,0.633,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[160.6,5.4,1115.9,1076.5]",1,Active falling motion; dual-box person+fall required
+FD0052,40,0.667,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[160.6,5.4,1115.9,1076.5]",1,Active falling motion; dual-box person+fall required
+FD0052,50,0.833,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[160.6,5.4,1115.9,1076.5]",1,Active falling motion; dual-box person+fall required
+FD0052,60,1.0,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[160.6,5.4,1115.9,1076.5]",1,Active falling motion; dual-box person+fall required
+FD0052,63,1.05,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[160.6,5.4,1115.9,1076.5]",1,Active falling motion; dual-box person+fall required
+FD0052,70,1.166,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[160.6,5.4,1115.9,1076.5]",1,Active falling motion; dual-box person+fall required
+FD0052,76,1.266,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[160.6,5.4,1115.9,1076.5]",1,Active falling motion; dual-box person+fall required
+FD0052,80,1.333,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[160.6,5.4,1115.9,1076.5]",1,Active falling motion; dual-box person+fall required
+FD0052,89,1.483,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[160.6,5.4,1115.9,1076.5]",1,Active falling motion; dual-box person+fall required
+FD0052,90,1.5,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,91,1.516,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[121.4,559.6,1436.7,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0052,94,1.566,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[121.4,559.6,1436.7,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0052,98,1.633,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[121.4,559.6,1436.7,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0052,100,1.666,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[121.4,559.6,1436.7,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0052,102,1.7,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[121.4,559.6,1436.7,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0052,106,1.766,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[121.4,559.6,1436.7,1076.5]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0052,107,1.783,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,110,1.833,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,120,2.0,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,130,2.166,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,140,2.333,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,150,2.499,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,157,2.616,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,160,2.666,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,170,2.833,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,180,2.999,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,190,3.166,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,200,3.333,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0052,207,3.449,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,0,0.0,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,10,0.2,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,20,0.4,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,30,0.6,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,33,0.66,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,40,0.8,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,50,1.0,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,60,1.2,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,67,1.34,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,70,1.4,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,80,1.6,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,90,1.8,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,100,2.0,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,110,2.2,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,120,2.4,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,130,2.6,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,134,2.68,standing_to_fall,standing,0:person,pre-fall (person only),"[242.6,10.7,918.0,1074.7]",1,Pre-fall state; requires 0:person box only
+FD0054,135,2.7,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,136,2.72,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[327.5,15.2,1157.0,1080.0]",1,Active falling motion; dual-box person+fall required
+FD0054,140,2.8,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[327.5,15.2,1180.6,1080.0]",1,Active falling motion; dual-box person+fall required
+FD0054,143,2.86,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[327.5,15.2,1198.2,1080.0]",1,Active falling motion; dual-box person+fall required
+FD0054,150,3.0,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[327.5,15.2,1239.3,1080.0]",1,Active falling motion; dual-box person+fall required
+FD0054,157,3.14,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[327.5,15.2,1274.6,1080.0]",1,Active falling motion; dual-box person+fall required
+FD0054,160,3.2,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[327.5,15.2,1274.6,1080.0]",1,Active falling motion; dual-box person+fall required
+FD0054,164,3.28,standing_to_fall,falling,"0:person,3:fall",active transition (dual-box required),"[327.5,15.2,1274.6,1080.0]",1,Active falling motion; dual-box person+fall required
+FD0054,165,3.3,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,166,3.32,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,170,3.4,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,180,3.6,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,184,3.68,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,190,3.8,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,200,4.0,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,202,4.04,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,210,4.2,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,220,4.4,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,230,4.6,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,238,4.76,standing_to_fall,fallen,"0:person,3:fall",resting post-fall (dual-box required),"[278.7,556.4,1678.3,1080.0]",1,Fallen subject on floor/mat; dual-box person+fall required | WARNING: loose/oversized bounding box
+FD0054,239,4.78,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,240,4.8,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,250,5.0,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,260,5.2,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,270,5.4,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,280,5.6,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,290,5.8,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,295,5.899,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,300,5.999,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,310,6.199,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,320,6.399,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,330,6.599,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,340,6.799,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,350,6.999,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0054,352,7.039,standing_to_fall,none,none,none (unannotated),,0,Tail unannotated frame or spot-check clip
+FD0007,0,0.0,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,10,0.168,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,20,0.336,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,30,0.504,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,40,0.672,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,50,0.84,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,60,1.008,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,70,1.175,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,80,1.343,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,90,1.511,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,100,1.679,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,110,1.847,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,120,2.015,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,130,2.183,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,140,2.351,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,150,2.519,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,160,2.687,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,170,2.855,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,180,3.023,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,190,3.191,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,200,3.358,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,210,3.526,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,220,3.694,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,230,3.862,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,240,4.03,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,250,4.198,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,260,4.366,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,270,4.534,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,280,4.702,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,290,4.87,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,300,5.038,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,310,5.206,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,320,5.374,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,330,5.541,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,340,5.709,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,350,5.877,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,360,6.045,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,370,6.213,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,380,6.381,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0007,383,6.431,sitting_to_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,0,0.0,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,10,0.167,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,20,0.333,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,30,0.5,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,40,0.666,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,50,0.833,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,60,1.0,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,70,1.166,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,80,1.333,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,90,1.5,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,100,1.666,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,110,1.833,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,120,1.999,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,130,2.166,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,140,2.333,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,150,2.499,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,160,2.666,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,170,2.833,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,180,2.999,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,190,3.166,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,200,3.332,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,210,3.499,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,220,3.666,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,230,3.832,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,240,3.999,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,250,4.165,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,260,4.332,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,270,4.499,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,280,4.665,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,290,4.832,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,300,4.999,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,310,5.165,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,320,5.332,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip
+FD0001,325,5.415,adl_no_fall,none,none,none (unannotated),,0,Unannotated spot-check clip

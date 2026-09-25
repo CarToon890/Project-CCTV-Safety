@@ -7,6 +7,7 @@ runs/
 *.onnx
 dataset/
 data/raw/
+data/processed/
 reports/
 configs/datasets.local.yaml
 .env

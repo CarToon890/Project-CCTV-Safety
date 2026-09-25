@@ -26,7 +26,8 @@ A comprehensive primary-source review was conducted to identify clean, legally d
 
 Under the 25 September 2026 binding owner decision for a non-commercial university course project submitted to an instructor, candidate evaluation applies a careful status model rather than an absolute blanket blocker:
 
-1. **Fall Detection Dataset (State-to-Fall + ADL)** — First-party, creator-published video dataset under **CC BY-NC 4.0** created by a four-member academic team. The repository contains 54 MP4 video clips, of which 8 clips currently have CVAT XML bounding-box annotations mapped via `annotations/cvat/annotation_manifest.csv`. It enters as a **GO — sample audit only** to evaluate annotation precision, human likeness/privacy constraints, and actor/session grouping.
+1. **Fall Detection Dataset (State-to-Fall + ADL)** — First-party, creator-published video dataset under **CC BY-NC 4.0** created by a four-member academic team. The repository contains 54 MP4 video clips, of which 8 clips currently have CVAT XML bounding-box annotations mapped via `annotations/cvat/annotation_manifest.csv`. It entered as a **GO — sample audit only** to evaluate annotation precision, human likeness/privacy constraints, and actor/session grouping.
+   - **Audit Outcome (25 September 2026): PASSED SAMPLE AUDIT — GO (Proceed to Corrected Label Build / Curation Pilot only; NOT training approval)**. 100% XML-to-video mapping verified across all 8 annotated clips (diff = 0). 10-clip stratified audit (487 frames across 8 annotated + 1 sitting + 1 ADL) verified dual-box fall kinematics, 0% missing persons on annotated frames, and 7 actor/session clusters cleanly isolating leakage. Systematic discrepancies cataloged: XML classes use state names (`standing`/`falling`/`fallen`) requiring transformation to Stage 1 `0: person` + `3: fall`; 7/8 clips have unannotated tail frames (450+ frames) requiring truncation/annotation; oversized boxes require tightening. See [fall_discrepancy_log.md](audit_artifacts/fall/fall_discrepancy_log.md).
 2. **Boreal Forest Fire, Subset A** — First-party UAV footage of prescribed burns in Finland, published under **CC BY 4.0** by the National Land Survey of Finland and academic partners, documented in *Nature Scientific Data* (2025) and Fairdata IDA. It contains 4,954 images with human-verified YOLO bounding boxes for **smoke only**. It is the strongest rights candidate found, but covers **smoke only** (zero fire boxes) and features an aerial drone perspective rather than fixed indoor CCTV. It enters as a **GO — sample audit only** for supplementary smoke detection.
 3. **D-Fire (`gaia-solutions-on-demand/DFireDataset`)** — Curated dataset containing 21,527 images in YOLO format with 14,692 fire boxes and 11,865 smoke boxes. The repository maintainers provide an explicit operative license (**CC0 1.0 Universal**) covering their dataset annotations and collection structure. Because its explicit operative license permits non-commercial research/education use, D-Fire enters under the careful status model as:
    **CONDITIONAL GO — educational prototype/sample audit only**.
@@ -51,7 +52,7 @@ A desk review of the raw InvenioRDM metadata on Zenodo revealed that earlier eva
 
 | Priority | Candidate | Target Class | Decision Status | Operative License | Immediate Technical & Provenance Reason |
 |:---:|---|:---:|:---:|:---:|---|
-| **1** | **Fall Detection Dataset (State-to-Fall + ADL)** | `fall` (and `person`) | **GO — sample audit only** | CC BY-NC 4.0 | First-party creator publication; explicit CC BY-NC 4.0 terms; 54 clips with 8 CVAT XML annotated clips mapped in `annotation_manifest.csv`. Sample audit only; privacy check, annotation QA, and actor grouping required. |
+| **1** | **Fall Detection Dataset (State-to-Fall + ADL)** | `fall` (and `person`) | **GO — Passed Sample Audit (Build Corrected Labels Only)** | CC BY-NC 4.0 | Sample audit completed 25 Sep 2026. 100% XML-to-video mapping confirmed (8/8 clips, diff=0). 487 stratified frames inspected across 10 clips. Actor grouping defined. Discrepancies cataloged for label remediation; unrestricted training remains gated. |
 | **2** | **Boreal Forest Fire — Subset A** | `smoke` | **GO — sample audit only** | CC BY 4.0 | First-party prescribed-burn UAV capture by Finnish research institutes; CC BY 4.0; human-reviewed YOLO smoke boxes; aerial domain; covers smoke only (zero fire boxes). Sample audit only. |
 | **3** | **D-Fire** | `fire`, `smoke` | **CONDITIONAL GO — educational prototype/sample audit only** | CC0 1.0 (annotations/collection); upstream web images unverified | 21,527 images in YOLO format (14,692 fire boxes, 11,865 smoke boxes). Operative CC0 license on annotations/structure; upstream image rights disclaimed. Bounded educational prototype only; Git redistribution barred, weights private, faces blurred, upstream rights disclosed. |
 | **4** | **TsetFall** | `fall` | **HOLD** | GPL-3.0 (repo) | Provides human bbox CSV and sequence IDs, but GPL-3.0 is a software license whose scope over media/likenesses is ambiguous; distributed via MEGA with a Google Form key requirement. |
@@ -79,7 +80,7 @@ A desk review of the raw InvenioRDM metadata on Zenodo revealed that earlier eva
 - **Stage 1 fit:** Provides a foundation for human bounding-box QA. The 8 annotated clips can serve as an annotation verification pilot. The remaining 46 clips require bounding-box annotation for both `person` and `fall`.
 - **Grouping:** Must be grouped strictly by participant/actor identity and recording environment. Individual frames must never cross splits.
 - **Privacy & likeness:** Human faces and full bodies are visible. Use must comply with the repository's `docs/ethics_and_privacy.md` and `docs/collection_protocol.md`. Identifiable faces in reports or presentations must be blurred.
-- **Decision:** **GO — sample audit only.** Proceed to execute the decision-complete sample audit protocol detailed in Section 5. Authorizes sample audit only, not unrestricted training approval.
+- **Decision:** **GO — PASSED SAMPLE AUDIT (Proceed to Corrected Label Build / Curation Pilot only; NOT training approval).** Completed 25 September 2026. 100% XML mapping verified across 8 annotated clips. 487 stratified frames inspected across 10 clips. Non-destructive actor grouping defined. See [fall_discrepancy_log.md](audit_artifacts/fall/fall_discrepancy_log.md) for required programmatic transformations before training ingestion.
 
 ### 2. TsetFall
 
@@ -261,6 +262,27 @@ The sample audit must produce and persist the following artifacts in the project
   - Pervasive labeling errors (e.g., `fall` applied to entire standing sequences).
   - Unresolvable subject privacy or consent objections.
 
+### 5.8 Executed Sample Audit Outcome & Findings (25 September 2026)
+
+The Fall sample audit was formally executed on 25 September 2026 using `scripts/audit_fall_sample.py`.
+
+- **Audit Decision:** **PASSED SAMPLE AUDIT — GO (Proceed to Corrected Label Build / Curation Pilot only; NOT training approval)**.
+- **Machine QA Coverage (100%):** 54 / 54 MP4 video clips readable and decodable via OpenCV; 54 unique SHA-256 digests (0 duplicate video uploads); 8 / 8 CVAT XML files verified with exact 1:1 frame count match (`diff = 0`) to mapped video clips in `annotation_manifest.csv`.
+- **Human Visual QA Coverage:** Exactly 10 clips audited (all 8 CVAT-annotated + 1 sitting_to_fall unannotated + 1 ADL hard negative); exactly 487 stratified frames extracted and visually inspected across pre-fall, falling transition, fallen posture, and unannotated tail frames via 10 multi-frame contact sheets rendered under `data/processed/fall_sample_audit/contact_sheets/`.
+- **Primary Technical Findings:**
+  1. *Dual-Box Semantics:* CVAT tracks use action states (`standing`, `falling`, `fallen` or `Sleeping`, `Falling`, `Fallen`). Pre-fall must map to canonical `0: person`; transition and fallen phases must map to dual-box `0: person` AND `3: fall`.
+  2. *Unannotated Tail Frames:* In 7 of the 8 annotated clips, tracking terminated prematurely upon fall completion, leaving 450+ unannotated tail frames where the fallen actor remains visible without bounding boxes. Truncation or box extension is mandatory before training ingestion.
+  3. *Loose Bounding Boxes:* Linear keyframe interpolation in CVAT resulted in oversized horizontal boxes (width > 1000 px) in `FD0044`, `FD0049`, and `FD0024`, requiring boundary clamping.
+  4. *Zero Non-Target Hazards:* Confirmed zero PPE (`helmet`, `vest`) and zero `fire`/`smoke` instances across all clips.
+  5. *Actor/Session Grouping:* Clustered into 7 distinct actor/session groups (`docs/audit_artifacts/fall/fall_actor_grouping.csv`), guaranteeing zero cross-split actor or room leakage.
+- **Committed Audit Artifacts:**
+  - Inventory: [`fall_sample_inventory.csv`](audit_artifacts/fall/fall_sample_inventory.csv)
+  - Frame-Level QA: [`fall_frame_qa.csv`](audit_artifacts/fall/fall_frame_qa.csv)
+  - Discrepancy Log: [`fall_discrepancy_log.md`](audit_artifacts/fall/fall_discrepancy_log.md)
+  - Hashes: [`fall_clip_hashes.csv`](audit_artifacts/fall/fall_clip_hashes.csv)
+  - dHash Analysis: [`fall_dhash_near_duplicates.csv`](audit_artifacts/fall/fall_dhash_near_duplicates.csv)
+  - Grouping Manifest: [`fall_actor_grouping.csv`](audit_artifacts/fall/fall_actor_grouping.csv)
+
 ---
 
 ## 6. Decision-Complete Sample-Audit Protocol: Boreal Forest Fire — Subset A
@@ -436,7 +458,7 @@ This replacement search has been cross-checked for absolute consistency against 
 
 ## 10. Recommended Next Actions
 
-1. **Execute Fall Sample Audit:** Carry out the 10-clip sample audit protocol on Fall Detection Dataset (State-to-Fall + ADL), verifying CVAT XML-to-video mapping, dual-box fall semantics, visible person completeness, and actor grouping.
+1. **Fall Sample Audit Executed (Completed 25 Sep 2026):** 10-clip sample audit successfully completed with **GO** decision to proceed to corrected label generation. Next action: implement programmatic CVAT-to-YOLO dual-box conversion script, truncate unannotated tail frames, and tighten loose bounding boxes.
 2. **Execute Smoke Sample Audit in Parallel:** Sample exactly 80 images from Boreal Forest Fire — Subset A across all four locations. Pay particular attention to detecting and logging any unboxed flames within smoke plumes.
 3. **Execute Fire Sample Audit & Safeguards Verification:** Sample exactly 80 images from D-Fire under the CONDITIONAL GO educational prototype framework. Verify flame bounding-box tightness, screen against ambient light false positives, audit for unboxed persons, and verify face-blurring and Git-exclusion safeguards.
 4. **Preserve Documentation Integrity:** Maintain all findings under version control in `docs/` without downloading raw datasets to the repository or modifying files outside `docs/`.
