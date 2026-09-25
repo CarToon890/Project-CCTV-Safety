@@ -601,15 +601,15 @@ def run_fall_sample_audit() -> dict[str, Any]:
     # Session 1 has actorA, actorB, actorC
     # Session 2 has actorD, actorE, actorF, actorG
     group_split_map = {
-        "grp_session1_actorA_classroom": "train",
-        "grp_session1_actorB_classroom": "train",
-        "grp_session1_actorC_classroom": "val",
-        "grp_session2_actorD_studio": "train",
-        "grp_session2_actorE_studio": "val",
-        "grp_session2_actorF_studio": "test",
-        "grp_session2_actorG_studio": "test",
-        "grp_session1_actor_session1_classroom": "train",
-        "grp_session2_actor_session2_studio": "test",
+        "grp_session_20260216_actorA_dark_top": "train",
+        "grp_session_20260216_actorB_green_polo": "train",
+        "grp_session_20260216_actorC_male_glasses": "val",
+        "grp_session_20260223_actorD_pink_shirt": "train",
+        "grp_session_20260223_actorE_black_graphic_top": "val",
+        "grp_session_20260223_actorF_green_polo": "test",
+        "grp_session_20260223_actorG_pattern_blouse": "test",
+        "grp_session_20260216_actor_session1_classroom": "train",
+        "grp_session_20260223_actor_session2_studio": "test",
     }
 
     actor_grouping_rows = []

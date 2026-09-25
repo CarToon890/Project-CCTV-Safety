@@ -1,0 +1,9 @@
+clip_id,class_label,split,actor_group,total_frames,annotated_frames,tail_dropped,internal_gap_dropped,candidate_frames,dhash_dropped,retained_frames,pre_fall_retained,falling_retained,fallen_retained,person_instances,fall_instances
+FD0035,standing_to_fall,train,grp_session_20260216_actorA_dark_top,579,547,30,2,70,20,50,34,13,3,50,16
+FD0044,standing_to_fall,train,grp_session_20260216_actorB_green_polo,474,407,65,2,66,16,50,20,19,11,50,30
+FD0049,standing_to_fall,val,grp_session_20260216_actorC_male_glasses,197,184,12,1,30,6,24,8,10,6,24,16
+FD0024,sleeping_to_fall,train,grp_session_20260223_actorD_pink_shirt,346,252,94,0,46,28,18,3,11,4,18,15
+FD0027,sleeping_to_fall,val,grp_session_20260223_actorE_black_graphic_top,437,293,36,105,47,21,26,11,8,7,26,15
+FD0051,standing_to_fall,test,grp_session_20260223_actorF_green_polo,177,174,1,2,39,11,28,4,21,3,28,24
+FD0052,standing_to_fall,train,grp_session_20260223_actorD_pink_shirt,208,105,101,2,27,13,14,3,8,3,14,11
+FD0054,standing_to_fall,test,grp_session_20260223_actorG_pattern_blouse,353,237,114,2,35,18,17,3,7,7,17,14

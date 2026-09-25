@@ -1,0 +1,9 @@
+clip_id,video_rel_path,total_frames,fps,first_annotated_frame,last_annotated_frame,tail_excluded_start,tail_excluded_end,tail_excluded_count,internal_gaps_count,internal_gaps_ranges,total_unannotated_excluded
+FD0035,data/standing_to_fall/video_20260216_152357.mp4,579,60.02,0,548,549,578,30,2,"[464, 514]",32
+FD0044,data/standing_to_fall/video_20260216_154044.mp4,474,59.89,0,408,409,473,65,2,"[218, 303]",67
+FD0049,data/standing_to_fall/video_20260216_155034.mp4,197,50.0,0,184,185,196,12,1,[144],13
+FD0024,data/sleeping_to_fall/video_20260223_150715.mp4,346,60.02,0,251,252,345,94,0,[],94
+FD0027,data/sleeping_to_fall/video_20260223_150939.mp4,437,60.02,3,400,401,436,36,105,"[235, 247, 248, 249, 250, 251, 252, 253, 254, 255]...",141
+FD0051,data/standing_to_fall/video_20260223_152105.mp4,177,50.0,0,175,176,176,1,2,"[81, 156]",3
+FD0052,data/standing_to_fall/video_20260223_152210.mp4,208,60.01,0,106,107,207,101,2,"[37, 90]",103
+FD0054,data/standing_to_fall/video_20260223_152521.mp4,353,50.0,0,238,239,352,114,2,"[135, 165]",116

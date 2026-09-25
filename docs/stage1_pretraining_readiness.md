@@ -30,7 +30,7 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
 | **`0`** | **`person`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 100% machine inventory (1,416 paired files); 42-image human QA; regroup manifest resolves split leakage; all 77 zero-Person files cataloged | 77 zero-Person files (58 context-evidenced + 19 machine-only); unboxed background personnel; duplicate boxes; Pass 1 & Pass 2 remediation required | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
 | **`1`** | **`helmet`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,734 paired instances cataloged; mapped to canonical ID 1 | Soft bucket hats, police peaked caps, bicycle racing helmets mislabeled as hardhats; unboxed helmets | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
 | **`2`** | **`vest`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,618 paired instances cataloged; mapped to canonical ID 2 | Orange jumpsuits mislabeled as vests; unboxed hi-vis vests; source class 5 `none` must be discarded | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
-| **`3`** | **`fall`** | Fall Detection Dataset (State-to-Fall + ADL) | CC BY-NC 4.0 | 100% machine inventory (54 clips); 8 CVAT XMLs mapped (diff=0); 10-clip stratified audit (487 frames); 10 contact sheets inspected; 7 actor/session groups mapped | Programmatic label conversion from CVAT state labels (`standing`/`falling`/`fallen`) to Stage 1 dual boxes (`0:person` + `3:fall`); unannotated tail truncation; loose box tightening; 46 unannotated clips | **PASSED SAMPLE AUDIT → GO TO BUILD LABELS (HOLD FOR REMEDIATION)** |
+| **`3`** | **`fall`** | Fall Detection Dataset (State-to-Fall + ADL) | CC BY-NC 4.0 | 8 CVAT clips built and validated into 227-pair pilot dataset (train=132, val=50, test=45; 227 person, 141 fall); zero tail/split leakage; 100% machine validated; 16 state transitions QA inspected | Remaining 46 unannotated clips blocked pending human annotation or formal exclusion; loose bounding box tightening needed | **PILOT_READY (8 CLIPS) → NOT TRAINING_READY (46 UNANNOTATED CLIPS)** |
 | **`4`** | **`fire`** | D-Fire (`DFireDataset`) | CC0 1.0 (annotations); source rights disclaimed | Desk review of 21,527 YOLO images; 80-image stratified sample audit protocol approved; educational constraints bound | Dataset absent locally; 80-image visual audit not executed; unboxed person review and ambient glare checks pending | **SHORTLISTED (CONDITIONAL GO: Educational Prototype) → HOLD PENDING LOCAL AUDIT** |
 | **`5`** | **`smoke`** | Boreal Forest Fire — Subset A / D-Fire | CC BY 4.0 (Boreal) / CC0 1.0 (D-Fire) | Desk review of *Nature Sci Data* (2025) paper & D-Fire; 80-image sample audit protocols approved | Datasets absent locally; 80-image visual audits not executed; flame contamination check in smoke plumes pending | **SHORTLISTED (GO / CONDITIONAL GO: Sample Audit Only) → HOLD PENDING LOCAL AUDIT** |
 
@@ -90,17 +90,21 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
   - Verified operative license: **CC BY-NC 4.0** (direct creator authority, non-commercial education scope accepted by owner).
   - Inventory documented: 54 MP4 clips (22 standing-to-fall, 10 sleeping-to-fall, 16 sitting-to-fall, 6 ADL negative controls).
   - 8 clips identified with CVAT XML bounding-box exports (`annotation_manifest.csv`).
-  - Decision-complete 10-clip sample audit protocol executed (25 Sep 2026):
-    - 100% machine inventory across all 54 clips and 8 CVAT XMLs (diff=0 on frame count and 1920x1080 resolution).
-    - 487 stratified frames extracted and inspected across pre-fall, falling transition, fallen posture, and tail sections.
-    - 10 visual contact sheets and 487 color-coded overlays rendered in `data/processed/fall_sample_audit/`.
-    - Clustered into 7 actor/session groups in `docs/audit_artifacts/fall/fall_actor_grouping.csv` to eliminate split leakage.
-- **Current Limitations & Unfinished Work (HOLD FOR REMEDIATION):**
-  - **Programmatic label conversion:** Convert CVAT state tracks (`standing`/`falling`/`fallen` or `Sleeping`/`Falling`/`Fallen`) into canonical Stage 1 dual-box YOLO labels (`0: person` for pre-fall; `0: person` + `3: fall` for transition/fallen).
-  - **Unannotated tail truncation:** Programmatically truncate unannotated tail frames (450+ frames across 7 clips) or extend bounding boxes to prevent unboxed visible person penalties.
-  - **Loose box tightening:** Clamp oversized interpolated boxes (width > 1000px) in `FD0044`, `FD0049`, `FD0024`.
-  - **Unannotated clip coverage:** 46 clips remain unannotated; target sitting and ADL controls for future pilot annotation.
-  - **Owner approval (Gate 5):** Sign-off in `configs/datasets.local.yaml` required before bounded prototype training.
+  - Decision-complete 10-clip sample audit protocol executed (25 Sep 2026): 100% machine inventory across all 54 clips and 8 CVAT XMLs (diff=0).
+  - Clustered into 7 actor/session groups in `docs/audit_artifacts/fall/fall_actor_grouping.csv` guaranteeing zero split leakage.
+  - **Corrected Pilot Dataset Built & Executed (25 Sep 2026):**
+    - Built via reusable `scripts/build_fall_corrected_pilot.py` targeting all 8 CVAT-annotated clips.
+    - Yielded exactly **227 image-label pairs** in YOLO format under `data/processed/fall_corrected_pilot/`: **132 train** (58.1%), **50 val** (22.0%), **45 test** (19.8%).
+    - Stage 1 canonical dual-box mapping enforced: **227 class 0 (`person`) instances**, **141 class 3 (`fall`) instances**, exactly 0 instances of classes 1, 2, 4, 5.
+    - Conservative tail truncation executed: exactly 453 tail frames and 119 internal gap frames excluded across all 8 clips; 0 unannotated frames pseudo-labeled or exported (`fall_tail_exclusion_log.csv`).
+    - Deterministic temporal decimation executed: 1,972 redundant frames pruned via 64-bit dHash (Hamming distance $\le 3$) while strictly preserving keyframes, state boundaries, dense falling motion (stride 3), and representative resting poses (`fall_decimation_stats.csv`).
+    - 100% machine validation passed cleanly via `scripts/validate_fall_pilot.py` (0 coordinate errors, 0 class mismatches, 0 orphan pairs, 0 split leakage).
+    - Human visual QA completed: 16 multi-frame contact sheets and 227 color-coded overlays inspected, verifying all 16 key state transitions (8 onset, 8 impact) ([fall_pilot_qa_report.md](audit_artifacts/fall/fall_pilot_qa_report.md)).
+- **Current Limitations & Unfinished Work (PILOT_READY / HOLD FOR TRAINING):**
+  - **Status Distinction:** **PILOT_READY** for model pipeline dry-runs and integration testing. **NOT TRAINING_READY** for general Stage 1 detector training.
+  - **46 Unannotated Clips:** 46 of 54 clips (including all 16 sitting-to-fall and all 6 ADL negative controls) remain unannotated. Ingesting the pilot alone would lack negative sitting/bending controls. Annotation or formal exclusion with dataset adequacy review is required.
+  - **Loose / Oversized Bounding Boxes:** Original upstream CVAT keyframes in clips `FD0044`, `FD0049`, `FD0035`, etc. span > 1000px in width. Coordinates are preserved without synthetic distortion per policy, but require polygon contour clamping or manual tightening before final training.
+  - **Owner Sign-off (Gate 5):** Bounded prototype training requires formal `license_approved: true` in `configs/datasets.local.yaml`.
 
 ### Class 4: `fire`
 - **Candidate:** D-Fire (`gaia-solutions-on-demand/DFireDataset`) ([fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md)).
@@ -294,11 +298,14 @@ The following sequential, decision-free task queue specifies the exact order of 
            Action: Second reviewer validates 100% of remediated files and 10% spot check of remainder.
            Verification: Verify against GATE-Q1 through GATE-Q9 thresholds (IoU >= 0.85, kappa >= 0.90).
 
-[QUEUE-05] EXECUTE FALL DETECTION DATASET SAMPLE AUDIT
-           Action: Extract frames from the 10 approved video clips (8 CVAT-annotated, 2 spot-checks).
-           Verification: Verify CVAT XML mapping, inspect dual-box (person + fall) semantics, check
-                         actor grouping, and confirm zero missing person boxes on fallen/standing actors.
-           Artifacts: Emit fall_sample_inventory.csv and fall_discrepancy_log.md.
+[QUEUE-05] EXECUTE FALL DETECTION DATASET PILOT & REMEDIATION [PILOT COMPLETED]
+           Status: PILOT COMPLETED (8 CVAT clips). Executed sample audit and built 227-pair
+                   corrected pilot dataset (train=132, val=50, test=45; 227 person, 141 fall instances)
+                   via scripts/build_fall_corrected_pilot.py and validated via scripts/validate_fall_pilot.py.
+           Open Work: Remaining 46 clips require human annotation or formal exclusion with dataset
+                      adequacy review; polygon contour clamping needed on loose keyframe boxes.
+           Artifacts: fall_pilot_manifest.csv, fall_tail_exclusion_log.csv, fall_decimation_stats.csv,
+                      fall_actor_grouping.csv, fall_pilot_qa_report.md.
 
 [QUEUE-06] EXECUTE BOREAL SMOKE DATASET SAMPLE AUDIT
            Action: Inspect the 80 stratified drone images across Evo, Ruokolahti, Karkkila, Heinola.

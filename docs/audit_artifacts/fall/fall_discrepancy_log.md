@@ -128,8 +128,14 @@ While the candidate passed the sample audit, the audit revealed four systematic 
 
 ## 6. Next Steps & Precise Remaining Work
 
-Passing the sample audit (**GO**) authorizes proceeding to data preparation and label build. The remaining tasks prior to training approval are:
-1. **Programmatic Label Conversion Tool:** Develop a script to transform CVAT XML tracks into canonical Stage 1 YOLO `.txt` labels with dual-box (`0: person` + `3: fall`) semantics.
-2. **Tail Frame Truncation / Bbox Clamping:** Programmatically truncate unannotated tail frames and clamp oversized bounding boxes to realistic human bounds.
-3. **Pilot Annotation for Uncovered Modalities:** Manually annotate bounding boxes for the 2 unannotated spot-check clips (FD0001 ADL and FD0007 sitting) to validate full-pipeline integration.
-4. **Owner Gate 5 Sign-off:** Present the curated prototype dataset and request formal `license_approved: true` sign-off in `configs/datasets.local.yaml` for educational prototype training.
+The corrected-label pilot for the 8 CVAT-annotated clips has been successfully executed and validated via `scripts/build_fall_corrected_pilot.py` and `scripts/validate_fall_pilot.py` (see [fall_pilot_qa_report.md](fall_pilot_qa_report.md)):
+- **Dual-box conversion:** Completed (227 `0:person`, 141 `3:fall` instances across 227 frames).
+- **Tail truncation & Gap exclusion:** Completed (453 tail frames and 119 internal gap frames excluded; 0 unannotated frames exported).
+- **Temporal decimation:** Completed (1,972 frames pruned using 64-bit dHash Hamming distance $\le 3$, preserving keyframes and state boundaries).
+- **Split isolation:** Completed (train=132, val=50, test=45; zero actor group cross-split leakage).
+- **Status:** **PILOT_READY (Approved for pipeline dry-runs & integration testing)**.
+
+The remaining tasks prior to declaring the dataset **TRAINING_READY** are:
+1. **Resolution of 46 Unannotated Clips:** 46 clips (sitting-to-fall, ADL negative controls, and other standing/sleeping variations) have zero annotations. Training on the pilot alone lacks essential negative sitting/bending controls. Either execute a targeted human annotation campaign for these clips or formally exclude them under a justified dataset adequacy protocol approved by the project owner.
+2. **Bounding Box Tightening:** Clamp oversized upstream keyframe boxes (width > 1000px in FD0044, FD0049, FD0035, etc.) via polygon contour clamping or manual keyframe adjustment.
+3. **Owner Gate 5 Sign-off:** Secure formal `license_approved: true` in `configs/datasets.local.yaml` for Stage 1 pre-training.
