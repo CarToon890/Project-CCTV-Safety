@@ -20,17 +20,17 @@
 
 The Stage 1 spatial detector pipeline is **NOT ready for model training**. While primary candidate datasets have been identified, license terms and educational safeguards established, and cross-split leakage resolved for the primary PPE candidate, critical data-readiness gates remain open across all six canonical classes:
 
-1. **PPE (`person`, `helmet`, `vest`):** Ultralytics Construction-PPE has completed 100% machine inventory and a 42-image stratified human visual QA sample. However, training is blocked by **77 label files with zero `Person` boxes**, unboxed worn PPE, misclassified non-industrial garments, duplicate boxes, and 10 orphan labels. These defects are fully cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv) (covering all 77 zero-Person files and 11 other evidenced defects, totaling exactly 88 data rows) and require human label remediation and second-pass review.
+1. **PPE (`person`, `helmet`, `vest`):** Ultralytics Construction-PPE has completed 100% machine inventory and a 42-image stratified human visual QA sample. All 88 defect rows (85 unique images) cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv) have undergone 100% worker visual QA remediation. The complete corrected dataset has been generated at `data/processed/construction_ppe_corrected` (1,416 paired images: train 1,151 / val 129 / test 136; Person 2,379, Helmet 1,733, Vest 1,626; zero instances of classes 3, 4, 5). Zero group leakage across splits is verified. A concise human QA review queue ([remediation_qa_queue.csv](audit_artifacts/construction_ppe/remediation_qa_queue.csv)) and QA overlays have been emitted. The verdict is **`WORKER_REMEDIATION_COMPLETE` / `PENDING_INDEPENDENT_HUMAN_QA`**.
 2. **Fall (`fall`):** The Fall Detection Dataset ([samruddhi-2308/FallDetectionDataset](https://github.com/samruddhi-2308/FallDetectionDataset)) has completed its 8-clip CVAT pilot (227 pairs) and the 10-clip targeted annotation campaign across 10 selected clips (all 6 ADL negative controls plus 4 diverse sitting-to-fall clips: `FD0007`, `FD0010`, `FD0014`, `FD0020`). Across the 10 campaign clips, all 176 retained review frames were visually inspected and annotated via worker visual QA, resulting in **176 completed frames and 0 pending frames (`PENDING_MANUAL_BBOX: 0`)**. The pilot extension dataset yields class counts: **`Person 185`**, **`Fall 60`**, with classes 1/2/4/5 strictly `0`, across splits **train: 67, val: 76, test: 33**. Actor-group regrouping in `fall_actor_grouping.csv` confirms zero actor-group split leakage across 9 groups. The campaign verdict is **`FALL_CAMPAIGN_COMPLETE` / `FALL_REMEDIATION_COMPLETE`**. Model training remains on hold pending independent human sign-off (open governance gate) and non-fall pre-training gates. Provenance and upstream CC BY-NC 4.0 licensing are documented as a course-project risk note (under owner educational prototype baseline), not the present execution blocker.
 3. **Fire & Smoke (`fire`, `smoke`):** The shortlisted supplementary smoke candidate ([Boreal Forest Fire — Subset A](https://doi.org/10.23729/fd-72c6cf74-b8eb-3687-860d-bf93a1ab94c9)) is approved under **GO — sample audit only** (CC BY 4.0), and the primary fire/smoke candidate ([DFireDataset](https://github.com/gaia-solutions-on-demand/DFireDataset)) is conditionally approved under **CONDITIONAL GO — educational prototype/sample audit only** (CC0 1.0 annotations). Both datasets are **absent locally** and their 80-image sample audits have **not yet been executed on disk**.
 
 ### Class-by-Class Readiness Summary
 
 | Canonical Class ID | Canonical Class Name | Primary Candidate Dataset | Operative License | Completed Evidence | Open Work / Blockers | Current Status |
-|:---:|---|---|---|---|---|:---:|
-| **`0`** | **`person`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 100% machine inventory (1,416 paired files); 42-image human QA; regroup manifest resolves split leakage; all 77 zero-Person files cataloged | 77 zero-Person files (58 context-evidenced + 19 machine-only); unboxed background personnel; duplicate boxes; Pass 1 & Pass 2 remediation required | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
-| **`1`** | **`helmet`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,734 paired instances cataloged; mapped to canonical ID 1 | Soft bucket hats, police peaked caps, bicycle racing helmets mislabeled as hardhats; unboxed helmets | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
-| **`2`** | **`vest`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,618 paired instances cataloged; mapped to canonical ID 2 | Orange jumpsuits mislabeled as vests; unboxed hi-vis vests; source class 5 `none` must be discarded | **SAMPLE AUDITED → HOLD FOR REMEDIATION** |
+|:---:|---|---|---|---|---|---|:---:|
+| **`0`** | **`person`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 100% machine inventory (1,416 paired files); 42-image human QA; regroup manifest resolves split leakage; all 77 zero-Person files cataloged; worker visual QA remediation completed across all 88 defect rows; dataset built at `data/processed/construction_ppe_corrected` (2,379 persons) | Independent human sign-off on 85 remediated images (`remediation_qa_queue.csv`); non-PPE pretraining gates | **WORKER_REMEDIATION_COMPLETE → HOLD FOR HUMAN SIGN-OFF** |
+| **`1`** | **`helmet`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,734 paired instances cataloged; mapped to canonical ID 1; bucket hats, police caps, racing helmets removed; unboxed helmets added; 1,733 instances in corrected dataset | Independent human sign-off on 85 remediated images (`remediation_qa_queue.csv`); non-PPE pretraining gates | **WORKER_REMEDIATION_COMPLETE → HOLD FOR HUMAN SIGN-OFF** |
+| **`2`** | **`vest`** | Ultralytics Construction-PPE | AGPL-3.0 (owner accepted) | 1,618 paired instances cataloged; mapped to canonical ID 2; jumpsuits removed; unboxed vests added; source class 5 `none` discarded; 1,626 instances in corrected dataset | Independent human sign-off on 85 remediated images (`remediation_qa_queue.csv`); non-PPE pretraining gates | **WORKER_REMEDIATION_COMPLETE → HOLD FOR HUMAN SIGN-OFF** |
 | **`3`** | **`fall`** | Fall Detection Dataset (State-to-Fall + ADL) | CC BY-NC 4.0 (course-project risk note, not execution blocker) | 8 CVAT clips built into 227-pair pilot; 10 targeted campaign clips (6 ADL + FD0007/FD0010/FD0014/FD0020) with 176 retained review frames; 176 completed worker visual QA frames (Person 185, Fall 60, classes 1/2/4/5: 0; train 67, val 76, test 33); 0 pending; 0 actor-group split leakage | Independent human sign-off pending (governance gate); loose bounding box tightening needed on 8 original pilot clips | **FALL_CAMPAIGN_COMPLETE / FALL_REMEDIATION_COMPLETE → HOLD FOR HUMAN SIGN-OFF & NON-FALL GATES** |
 | **`4`** | **`fire`** | D-Fire (`DFireDataset`) | CC0 1.0 (annotations); source rights disclaimed | Desk review of 21,527 YOLO images; 80-image stratified sample audit protocol approved; educational constraints bound | Dataset absent locally; 80-image visual audit not executed; unboxed person review and ambient glare checks pending | **SHORTLISTED (CONDITIONAL GO: Educational Prototype) → HOLD PENDING LOCAL AUDIT** |
 | **`5`** | **`smoke`** | Boreal Forest Fire — Subset A / D-Fire | CC BY 4.0 (Boreal) / CC0 1.0 (D-Fire) | Desk review of *Nature Sci Data* (2025) paper & D-Fire; 80-image sample audit protocols approved | Datasets absent locally; 80-image visual audits not executed; flame contamination check in smoke plumes pending | **SHORTLISTED (GO / CONDITIONAL GO: Sample Audit Only) → HOLD PENDING LOCAL AUDIT** |
@@ -54,7 +54,7 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
     - **19 machine-only review candidates:** 19 `train` files identified via automated regex without visual inference (`image57.jpeg`, `image81.jpg`–`image85.jpg`, `image472.jpg`, `image475.jpg`, `image479.jpg`, `image482.jpg`, `image501.jpg`, `image526.jpg`, `image539.jpg`, `image579.jpg`, `image582.jpg`, `image629.jpg`, `image653.jpeg`, `image720.jpeg`, `image734.jpeg`), scheduled for human inspection to add `person` boxes if visible.
   - **Unboxed background personnel:** In scenes such as `image1008.jpeg` (cinderblock masonry) and `image109.jpg` (blueprint review), background engineers and workers are unannotated.
   - **Duplicate annotations:** Overlapping duplicate `person` boxes on single individuals (e.g., `image207.jpg`).
-- **Impact if Untrained:** YOLO penalizes detected persons as false positives during loss computation, suppressing human recall across all CCTV frames.
+- **Remediation Outcome (`WORKER_REMEDIATION_COMPLETE`):** All 88 defect rows (85 unique images) resolved via worker visual QA remediation. Missing person boxes added to all 77 zero-Person files, unboxed background workers added, duplicate boxes deduplicated. Yields 2,379 canonical person instances in `data/processed/construction_ppe_corrected`. Visual overlays generated; independent human QA sign-off remains pending in `remediation_qa_queue.csv`.
 
 ### Class 1: `helmet`
 - **Candidate:** Ultralytics Construction-PPE.
@@ -70,6 +70,7 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
   - Source class 7 (`no_helmet`, 485 instances) must be **strictly discarded from detector training**.
   - A worker without a hardhat is annotated with a `person` box and **zero helmet box**.
   - Worn helmet absence is a legitimate negative condition, evaluated downstream by [`cctv_safety/ppe.py`](../cctv_safety/ppe.py).
+- **Remediation Outcome (`WORKER_REMEDIATION_COMPLETE`):** Soft bucket hats, police peaked caps, and bicycle racing helmets removed; unboxed hardhats added. Yields 1,733 canonical helmet instances in `data/processed/construction_ppe_corrected`. Visual overlays generated; independent human QA sign-off remains pending in `remediation_qa_queue.csv`.
 
 ### Class 2: `vest`
 - **Candidate:** Ultralytics Construction-PPE.
@@ -83,6 +84,7 @@ The Stage 1 spatial detector pipeline is **NOT ready for model training**. While
   - Source class 5 (`none`, 797 instances) represents torso negative markers (`no_vest`). It must be **strictly discarded from detector training**.
   - A worker wearing ordinary clothing without a vest is annotated with a `person` box and **zero vest box**.
   - Worn vest absence is a legitimate negative condition, evaluated downstream by [`cctv_safety/ppe.py`](../cctv_safety/ppe.py).
+- **Remediation Outcome (`WORKER_REMEDIATION_COMPLETE`):** Work coverall/jumpsuit labels removed; unboxed hi-vis vests added; negative torso marker (source class 5) discarded. Yields 1,626 canonical vest instances in `data/processed/construction_ppe_corrected`. Visual overlays generated; independent human QA sign-off remains pending in `remediation_qa_queue.csv`.
 
 ### Class 3: `fall`
 - **Candidate:** Fall Detection Dataset (State-to-Fall + ADL) ([fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md)).
@@ -295,16 +297,20 @@ The following sequential, decision-free task queue specifies the exact order of 
                    proposed_regroup_manifest.csv, and appended to label_remediation_manifest.csv,
                    bringing total manifest records to 88 data rows (77 zero-Person + 11 visual defects).
 
-[QUEUE-03] EXECUTE CONSTRUCTION-PPE PASS 1 LABEL REMEDIATION
-           Action: Carry out bounding box additions, corrections, and deletions on all 88 rows
-                   in docs/audit_artifacts/construction_ppe/label_remediation_manifest.csv.
-           Rule: Add person (6) boxes on all 77 zero-Person files; add worn vest (2) and helmet (0) boxes;
-                 delete bucket hat, police cap, and racing helmet boxes; remove vest label from coveralls;
-                 merge duplicate boxes.
+[QUEUE-03] EXECUTE CONSTRUCTION-PPE PASS 1 LABEL REMEDIATION [WORKER_REMEDIATION_COMPLETE]
+           Status: WORKER_REMEDIATION_COMPLETE. All 88 defect rows (85 unique images) remediated and
+                   verified via worker visual QA. Built corrected dataset at
+                   data/processed/construction_ppe_corrected (1,416 paired images, train 1,151 / val 129 / test 136;
+                   Person 2,379, Helmet 1,733, Vest 1,626; zero split leakage; zero orphan labels).
+           Artifacts: proposed_regroup_manifest.csv, label_remediation_manifest.csv,
+                      remediation_qa_queue.csv, qa_overlays, contact_sheets.
 
-[QUEUE-04] EXECUTE CONSTRUCTION-PPE PASS 2 INDEPENDENT QA
-           Action: Second reviewer validates 100% of remediated files and 10% spot check of remainder.
-           Verification: Verify against GATE-Q1 through GATE-Q9 thresholds (IoU >= 0.85, kappa >= 0.90).
+[QUEUE-04] EXECUTE CONSTRUCTION-PPE PASS 2 INDEPENDENT QA [PENDING_INDEPENDENT_HUMAN_QA]
+           Status: PENDING_INDEPENDENT_HUMAN_QA. Handoff queue emitted to
+                   docs/audit_artifacts/construction_ppe/remediation_qa_queue.csv (85 unique images).
+           Action: Independent reviewer performs PASS/FIX audit on the 85 remediated images using
+                   visual overlays in data/processed/construction_ppe_corrected/qa_overlays/.
+                   Independent human sign-off remains the sole open gate for PPE.
 
 [QUEUE-05] EXECUTE FALL DETECTION DATASET PILOT & ANNOTATION CAMPAIGN [FALL_CAMPAIGN_COMPLETE]
            Status: FALL_CAMPAIGN_COMPLETE / FALL_REMEDIATION_COMPLETE. Built 227-pair CVAT pilot and
@@ -366,7 +372,7 @@ In [construction_ppe_sample_audit.md](construction_ppe_sample_audit.md), Section
     `image57.jpeg`, `image81.jpg`, `image82.jpg`, `image83.jpg`, `image84.jpg`, `image85.jpg`, `image472.jpg`, `image475.jpg`, `image479.jpg`, `image482.jpg`, `image501.jpg`, `image526.jpg`, `image539.jpg`, `image579.jpg`, `image582.jpg`, `image629.jpg`, `image653.jpeg`, `image720.jpeg`, `image734.jpeg`.
 
 **Reconciliation Summary:**
-All 77 zero-Person files ($4 \text{ val} + 8 \text{ test} + 46 \text{ train sequence} + 19 \text{ train machine-only} = 77$) are now fully enumerated and cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv). Each row joins `source_split` and `group_id` from [proposed_regroup_manifest.csv](audit_artifacts/construction_ppe/proposed_regroup_manifest.csv). Combined with the 11 other explicitly evidenced defect rows (6 unboxed objects, 4 misclassifications, 1 duplicate annotation), the remediation manifest contains **exactly 88 data rows** (89 total lines including the CSV header).
+All 77 zero-Person files ($4 \text{ val} + 8 \text{ test} + 46 \text{ train sequence} + 19 \text{ train machine-only} = 77$) are now fully enumerated and cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv). Each row joins `source_split` and `group_id` from [proposed_regroup_manifest.csv](audit_artifacts/construction_ppe/proposed_regroup_manifest.csv). Combined with the 11 other explicitly evidenced defect rows (6 unboxed objects, 4 misclassifications, 1 duplicate annotation), the remediation manifest contains **exactly 88 data rows** (89 total lines including the CSV header). All 88 defect rows (85 unique images) have been remediated in `data/processed/construction_ppe_corrected` and verified via worker visual QA (`WORKER_VISUAL_QA_VERIFIED`), with the handoff queue recorded in [remediation_qa_queue.csv](audit_artifacts/construction_ppe/remediation_qa_queue.csv) awaiting independent human QA sign-off.
 
 ### 8.2 Two-Stage Scope & Architecture Boundary
 - **Stage 1 Detector:** Dedicated strictly to real-time spatial bounding-box detection of the six canonical physical classes (`person`, `helmet`, `vest`, `fall`, `fire`, `smoke`).

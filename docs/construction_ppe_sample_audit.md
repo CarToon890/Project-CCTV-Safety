@@ -14,23 +14,24 @@
 
 ## 1. Audit Verdict and Decision Gate
 
-### Verdict: HOLD FOR TRAINING
+### Verdict: WORKER_REMEDIATION_COMPLETE / PENDING_INDEPENDENT_HUMAN_QA
 
-Although the non-destructive regroup manifest resolves cross-split sequence leakage, the raw annotations contain severe systematic defects that would corrupt detector training:
-1. **77 label files (5.44% of images)** contain zero `Person` (class 6) bounding boxes despite prominently featuring visible human workers or actors.
-2. **Missing PPE annotations**: Visible worn safety vests and hardhats are unboxed on foreground workers and background personnel.
-3. **Misclassified classes**: Peaked police caps, soft bucket hats, and bicycle racing helmets are annotated as industrial hardhats (class 0); full-body work coveralls/jumpsuits are annotated as safety vests (class 2).
-4. **Duplicate annotations**: Duplicate overlapping bounding boxes exist for single individuals.
+All worker-side visual QA remediation tasks have been completed and verified across all 88 defect rows (85 unique images) cataloged in [`label_remediation_manifest.csv`](audit_artifacts/construction_ppe/label_remediation_manifest.csv):
+1. **77 zero-Person label files**: Every visible human worker or actor has been inspected and annotated with canonical `person` (0) bounding boxes.
+2. **Missing PPE annotations**: Unannotated visible worn safety vests and hardhats have been added on foreground and background personnel.
+3. **Misclassified classes corrected**: Soft bucket hats, peaked police caps, and bicycle racing helmets were removed from `helmet` (1); orange work coveralls/jumpsuits were removed from `vest` (2).
+4. **Duplicate annotations deduplicated**: Overlapping bounding boxes for single individuals have been merged into single accurate boxes.
+5. **Raw immutability strictly preserved**: Source raw dataset at `data/raw/construction-ppe/` remains untouched and read-only. The complete corrected dataset has been built under `data/processed/construction_ppe_corrected/` with 1,416 paired images (train 1,151 / val 129 / test 136) and canonical Stage-1 mapping (`person: 2,379`, `helmet: 1,733`, `vest: 1,626`).
 
-The dataset is retained under `data/raw/construction-ppe/` for remediation. It must not be fed into the Stage 1 training pipeline until the targeted label remediation steps detailed in Section 8 are complete.
+**Remaining Decision Gate**: Final model training remains gated on **independent human QA sign-off** using the concise human QA queue ([`remediation_qa_queue.csv`](audit_artifacts/construction_ppe/remediation_qa_queue.csv)) and visual overlays in `data/processed/construction_ppe_corrected/qa_overlays/`.
 
 ### GO / HOLD / REJECT Decision Criteria
 
 | Decision | Criteria | Current Status |
 |---|---|---|
-| **GO** | All canonical classes (`person`, `helmet`, `vest`) exhaustively and accurately labeled; no cross-split scene or sequence leakage; zero orphan/duplicate label anomalies; training-ready. | Failed: 77 files missing `person` boxes; unboxed PPE; misclassified hats/jumpsuits. |
-| **HOLD** | Usable real-world visual imagery with recoverable annotation or split defects; non-destructive split manifest available; targeted relabeling required before training. | **MATCH (Current Decision)**: High-quality CCTV/industrial imagery; sequence leakage resolved via manifest; annotation defects cataloged for relabeling. |
-| **REJECT** | Fundamentally corrupted imagery, unrecoverable domain mismatch, insurmountable licensing embargo, or irremediable labeling corruption. | Not applicable: Defects are localized and fixable via targeted relabeling. |
+| **GO** | All canonical classes (`person`, `helmet`, `vest`) exhaustively and accurately labeled; no cross-split scene or sequence leakage; zero orphan/duplicate label anomalies; training-ready with human sign-off. | Pending final independent human QA review on the 85 remediated images. |
+| **HOLD** | Usable real-world visual imagery with recoverable annotation or split defects; non-destructive split manifest available; targeted relabeling required before training. | **TRANSITIONED TO WORKER_REMEDIATION_COMPLETE**: Worker visual QA remediation complete (88/88 defect rows resolved, dataset built, zero leakage). Handoff queue prepared for independent human QA. |
+| **REJECT** | Fundamentally corrupted imagery, unrecoverable domain mismatch, insurmountable licensing embargo, or irremediable labeling corruption. | Not applicable: Defects successfully remediated in processed dataset. |
 
 ---
 
@@ -261,23 +262,25 @@ To resolve cross-split leakage without modifying or copying raw dataset files, a
 
 ---
 
-## 8. Remaining Work Before "TRAINING READY"
+## 8. Worker Remediation Status & Human QA Handoff
 
-To advance this dataset from **HOLD** to **TRAINING READY**, the following engineering steps must be executed:
+### Worker Remediation: COMPLETE (`WORKER_REMEDIATION_COMPLETE`)
 
-1. **Relabel Missing `Person` Boxes**:
-   Add missing `person` (class 6) bounding boxes to all 77 identified files (specifically in `grp_lobby_tryon`, `grp_vietnam_road`, `grp_fall_incident`, `grp_rebar_work`, `grp_deck_workers`, and negative portrait frames).
-2. **Box Unannotated Worn PPE**:
-   Annotate visible worn safety vests (`image4.jpg`, `image100.jpg`, `image1008.jpeg`) and hardhats on all visible personnel.
-3. **Correct Misclassified Non-Industrial Items**:
-   - Reclassify peaked police caps (`image100.jpg`) and bucket hats (`image3.jpeg`) from `helmet` (0) to negative.
-   - Reclassify bicycle racing helmets (`image1357.jpg`) to negative.
-   - Remove `vest` (2) label from full-body coveralls/jumpsuits (`image805.jpg`).
-4. **Deduplicate Overlapping Boxes**:
-   Merge duplicate bounding boxes on identical objects (e.g., `image207.jpg`).
-5. **Drop Orphan Label Artifacts**:
-   Configure the dataset ingestion pipeline (`scripts/prepare_dataset.py`) to exclude the 10 duplicate `image*(1).txt` orphan labels.
-6. **Apply Non-Destructive Regroup Manifest**:
-   Update `scripts/prepare_dataset.py` to ingest `docs/audit_artifacts/construction_ppe/proposed_regroup_manifest.csv` and emit split symlinks/manifests based on `proposed_split`.
-7. **Post-Remediation Verification**:
-   Re-run automated linting and visual QA on remediated labels before initiating YOLOv8 benchmark training.
+All seven engineering remediation steps have been executed and verified across the Construction-PPE dataset:
+1. **Relabeled Missing `Person` Boxes**: Missing `person` (0) bounding boxes added to all 77 zero-Person files across `grp_lobby_tryon`, `grp_vietnam_road`, `grp_fall_incident`, `grp_rebar_work`, `grp_deck_workers`, rotated scenes, and portrait frames.
+2. **Boxed Unannotated Worn PPE**: Visible worn safety vests and hardhats boxed on foreground and background personnel (`image4.jpg`, `image100.jpg`, `image1008.jpeg`, `image109.jpg`).
+3. **Corrected Misclassified Non-Industrial Items**:
+   - Reclassified bucket hats (`image3.jpeg`), police peaked caps (`image100.jpg`), and bicycle racing helmets (`image1357.jpg`) to negative.
+   - Removed `vest` (2) label from full-body jumpsuits (`image805.jpg`).
+4. **Deduplicated Overlapping Boxes**: Merged duplicate bounding boxes on identical objects (`image207.jpg`).
+5. **Dropped Orphan Label Artifacts**: Ingestion builder `scripts/build_ppe_corrected_dataset.py` excludes the 10 duplicate `image*(1).txt` orphan labels.
+6. **Applied Non-Destructive Regroup Manifest**: Applied `docs/audit_artifacts/construction_ppe/proposed_regroup_manifest.csv` to partition 1,416 paired images into leak-free splits: **train: 1,151 (81.29%)**, **val: 129 (9.11%)**, **test: 136 (9.60%)**.
+7. **Production Dataset Built**: Generated full corrected dataset under `data/processed/construction_ppe_corrected/` with class instances: `Person: 2,379`, `Helmet: 1,733`, `Vest: 1,626`; classes 3/4/5: 0.
+
+### Remaining Decision Gate: Independent Human QA Sign-Off
+
+The dataset has passed all worker-side automated validation checks (`scripts/validate_construction_ppe.py`). The sole remaining gate before training is **independent human QA sign-off**:
+- **Handoff Queue**: [`docs/audit_artifacts/construction_ppe/remediation_qa_queue.csv`](audit_artifacts/construction_ppe/remediation_qa_queue.csv) (85 unique images, status: `WORKER_VISUAL_QA_VERIFIED`, verdict: `PENDING_HUMAN_QA`).
+- **QA Overlays**: `data/processed/construction_ppe_corrected/qa_overlays/{train,val,test}/<stem>_qa.jpg` (bounding boxes color-coded: green=person, cyan=helmet, orange=vest).
+- **Contact Sheets**: `data/processed/construction_ppe_corrected/contact_sheets/*.jpg` (9 cluster contact sheets for rapid visual review).
+- **Human Review Requirement**: PASS/FIX verdict per row by independent reviewer. No further worker-side modification required prior to review.

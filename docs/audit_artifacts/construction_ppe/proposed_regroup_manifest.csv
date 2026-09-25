@@ -39,7 +39,7 @@ image37.jpeg,train,grp_scene_0037,test,general_construction_scene
 image38.jpg,train,grp_scene_0038,train,general_construction_scene
 image39.jpeg,train,grp_scene_0039,train,general_construction_scene
 image40.jpg,test,grp_scene_0040,val,general_construction_scene
-image41.jpg,train,grp_scene_0041,train,general_construction_scene
+image41.jpeg,train,grp_scene_0041,train,general_construction_scene
 image42.jpg,train,grp_scene_0042,train,general_construction_scene
 image43.jpeg,train,grp_scene_0043,train,general_construction_scene
 image44.jpeg,train,grp_scene_0044,train,general_construction_scene
@@ -99,9 +99,9 @@ image97.jpg,train,grp_scene_0097,test,general_construction_scene
 image98.jpg,test,grp_scene_0098,train,general_construction_scene
 image99.jpeg,train,grp_scene_0099,train,general_construction_scene
 image100.jpg,train,grp_china_police_inspection,train,china_police_highway_inspection
-image101.jpg,train,grp_scene_0101,train,general_construction_scene
+image101.jpeg,train,grp_scene_0101,train,general_construction_scene
 image102.jpg,train,grp_scene_0102,train,general_construction_scene
-image103.jpg,train,grp_scene_0103,train,general_construction_scene
+image103.jpeg,train,grp_scene_0103,train,general_construction_scene
 image104.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image105.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image106.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
@@ -110,7 +110,7 @@ image108.jpg,train,grp_warehouse_worker,train,warehouse_worker_photoshoot
 image109.jpg,train,grp_scene_0109,train,general_construction_scene
 image110.jpg,test,grp_scene_0110,val,general_construction_scene
 image111.jpg,train,grp_scene_0111,train,general_construction_scene
-image112.jpg,train,grp_scene_0112,train,general_construction_scene
+image112.jpeg,train,grp_scene_0112,train,general_construction_scene
 image113.jpg,train,grp_scene_0113,train,general_construction_scene
 image114.jpg,train,grp_scene_0114,train,general_construction_scene
 image115.jpg,val,grp_scene_0115,train,general_construction_scene
@@ -1003,7 +1003,7 @@ image1001.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1002.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1003.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1004.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
-image1005.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
+image1005.jpeg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1006.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1007.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1008.jpeg,train,grp_cinderblock_masonry,test,cinderblock_masonry_photoshoot
@@ -1014,7 +1014,7 @@ image1012.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1013.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1014.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1015.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
-image1016.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
+image1016.jpeg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1017.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1018.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1019.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
@@ -1022,7 +1022,7 @@ image1020.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1021.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1022.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1023.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
-image1024.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
+image1024.jpeg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1025.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1026.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1027.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
@@ -1033,7 +1033,7 @@ image1031.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1032.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1033.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1034.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
-image1035.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
+image1035.jpeg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1036.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1037.jpeg,test,grp_cinderblock_masonry,test,cinderblock_masonry_photoshoot
 image1038.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
@@ -1049,7 +1049,7 @@ image1047.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1048.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1049.jpg,val,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1050.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
-image1051.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
+image1051.jpeg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1052.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1053.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1054.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
@@ -1058,7 +1058,7 @@ image1056.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1057.jpg,val,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1058.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1059.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
-image1060.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
+image1060.jpeg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1061.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1062.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1063.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
@@ -1067,7 +1067,7 @@ image1065.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1066.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1067.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1068.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
-image1069.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
+image1069.jpeg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1070.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1071.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1072.jpg,val,grp_rooftop_a,train,rooftop_actor_sequence_a
@@ -1076,7 +1076,7 @@ image1074.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1075.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1076.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1077.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
-image1078.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
+image1078.jpeg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1079.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1080.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1081.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
@@ -1088,7 +1088,7 @@ image1086.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1087.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1088.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1089.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
-image1090.jpg,train,grp_scene_1090,val,general_construction_scene
+image1090.jpeg,train,grp_scene_1090,val,general_construction_scene
 image1091.jpg,val,grp_scene_1091,train,general_construction_scene
 image1092.jpg,train,grp_scene_1092,train,general_construction_scene
 image1093.jpg,train,grp_scene_1093,train,general_construction_scene
@@ -1098,7 +1098,7 @@ image1096.jpg,val,grp_scene_1096,train,general_construction_scene
 image1097.jpg,train,grp_scene_1097,test,general_construction_scene
 image1098.jpg,train,grp_scene_1098,train,general_construction_scene
 image1099.jpg,train,grp_scene_1099,train,general_construction_scene
-image1100.jpg,train,grp_scene_1100,val,general_construction_scene
+image1100.jpeg,train,grp_scene_1100,val,general_construction_scene
 image1101.jpg,train,grp_scene_1101,train,general_construction_scene
 image1102.jpg,train,grp_scene_1102,train,general_construction_scene
 image1103.jpg,train,grp_scene_1103,train,general_construction_scene
@@ -1108,7 +1108,7 @@ image1106.jpg,train,grp_scene_1106,train,general_construction_scene
 image1107.jpg,val,grp_scene_1107,test,general_construction_scene
 image1108.jpg,train,grp_scene_1108,train,general_construction_scene
 image1109.jpg,val,grp_scene_1109,train,general_construction_scene
-image1110.jpg,train,grp_scene_1110,val,general_construction_scene
+image1110.jpeg,train,grp_scene_1110,val,general_construction_scene
 image1111.jpg,test,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1112.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
 image1113.jpg,train,grp_rooftop_a,train,rooftop_actor_sequence_a
