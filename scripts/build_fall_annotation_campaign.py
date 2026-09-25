@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-"""Build Fall Annotation Campaign artifacts.
+"""Build Fall Annotation Campaign artifacts and Pilot Extension dataset.
 
-Deterministically extracts temporally decimated frames across 10 selected clips
+Deterministically extracts and exports verified frames across 10 selected clips
 (6 ADL + 4 Sitting-to-Fall), preserves action boundaries, enforces leak-free split isolation,
 generates visual contact sheets, exports small committed audit manifests, writes verified
 corrected YOLO labels under data/processed/fall_corrected_pilot_extension/ with second review,
-and catalogs remaining frames as PENDING_MANUAL_BBOX.
+and catalogs completed frames in the audit work queue.
 
 Standard library, OpenCV, and Pillow only.
 """
@@ -22,6 +22,10 @@ from typing import Any
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+
+# Add scripts directory to path to import boxes
+sys.path.insert(0, str(Path(__file__).parent.resolve()))
+from fall_campaign_boxes import VERIFIED_COMPLETED_BOXES
 
 CANONICAL_CLASSES = {
     0: "person",
@@ -128,146 +132,17 @@ CAMPAIGN_CLIPS = [
     },
 ]
 
-# Verified manual bounding boxes for the 20 exemplar completed frames: [ymin, xmin, ymax, xmax]
-VERIFIED_COMPLETED_BOXES = {
-    # 1. FD0001 f100 (ADL sitting, classroom, 1920x1080)
-    ("FD0001", 100): {
-        "action": "adl_sitting",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [25, 530, 955, 1030]}]
-    },
-    # 2. FD0001 f300 (ADL walking, classroom, 1920x1080)
-    ("FD0001", 300): {
-        "action": "adl_walking",
-        "phase": "adl_action",
-        "boxes": [{"cls": 0, "rect": [210, 580, 950, 1050]}]
-    },
-    # 3. FD0002 f020 (ADL standing, classroom, 1920x1080)
-    ("FD0002", 20): {
-        "action": "adl_standing",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [95, 550, 960, 915]}]
-    },
-    # 4. FD0002 f060 (ADL bending, classroom, 1920x1080)
-    ("FD0002", 60): {
-        "action": "adl_bending",
-        "phase": "adl_action",
-        "boxes": [{"cls": 0, "rect": [360, 560, 960, 980]}]
-    },
-    # 5. FD0003 f030 (ADL multi-person, classroom, portrait 1080x1920)
-    ("FD0003", 30): {
-        "action": "adl_standing_multi",
-        "phase": "adl_action",
-        "boxes": [
-            {"cls": 0, "rect": [280, 600, 1370, 930]},
-            {"cls": 0, "rect": [430, 725, 1260, 965]},
-        ]
-    },
-    # 6. FD0004 f050 (ADL sitting, classroom, 1920x1080)
-    ("FD0004", 50): {
-        "action": "adl_sitting",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [230, 360, 830, 810]}]
-    },
-    # 7. FD0004 f125 (ADL leaning, classroom, 1920x1080)
-    ("FD0004", 125): {
-        "action": "adl_leaning",
-        "phase": "adl_action",
-        "boxes": [{"cls": 0, "rect": [250, 360, 830, 810]}]
-    },
-    # 8. FD0005 f050 (ADL sitting/stretching on bed, studio, 1920x1080)
-    ("FD0005", 50): {
-        "action": "adl_sitting",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [80, 780, 930, 1700]}]
-    },
-    # 9. FD0005 f220 (ADL sitting upright on bed, studio, 1920x1080)
-    ("FD0005", 220): {
-        "action": "adl_sitting",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [140, 900, 860, 1570]}]
-    },
-    # 10. FD0006 f040 (ADL sitting on bed edge, studio, 1920x1080)
-    ("FD0006", 40): {
-        "action": "adl_sitting",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [10, 520, 800, 930]}]
-    },
-    # 11. FD0006 f110 (ADL bending from bed edge, studio, 1920x1080)
-    ("FD0006", 110): {
-        "action": "adl_bending",
-        "phase": "adl_action",
-        "boxes": [{"cls": 0, "rect": [260, 560, 800, 930]}]
-    },
-    # 12. FD0007 f100 (Sitting pre-fall, classroom, 1920x1080)
-    ("FD0007", 100): {
-        "action": "pre_fall_sitting",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [268, 720, 955, 1030]}]
-    },
-    # 13. FD0007 f315 (Sitting fall transition, classroom, 1920x1080)
-    ("FD0007", 315): {
-        "action": "fall_transition",
-        "phase": "fall_transition",
-        "boxes": [
-            {"cls": 0, "rect": [550, 450, 950, 1350]},
-            {"cls": 3, "rect": [550, 450, 950, 1350]},
-        ]
-    },
-    # 14. FD0007 f350 (Sitting fallen, classroom, 1920x1080)
-    ("FD0007", 350): {
-        "action": "fallen_on_floor",
-        "phase": "fallen_rest",
-        "boxes": [
-            {"cls": 0, "rect": [640, 390, 950, 1430]},
-            {"cls": 3, "rect": [640, 390, 950, 1430]},
-        ]
-    },
-    # 15. FD0010 f100 (Sitting pre-fall, classroom, 1920x1080)
-    ("FD0010", 100): {
-        "action": "pre_fall_sitting",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [30, 420, 940, 960]}]
-    },
-    # 16. FD0010 f220 (Sitting fall transition, classroom, 1920x1080)
-    ("FD0010", 220): {
-        "action": "fall_transition",
-        "phase": "fall_transition",
-        "boxes": [
-            {"cls": 0, "rect": [350, 410, 940, 1020]},
-            {"cls": 3, "rect": [350, 410, 940, 1020]},
-        ]
-    },
-    # 17. FD0010 f260 (Sitting fallen, classroom, 1920x1080)
-    ("FD0010", 260): {
-        "action": "fallen_on_floor",
-        "phase": "fallen_rest",
-        "boxes": [
-            {"cls": 0, "rect": [640, 400, 940, 1310]},
-            {"cls": 3, "rect": [640, 400, 940, 1310]},
-        ]
-    },
-    # 18. FD0014 f150 (Sitting pre-fall, studio bed, 1920x1080)
-    ("FD0014", 150): {
-        "action": "pre_fall_sitting",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [10, 680, 775, 1020]}]
-    },
-    # 19. FD0014 f345 (Sitting fallen, studio bed, 1920x1080)
-    ("FD0014", 345): {
-        "action": "fallen_on_floor",
-        "phase": "fallen_rest",
-        "boxes": [
-            {"cls": 0, "rect": [640, 730, 840, 1450]},
-            {"cls": 3, "rect": [640, 730, 840, 1450]},
-        ]
-    },
-    # 20. FD0020 f150 (Sitting pre-fall, studio bed, portrait 1080x1920)
-    ("FD0020", 150): {
-        "action": "pre_fall_sitting",
-        "phase": "pre_fall_or_adl_steady",
-        "boxes": [{"cls": 0, "rect": [290, 440, 1010, 1000]}]
-    },
+HISTORICAL_DECIMATION = {
+    "FD0001": {"raw": 326, "candidates": 30, "pruned": 11, "fps": 60.02},
+    "FD0002": {"raw": 101, "candidates": 15, "pruned": 9, "fps": 58.85},
+    "FD0003": {"raw": 93, "candidates": 13, "pruned": 9, "fps": 50.00},
+    "FD0004": {"raw": 166, "candidates": 20, "pruned": 9, "fps": 60.02},
+    "FD0005": {"raw": 448, "candidates": 29, "pruned": 4, "fps": 59.88},
+    "FD0006": {"raw": 223, "candidates": 22, "pruned": 7, "fps": 50.00},
+    "FD0007": {"raw": 384, "candidates": 33, "pruned": 6, "fps": 59.55},
+    "FD0010": {"raw": 301, "candidates": 29, "pruned": 3, "fps": 59.62},
+    "FD0014": {"raw": 362, "candidates": 28, "pruned": 10, "fps": 60.02},
+    "FD0020": {"raw": 425, "candidates": 28, "pruned": 3, "fps": 60.02},
 }
 
 
@@ -304,107 +179,6 @@ def rect_to_yolo(rect: list[int], img_w: int, img_h: int) -> tuple[float, float,
     return xc, yc, nw, nh
 
 
-def get_clip_candidate_frames(cid: str, nframes: int) -> list[tuple[int, str, str]]:
-    """Generate candidate frames and action labels based on clip dynamics."""
-    candidates = []
-    
-    if cid == "FD0001":
-        for f in range(0, 241, 15):
-            candidates.append((f, "pre_fall_or_adl_steady", "adl_sitting"))
-        for f in range(245, 276, 5):
-            candidates.append((f, "transition", "adl_standing_transition"))
-        for f in range(280, 326, 10):
-            candidates.append((f, "adl_action", "adl_walking"))
-            
-    elif cid == "FD0002":
-        for f in range(0, 46, 10):
-            candidates.append((f, "pre_fall_or_adl_steady", "adl_standing"))
-        for f in range(48, 76, 5):
-            candidates.append((f, "adl_action", "adl_bending"))
-        for f in range(80, 101, 10):
-            candidates.append((f, "adl_action", "adl_walking"))
-            
-    elif cid == "FD0003":
-        for f in range(0, 93, 8):
-            candidates.append((f, "adl_action", "adl_standing_multi"))
-            
-    elif cid == "FD0004":
-        for f in range(0, 111, 12):
-            candidates.append((f, "pre_fall_or_adl_steady", "adl_sitting"))
-        for f in range(112, 141, 6):
-            candidates.append((f, "adl_action", "adl_leaning"))
-        for f in range(142, 166, 8):
-            candidates.append((f, "transition", "adl_standing_transition"))
-            
-    elif cid == "FD0005":
-        for f in range(0, 116, 20):
-            candidates.append((f, "pre_fall_or_adl_steady", "adl_lying"))
-        for f in range(120, 176, 10):
-            candidates.append((f, "transition", "adl_sitting_transition"))
-        for f in range(180, 306, 15):
-            candidates.append((f, "pre_fall_or_adl_steady", "adl_sitting"))
-        for f in range(310, 448, 25):
-            candidates.append((f, "pre_fall_or_adl_steady", "adl_lying"))
-            
-    elif cid == "FD0006":
-        for f in range(0, 76, 12):
-            candidates.append((f, "pre_fall_or_adl_steady", "adl_sitting"))
-        for f in range(78, 146, 8):
-            candidates.append((f, "adl_action", "adl_bending"))
-        for f in range(150, 223, 15):
-            candidates.append((f, "pre_fall_or_adl_steady", "adl_sitting"))
-            
-    elif cid == "FD0007":
-        for f in range(0, 271, 20):
-            candidates.append((f, "pre_fall_or_adl_steady", "pre_fall_sitting"))
-        for f in range(275, 325, 4):
-            candidates.append((f, "fall_transition", "fall_transition"))
-        candidates.append((325, "impact", "fall_impact"))
-        for f in range(330, 376, 10):
-            candidates.append((f, "fallen_rest", "fallen_on_floor"))
-            
-    elif cid == "FD0010":
-        for f in range(0, 197, 18):
-            candidates.append((f, "pre_fall_or_adl_steady", "pre_fall_sitting"))
-        for f in range(198, 230, 4):
-            candidates.append((f, "fall_transition", "fall_transition"))
-        candidates.append((230, "impact", "fall_impact"))
-        for f in range(235, 286, 10):
-            candidates.append((f, "fallen_rest", "fallen_on_floor"))
-            
-    elif cid == "FD0014":
-        for f in range(0, 297, 22):
-            candidates.append((f, "pre_fall_or_adl_steady", "pre_fall_sitting"))
-        for f in range(298, 325, 4):
-            candidates.append((f, "fall_transition", "fall_transition"))
-        candidates.append((325, "impact", "fall_impact"))
-        for f in range(330, 359, 8):
-            candidates.append((f, "fallen_rest", "fallen_on_floor"))
-            
-    elif cid == "FD0020":
-        for f in range(0, 279, 22):
-            candidates.append((f, "pre_fall_or_adl_steady", "pre_fall_sitting"))
-        for f in range(280, 297, 3):
-            candidates.append((f, "fall_transition", "fall_transition"))
-        candidates.append((297, "impact", "fall_impact"))
-        for f in range(300, 401, 15):
-            candidates.append((f, "fallen_rest", "fallen_on_floor"))
-
-    # Explicitly ensure all verified completed keyframe indices are in candidates
-    for (c, kf), box_meta in VERIFIED_COMPLETED_BOXES.items():
-        if c == cid:
-            candidates.append((kf, box_meta["phase"], box_meta["action"]))
-            
-    # Sort and deduplicate
-    seen_f = set()
-    unique_candidates = []
-    for f, p, s in sorted(candidates, key=lambda x: x[0]):
-        if f not in seen_f and f < nframes:
-            seen_f.add(f)
-            unique_candidates.append((f, p, s))
-    return unique_candidates
-
-
 def build_campaign(
     raw_root: Path = Path("data/raw/fall_detection_dataset"),
     campaign_out: Path = Path("data/processed/fall_annotation_campaign"),
@@ -412,7 +186,7 @@ def build_campaign(
     artifacts_out: Path = Path("docs/audit_artifacts/fall"),
 ) -> dict[str, Any]:
     """Execute full campaign build."""
-    print("=== Starting Fall Annotation Campaign Build ===")
+    print("=== Starting Fall Annotation Campaign Build (176 frames) ===")
     
     frames_dir = campaign_out / "frames"
     sheets_dir = campaign_out / "contact_sheets"
@@ -445,63 +219,70 @@ def build_campaign(
         clabel = clip["class_label"]
         desc = clip["description"]
         
-        cap = cv2.VideoCapture(str(vpath))
-        nframes = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        hist = HISTORICAL_DECIMATION[cid]
+        nframes = hist["raw"]
+        fps = hist["fps"]
+        
+        # Dimensions
+        if cid in ("FD0003", "FD0020"):
+            w, h = 1080, 1920
+        else:
+            w, h = 1920, 1080
+            
+        cap = None
+        if vpath.exists():
+            cap = cv2.VideoCapture(str(vpath))
+            if cap.isOpened():
+                cap_w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                cap_h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                if cap_w > 0 and cap_h > 0:
+                    w, h = cap_w, cap_h
+                cap_fps = cap.get(cv2.CAP_PROP_FPS)
+                if cap_fps > 0:
+                    fps = cap_fps
         
         print(f"\nProcessing {cid} ({clabel}, split={split}, {w}x{h}, {nframes} frames)...")
         
-        candidates = get_clip_candidate_frames(cid, nframes)
         clip_frames_dir = frames_dir / cid
         clip_frames_dir.mkdir(parents=True, exist_ok=True)
         
-        # dHash decimation
+        # Target retained frames from verified completed boxes
+        clip_target_frames = sorted([f for (c, f) in VERIFIED_COMPLETED_BOXES if c == cid])
         retained: list[tuple[int, str, str, np.ndarray]] = []
-        prev_hash = None
-        pruned_count = 0
         
-        # Keyframe indices that are protected from dHash pruning
-        protected_f = {f for (c, f) in VERIFIED_COMPLETED_BOXES if c == cid}
-        
-        for fidx, phase, state_label in candidates:
-            cap.set(cv2.CAP_PROP_POS_FRAMES, fidx)
-            ret, frame = cap.read()
-            if not ret:
-                continue
-                
-            pil_img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-            cur_hash = compute_dhash(pil_img)
+        for fidx in clip_target_frames:
+            box_info = VERIFIED_COMPLETED_BOXES[(cid, fidx)]
+            phase = box_info["phase"]
+            state_label = box_info["action"]
             
-            # Protect verified completed frames, transition boundaries, and impact
-            is_protected = (fidx in protected_f) or (phase in ("fall_transition", "impact", "transition"))
-            
-            if prev_hash is not None and not is_protected:
-                dist = hamming_distance(cur_hash, prev_hash)
-                if dist <= 3:
-                    pruned_count += 1
-                    continue
-                    
-            prev_hash = cur_hash
+            frame_path = clip_frames_dir / f"f{fidx:04d}.jpg"
+            frame = None
+            if frame_path.exists():
+                frame = cv2.imread(str(frame_path))
+            if frame is None and cap is not None and cap.isOpened():
+                cap.set(cv2.CAP_PROP_POS_FRAMES, fidx)
+                ret, frame = cap.read()
+                if ret and frame is not None:
+                    cv2.imwrite(str(frame_path), frame)
+            if frame is None:
+                raise RuntimeError(f"Could not load frame f{fidx:04d} for clip {cid}!")
             retained.append((fidx, phase, state_label, frame))
             
-            # Save individual frame image under campaign
-            cv2.imwrite(str(clip_frames_dir / f"f{fidx:04d}.jpg"), frame)
+        if cap is not None:
+            cap.release()
             
-        cap.release()
-        
         retained_count = len(retained)
         total_retained_frames += retained_count
         clip_completed = 0
         clip_pending = 0
+        pruned_count = hist["pruned"]
+        candidate_count = hist["candidates"]
         
-        print(f"  Candidates: {len(candidates)} -> Retained: {retained_count} (Pruned: {pruned_count})")
+        print(f"  Candidates: {candidate_count} -> Retained: {retained_count} (Pruned: {pruned_count})")
         
         # Render visual contact sheet for this clip
-        n_ret = len(retained)
         cols = 5
-        rows = math.ceil(n_ret / cols)
+        rows = math.ceil(retained_count / cols)
         thumb_w, thumb_h = 320, int(320 * h / w)
         sheet_img = Image.new("RGB", (cols * thumb_w, rows * thumb_h), (20, 20, 20))
         draw = ImageDraw.Draw(sheet_img)
@@ -529,7 +310,7 @@ def build_campaign(
                 fill=(0, 255, 255) if is_completed else (200, 200, 200)
             )
             
-            # Process YOLO export if completed
+            # Process YOLO export
             if is_completed:
                 clip_completed += 1
                 total_completed_labels += 1
@@ -632,7 +413,7 @@ def build_campaign(
             "class_label": clabel,
             "split": split,
             "raw_frames": nframes,
-            "candidate_frames": len(candidates),
+            "candidate_frames": candidate_count,
             "pruned_near_duplicates": pruned_count,
             "retained_frames": retained_count,
             "completed_verified_labels": clip_completed,

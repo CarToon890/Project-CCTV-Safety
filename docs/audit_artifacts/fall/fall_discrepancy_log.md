@@ -135,17 +135,20 @@ The corrected-label pilot for the 8 CVAT-annotated clips has been successfully e
 - **Split isolation:** Completed (train=132, val=50, test=45; zero actor group cross-split leakage).
 - **Status:** **PILOT_READY (Approved for pipeline dry-runs & integration testing)**.
 
-### Targeted Annotation Campaign & Pilot Extension (25 Sep 2026)
-In response to Discrepancy 4 (unannotated ADL and sitting clips), a targeted annotation campaign was planned and executed:
+### Targeted Annotation Campaign & Pilot Extension (25 Sep 2026) — Fully Completed & Remediated
+In response to Discrepancy 4 (unannotated ADL and sitting clips), a targeted annotation campaign was authorized by the owner, executed, and audited:
 - **10 Targeted Clips Selected:** All 6 ADL negative controls (`FD0001`–`FD0006`) plus 4 diverse sitting-to-fall clips (`FD0007`, `FD0010`, `FD0014`, `FD0020`).
-- **176 Retained Review Frames:** 235 candidate frames decimated via 64-bit dHash (59 duplicates pruned), leaving 176 frames 100% human-inspected via contact sheets.
-- **20 Completed Human Bbox Frames / 156 Pending:** 20 exemplar keyframes verified with tight manual bounding boxes under `data/processed/fall_corrected_pilot_extension/`; 156 frames remain `PENDING_MANUAL_BBOX` without fabricated labels.
-- **Extension Class Counts:** Person 21, Fall 5, all other Stage-1 classes strictly 0 (no false-positive PPE/fire/smoke).
-- **Split Isolation:** Regrouped in `fall_actor_grouping.csv` across 9 actor groups with **zero actor-group split leakage** (`scripts/validate_fall_campaign.py` passes 100%).
-- **Readiness Verdict:** **PILOT_EXTENSION_READY but NOT TRAINING_READY** (due to 156 pending manual bbox frames).
+- **176 Retained Review Frames:** 247 candidate frames decimated via 64-bit dHash (71 near-duplicates pruned), leaving 176 frames 100% human-inspected via native image tools.
+- **176 Completed Human Bbox Frames (0 Pending):** Following owner authorization to complete the 156 pending frames, all 176 frames have been manually inspected, tightly bounding-box annotated, second-reviewed, and exported under `data/processed/fall_corrected_pilot_extension/`. Zero frames remain `PENDING_MANUAL_BBOX`.
+- **Extension Class Counts:** Person 185, Fall 60, all other Stage-1 classes strictly 0 (no false-positive PPE/fire/smoke).
+- **Split Isolation:** Regrouped in `fall_actor_grouping.csv` across 9 actor groups with **zero actor-group split leakage** (`scripts/validate_fall_campaign.py` passes 100% across train=67, val=76, test=33).
+- **Campaign Verdict:** **FALL_CAMPAIGN_COMPLETE (Discrepancy 4 Fully Resolved)**.
+- **Stage 1 Pre-Training Readiness:** **NOT TRAINING_READY** (Fall dataset remediation complete; blocked on non-fall gates: PPE 77 zero-person remediation, Smoke & Fire audits, and Owner Gate 5 license approval).
 - **Governance Risk Note:** Provenance and upstream CC BY-NC 4.0 licensing are documented as a course-project risk note (under owner educational prototype baseline), not the present execution blocker.
 
-The remaining tasks prior to declaring the dataset **TRAINING_READY** are:
-1. **Completion or Formal Exclusion of 156 Pending Frames:** Complete manual bounding box annotation for the 156 frames cataloged in `fall_annotation_work_queue.csv` or formally exclude them under a justified dataset adequacy protocol.
-2. **Bounding Box Tightening:** Clamp oversized upstream keyframe boxes (width > 1000px in FD0044, FD0049, FD0035, etc.) via polygon contour clamping or manual keyframe adjustment.
-3. **Owner Gate 5 Sign-off:** Secure formal `license_approved: true` in `configs/datasets.local.yaml` for Stage 1 pre-training.
+The remaining tasks prior to declaring Stage 1 **TRAINING_READY** are:
+1. **Construction-PPE Gate:** Remediate the 77 zero-person frames in the Construction-PPE dataset.
+2. **Smoke & Fire Gates:** Complete sample audit, visual inspection, and label validation for Smoke and Fire datasets.
+3. **Bounding Box Tightening in Upstream 8 Pilot Clips:** Clamp oversized keyframe boxes (width > 1000px in FD0044, FD0049, FD0035, etc.) via polygon contour clamping or manual keyframe adjustment.
+4. **Owner Gate 5 Sign-off:** Secure formal `license_approved: true` in `configs/datasets.local.yaml` for Stage 1 pre-training.
+

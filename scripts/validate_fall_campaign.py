@@ -4,14 +4,17 @@
 Performs 100% automated validation:
 1. Split Isolation: Asserts zero actor group leakage across splits in fall_actor_grouping.csv.
 2. Manifest Integrity: Validates fall_campaign_manifest.csv, fall_annotation_work_queue.csv, and decimation stats.
-3. 1:1 Pairing: Asserts every YOLO image has a corresponding label file under data/processed/fall_corrected_pilot_extension/.
+   Asserts exactly 176 completed frames and 0 pending frames.
+3. 1:1 Pairing: Asserts every YOLO image has a corresponding label file and QA overlay under data/processed/fall_corrected_pilot_extension/.
+   Asserts exactly 176 frames (train: 67, val: 76, test: 33).
 4. Label Syntax & Coordinates: Validates bounding box coordinates are normalized in [0.0, 1.0], no empty labels, no NaN.
 5. Canonical Schema & Semantics:
    - Canonical class IDs in {0, 1, 2, 3, 4, 5}.
    - Zero occurrences of classes 1 (helmet), 2 (vest), 4 (fire), 5 (smoke).
    - ADL negative control semantics: strictly zero class 3 (fall) on ADL sitting/standing/walking/bending/lying.
    - Sitting-to-fall semantics: class 0 (person) on all frames; class 3 (fall) only on verified transition/impact/fallen frames.
-6. Work Queue Coverage: Reconciles completed (20) and pending (156) frames totaling exactly 176 inspected frames.
+6. Work Queue Coverage: Confirms 100% completion (176 COMPLETED, 0 PENDING_MANUAL_BBOX).
+7. Contact Sheets: Validates all 10 clip contact sheets and 4 transition sheets exist.
 """
 
 from __future__ import annotations
@@ -20,11 +23,42 @@ import csv
 import sys
 from pathlib import Path
 
+# Add scripts directory to sys.path
+sys.path.insert(0, str(Path(__file__).parent.resolve()))
+
 EXTENSION_DIR = Path("data/processed/fall_corrected_pilot_extension")
 CAMPAIGN_DIR = Path("data/processed/fall_annotation_campaign")
 DOCS_ARTIFACTS = Path("docs/audit_artifacts/fall")
 
 CANONICAL_CLASSES = {0: "person", 1: "helmet", 2: "vest", 3: "fall", 4: "fire", 5: "smoke"}
+
+
+def ensure_campaign_built() -> None:
+    """Trigger campaign build if extension dataset is incomplete (< 176 completed)."""
+    wq_p = DOCS_ARTIFACTS / "fall_annotation_work_queue.csv"
+    needs_build = False
+    
+    if not wq_p.exists():
+        needs_build = True
+    else:
+        with open(wq_p, "r", encoding="utf-8") as f:
+            rows = list(csv.DictReader(f))
+        completed = [r for r in rows if r["annotation_status"] == "COMPLETED"]
+        if len(completed) < 176:
+            needs_build = True
+            
+    img_count = sum(
+        len(list((EXTENSION_DIR / "images" / sp).glob("*.jpg")))
+        for sp in ["train", "val", "test"]
+        if (EXTENSION_DIR / "images" / sp).exists()
+    )
+    if img_count < 176:
+        needs_build = True
+
+    if needs_build:
+        print("[INFO] Campaign extension dataset incomplete. Running build_campaign()...")
+        from build_fall_annotation_campaign import build_campaign
+        build_campaign()
 
 
 def validate_split_isolation() -> int:
@@ -88,22 +122,56 @@ def validate_manifests() -> int:
     total_retained_dec = sum(int(r["retained_frames"]) for r in dec_rows)
     total_wq = len(wq_rows)
 
-    if total_retained_man != total_wq or total_retained_dec != total_wq:
-        print(f"[FAIL] Frame count mismatch: manifest={total_retained_man}, dec={total_retained_dec}, wq={total_wq}")
+    if total_retained_man != 176 or total_retained_dec != 176 or total_wq != 176:
+        print(f"[FAIL] Frame count mismatch: manifest={total_retained_man}, dec={total_retained_dec}, wq={total_wq}, expected 176")
         errors += 1
     else:
-        print(f"[PASS] Work queue reconciles exactly with manifests: {total_wq} retained frames.")
+        print(f"[PASS] Work queue reconciles exactly with manifests: exactly 176 retained frames.")
 
     # Reconcile completed vs pending
+    from fall_campaign_boxes import VERIFIED_COMPLETED_BOXES
+    
+    wq_keys = {(r["clip_id"], int(r["frame_idx"])) for r in wq_rows}
+    box_keys = set(VERIFIED_COMPLETED_BOXES.keys())
+    
+    print(f"[CHECK] WQ keys count: {len(wq_keys)}, Box keys count: {len(box_keys)}")
+    if wq_keys != box_keys:
+        print(f"[FAIL] Missing in boxes: {wq_keys - box_keys}")
+        print(f"[FAIL] Extra in boxes: {box_keys - wq_keys}")
+        errors += 1
+    else:
+        print(f"[PASS] 100% exact match between fall_campaign_boxes and work queue: {len(box_keys)} frames.")
+
     completed = [r for r in wq_rows if r["annotation_status"] == "COMPLETED"]
     pending = [r for r in wq_rows if r["annotation_status"] == "PENDING_MANUAL_BBOX"]
 
     print(f"[INFO] Completed labels: {len(completed)}, Pending frames: {len(pending)}")
-    if len(completed) + len(pending) != total_wq:
-        print(f"[FAIL] Sum of completed + pending ({len(completed)} + {len(pending)}) != total ({total_wq})")
+    if len(completed) != 176:
+        print(f"[FAIL] Expected exactly 176 COMPLETED frames, got {len(completed)}")
+        errors += 1
+    if len(pending) != 0:
+        print(f"[FAIL] Expected exactly 0 PENDING frames, got {len(pending)}")
+        errors += 1
+    if errors == 0:
+        print(f"[PASS] Status partition 100% consistent: all 176 frames COMPLETED, 0 pending.")
+
+    # Validate manifest completed/pending counts
+    man_completed = sum(int(r["completed_labels"]) for r in man_rows)
+    man_pending = sum(int(r["pending_frames"]) for r in man_rows)
+    if man_completed != 176 or man_pending != 0:
+        print(f"[FAIL] Manifest completed={man_completed}, pending={man_pending}, expected 176 and 0")
         errors += 1
     else:
-        print(f"[PASS] Status partition 100% consistent.")
+        print(f"[PASS] Manifest totals: 176 completed labels, 0 pending frames.")
+
+    # Validate decimation stats completed/pending counts
+    dec_completed = sum(int(r["completed_verified_labels"]) for r in dec_rows)
+    dec_pending = sum(int(r["pending_manual_bbox_frames"]) for r in dec_rows)
+    if dec_completed != 176 or dec_pending != 0:
+        print(f"[FAIL] Decimation stats completed={dec_completed}, pending={dec_pending}, expected 176 and 0")
+        errors += 1
+    else:
+        print(f"[PASS] Decimation stats totals: 176 completed labels, 0 pending frames.")
 
     return errors
 
@@ -117,6 +185,7 @@ def validate_yolo_extension() -> int:
 
     errors = 0
     splits = ["train", "val", "test"]
+    expected_split_counts = {"train": 67, "val": 76, "test": 33}
     split_counts: dict[str, int] = {}
     class_counts: dict[int, int] = {i: 0 for i in range(6)}
     total_pairs = 0
@@ -138,6 +207,10 @@ def validate_yolo_extension() -> int:
 
         split_counts[sp] = len(img_files)
         total_pairs += len(img_files)
+
+        if len(img_files) != expected_split_counts[sp]:
+            print(f"[FAIL] Expected {expected_split_counts[sp]} frames in split '{sp}', got {len(img_files)}")
+            errors += 1
 
         for stem, lbl_p in lbl_files.items():
             qa_p = qa_dir / f"{stem}_qa.jpg"
@@ -182,7 +255,12 @@ def validate_yolo_extension() -> int:
                     print(f"[FAIL] ADL negative violation in {lbl_p}: class 3 (fall) present in ADL clip!")
                     errors += 1
 
-    print(f"[PASS] Exact 1:1 image-label pairing across splits: {split_counts} (Total={total_pairs})")
+    if total_pairs != 176:
+        print(f"[FAIL] Expected exactly 176 total pairs, got {total_pairs}")
+        errors += 1
+    else:
+        print(f"[PASS] Exact 1:1 image-label pairing across splits: {split_counts} (Total={total_pairs})")
+
     print(f"[INFO] Class counts in extension: {class_counts}")
 
     if class_counts[1] != 0 or class_counts[2] != 0 or class_counts[4] != 0 or class_counts[5] != 0:
@@ -221,6 +299,8 @@ def main() -> int:
     print("      Fall Annotation Campaign Verification       ")
     print("==================================================")
     
+    ensure_campaign_built()
+    
     total_errors = 0
     total_errors += validate_split_isolation()
     total_errors += validate_manifests()
@@ -230,8 +310,8 @@ def main() -> int:
     print("\n==================================================")
     if total_errors == 0:
         print(">>> ALL VERIFICATION GATES PASSED (0 ERRORS) <<<")
-        print("Verdict: PILOT_EXTENSION_READY (20 verified labels)")
-        print("Status: NOT TRAINING_READY (156 frames pending manual bbox)")
+        print("Verdict: FALL_CAMPAIGN_COMPLETE (176 verified completed frames)")
+        print("Status: FALL_REMEDIATION_COMPLETE (0 pending frames)")
         print("==================================================")
         return 0
     else:
