@@ -4,7 +4,7 @@
 Deterministically extracts and exports verified frames across 10 selected clips
 (6 ADL + 4 Sitting-to-Fall), preserves action boundaries, enforces leak-free split isolation,
 generates visual contact sheets, exports small committed audit manifests, writes verified
-corrected YOLO labels under data/processed/fall_corrected_pilot_extension/ with second review,
+corrected YOLO labels under data/processed/fall_corrected_pilot_extension/ with worker visual QA,
 and catalogs completed frames in the audit work queue.
 
 Standard library, OpenCV, and Pillow only.
@@ -344,15 +344,15 @@ def build_campaign(
                     cv2.rectangle(qa_vis, (xmin, ymin), (xmax, ymax), col, 3)
                     cv2.putText(qa_vis, f"{cls_id}:{CANONICAL_CLASSES[cls_id]}", (xmin, max(ymin-10, 30)),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, col, 2)
-                cv2.putText(qa_vis, f"{cid} f{fidx:04d} [{state_label}] QA_PASS_REVIEWED", (30, 50),
+                cv2.putText(qa_vis, f"{cid} f{fidx:04d} [{state_label}] WORKER_VISUAL_QA", (30, 50),
                             cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 255), 2)
                 qa_out_path = extension_out / "qa_overlays" / split / f"{cid}_f{fidx:04d}_qa.jpg"
                 cv2.imwrite(str(qa_out_path), qa_vis)
                 
                 person_cnt = sum(1 for b in boxes if b["cls"] == 0)
                 fall_cnt = sum(1 for b in boxes if b["cls"] == 3)
-                rev_status = "PASS_SECOND_REVIEW"
-                notes = f"Verified tight bounding box: {len(boxes)} canonical box(es). QA passed."
+                rev_status = "WORKER_VISUAL_QA_VERIFIED"
+                notes = f"Worker visual annotation verified: {len(boxes)} canonical box(es). Pending independent human sign-off."
             else:
                 clip_pending += 1
                 total_pending_frames += 1

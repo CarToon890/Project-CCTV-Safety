@@ -43,7 +43,10 @@ def ensure_campaign_built() -> None:
     else:
         with open(wq_p, "r", encoding="utf-8") as f:
             rows = list(csv.DictReader(f))
-        completed = [r for r in rows if r["annotation_status"] == "COMPLETED"]
+        completed = [
+            r for r in rows
+            if r["annotation_status"] == "COMPLETED" and r["review_status"] == "WORKER_VISUAL_QA_VERIFIED"
+        ]
         if len(completed) < 176:
             needs_build = True
             
@@ -56,7 +59,7 @@ def ensure_campaign_built() -> None:
         needs_build = True
 
     if needs_build:
-        print("[INFO] Campaign extension dataset incomplete. Running build_campaign()...")
+        print("[INFO] Campaign extension dataset needs update to worker visual QA. Running build_campaign()...")
         from build_fall_annotation_campaign import build_campaign
         build_campaign()
 
@@ -144,16 +147,20 @@ def validate_manifests() -> int:
 
     completed = [r for r in wq_rows if r["annotation_status"] == "COMPLETED"]
     pending = [r for r in wq_rows if r["annotation_status"] == "PENDING_MANUAL_BBOX"]
+    reviewed = [r for r in wq_rows if r["review_status"] == "WORKER_VISUAL_QA_VERIFIED"]
 
-    print(f"[INFO] Completed labels: {len(completed)}, Pending frames: {len(pending)}")
+    print(f"[INFO] Completed labels: {len(completed)}, Pending frames: {len(pending)}, Worker QA verified: {len(reviewed)}")
     if len(completed) != 176:
         print(f"[FAIL] Expected exactly 176 COMPLETED frames, got {len(completed)}")
         errors += 1
     if len(pending) != 0:
         print(f"[FAIL] Expected exactly 0 PENDING frames, got {len(pending)}")
         errors += 1
+    if len(reviewed) != 176:
+        print(f"[FAIL] Expected exactly 176 WORKER_VISUAL_QA_VERIFIED frames, got {len(reviewed)}")
+        errors += 1
     if errors == 0:
-        print(f"[PASS] Status partition 100% consistent: all 176 frames COMPLETED, 0 pending.")
+        print(f"[PASS] Status partition 100% consistent: all 176 frames COMPLETED via worker visual QA, 0 pending.")
 
     # Validate manifest completed/pending counts
     man_completed = sum(int(r["completed_labels"]) for r in man_rows)
@@ -310,8 +317,8 @@ def main() -> int:
     print("\n==================================================")
     if total_errors == 0:
         print(">>> ALL VERIFICATION GATES PASSED (0 ERRORS) <<<")
-        print("Verdict: FALL_CAMPAIGN_COMPLETE (176 verified completed frames)")
-        print("Status: FALL_REMEDIATION_COMPLETE (0 pending frames)")
+        print("Verdict: FALL_CAMPAIGN_COMPLETE (176 verified completed frames via worker visual QA)")
+        print("Status: FALL_REMEDIATION_COMPLETE (0 pending frames; pending independent human sign-off)")
         print("==================================================")
         return 0
     else:
