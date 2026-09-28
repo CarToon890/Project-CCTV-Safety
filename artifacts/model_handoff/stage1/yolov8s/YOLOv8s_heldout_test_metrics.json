@@ -1,0 +1,44 @@
+{
+  "model": "yolov8s",
+  "trained_epochs": 86,
+  "precision": 0.8581680691197686,
+  "recall": 0.7853345875257634,
+  "map50": 0.8698180081340497,
+  "map50_95": 0.4573307386454966,
+  "per_class": {
+    "person": {
+      "map50": 0.8614246572314062,
+      "map50_95": 0.42521954333839274
+    },
+    "helmet": {
+      "map50": 0.938947018367871,
+      "map50_95": 0.47000755262841665
+    },
+    "vest": {
+      "map50": 0.9507550095465398,
+      "map50_95": 0.5824887457121504
+    },
+    "fall": {
+      "map50": 0.9514864650364651,
+      "map50_95": 0.38729863913187634
+    },
+    "fire": {
+      "map50": 0.6779771881469752,
+      "map50_95": 0.3397010693448936
+    },
+    "smoke": {
+      "map50": 0.8383177104750414,
+      "map50_95": 0.5392688817172496
+    }
+  },
+  "class_names": [
+    "person",
+    "helmet",
+    "vest",
+    "fall",
+    "fire",
+    "smoke"
+  ],
+  "dataset_manifest": "/kaggle/input/datasets/surachatsolonoi/cctv-safety-stage-1-training-inputs/stage1_unified_colab/dataset_manifest.json",
+  "provisional_dataset": true
+}

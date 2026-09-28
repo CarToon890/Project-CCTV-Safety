@@ -21,9 +21,11 @@ For PPE, score detector quality and derived compliance separately. Record cases
 where the body region is not visible; absence of a detection is not proof of a
 violation in an occluded region.
 
-Fight evaluation is outside the Stage 1 detector protocol. When Stage 2 is
-unblocked, evaluate it at clip/event level against hugs, sports and close
-collaborative work, including event Recall and false alerts per camera-hour.
+Fight evaluation is outside the Stage 1 detector protocol. A small SCFD/X3D-S
+pilot has been evaluated at clip level (45 held-out clips; macro-F1 0.7984,
+balanced accuracy 0.8024), but the pilot is not enough to establish robustness.
+Further evaluation should include hugs, sports and close collaborative work,
+event Recall, and false alerts per camera-hour on authorized target-camera data.
 
 ## Baseline acceptance
 

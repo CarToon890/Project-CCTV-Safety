@@ -8,7 +8,8 @@
 > เท่านั้น ไม่ใช่ class list ของโมเดล ปัจจุบัน Stage 1 ใช้ detector schema v2
 > จำนวน 6 spatial classes ใน `../docs/data_schema_6classes.md` และคำนวณ
 > `no_helmet`/`no_vest` ด้วย post-processing ส่วน `fight` เป็น Stage 2 temporal
-> event ที่ยังถูกบล็อก ดังนั้น mock data ไม่ใช่ผล inference จริง
+> event ที่มี X3D-S pilot แยกต่างหากแล้ว แต่ยังไม่เชื่อมกับระบบจริง ดังนั้น
+> mock data ไม่ใช่ผล inference จริง ดู `../docs/project_status.md`.
 
 ---
 
@@ -82,4 +83,3 @@ mockup/
 | ปุ่ม "รับทราบเหตุการณ์" ไม่ทำอะไร | `PATCH /api/v1/events/{id}` | 
 
 ---
-

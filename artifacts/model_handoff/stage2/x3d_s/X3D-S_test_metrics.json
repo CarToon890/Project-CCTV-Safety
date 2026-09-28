@@ -1,0 +1,50 @@
+{
+  "model": "X3D-S",
+  "task": "fight_vs_non_fight",
+  "dataset_version": "1.0.0-pilot",
+  "manifest_sha256": "4aaec038080a1318cc769bac4a6e6ae15a254e4fc9df0ca704af420dc4e58310",
+  "test_clips": 45,
+  "class_names": [
+    "non_fight",
+    "fight"
+  ],
+  "macro_f1": 0.7984071677451469,
+  "balanced_accuracy": 0.8023715415019763,
+  "classification_report": {
+    "non_fight": {
+      "precision": 0.7407407407407407,
+      "recall": 0.9090909090909091,
+      "f1-score": 0.8163265306122449,
+      "support": 22.0
+    },
+    "fight": {
+      "precision": 0.8888888888888888,
+      "recall": 0.6956521739130435,
+      "f1-score": 0.7804878048780488,
+      "support": 23.0
+    },
+    "accuracy": 0.8,
+    "macro avg": {
+      "precision": 0.8148148148148148,
+      "recall": 0.8023715415019763,
+      "f1-score": 0.7984071677451469,
+      "support": 45.0
+    },
+    "weighted avg": {
+      "precision": 0.8164609053497941,
+      "recall": 0.8,
+      "f1-score": 0.7980089596814336,
+      "support": 45.0
+    }
+  },
+  "confusion_matrix_true_rows_pred_columns": [
+    [
+      20,
+      2
+    ],
+    [
+      7,
+      16
+    ]
+  ]
+}

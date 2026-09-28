@@ -1,9 +1,10 @@
 # Dataset Source Inventory (Candidates)
 
-> สถานะปัจจุบัน: รายการด้านล่างเป็นเพียง candidate sources ยังไม่มีแหล่งใดได้รับ
-> การยืนยัน license, version, annotation format หรือ exhaustive-label status
-> จึงยังห้ามนำเข้า training pipeline จนกว่าจะบันทึกข้อมูลใน
-> `configs/datasets.local.yaml` และตั้ง `license_approved: true` โดยผู้ตรวจสอบ
+> ขอบเขตเอกสารนี้: เป็น inventory ของ candidate sources ที่ถูกรวบรวมไว้เดิม
+> ไม่ใช่บัญชีชุดข้อมูลที่นำไปฝึกจริง และไม่ใช่สถานะปัจจุบันของ training pipeline.
+> มี provisional Unified Stage 1 และ SCFD Stage 2 pilot แยกต่างหาก; ข้อจำกัด
+> license/provenance และสถานะล่าสุดระบุใน `project_status.md`. อย่าตีความว่า
+> การอยู่ใน inventory นี้คือการอนุมัติ source หรือ license.
 
 ## Checklist ต่อหนึ่งแหล่งข้อมูล
 

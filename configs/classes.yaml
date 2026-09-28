@@ -16,4 +16,5 @@ derived_events:
 temporal_events:
   fight:
     detector_class: false
-    status: blocked_pending_data_approval
+    status: pilot_trained_evaluated
+    integration_status: not_integrated_with_stage1
