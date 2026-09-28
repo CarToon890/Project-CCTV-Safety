@@ -1,15 +1,13 @@
 # รายงานการประเมินชุดข้อมูลปฐมภูมิ (Primary Source Dataset Evaluation)
 ## โครงการ Project CCTV Safety — Dataset Candidate Evaluation
 
-> **สถานะปัจจุบัน:** ตารางและคะแนนบางส่วนด้านล่างถูกจัดทำภายใต้ detector
-> schema v1 จำนวน 7 คลาสและเก็บไว้เป็นประวัติการตัดสินใจเท่านั้น สัญญาที่ใช้งาน
-> ปัจจุบันคือ [Detector Schema v2 จำนวน 6 Spatial Classes](data_schema_6classes.md);
-> `fight` ย้ายไป Stage 2 และยัง `BLOCKED / PENDING DATA APPROVAL`.
->
-> **ขอบเขตการใช้งานที่เจ้าของโครงการกำหนด (25 ก.ย. 2026):** เพื่อการศึกษาและ
-> วิจัยเท่านั้น ไม่ใช้เชิงพาณิชย์ จึงอนุญาตให้ชุด Non-commercial เข้าสู่รอบ
-> sample audit ได้ แต่ยังต้องปฏิบัติตาม attribution/share-alike, provenance,
-> likeness/privacy และ Human QA ก่อน Training
+> **สถานะปัจจุบัน (2026-09-28):** เอกสารนี้เป็นผลประเมิน candidate ในรอบ
+> audit เดิม ไม่ใช่รายการ dataset ที่ใช้จริงหรือสถานะ pipeline ปัจจุบัน
+> ป้าย HOLD/GO/NOT SELECTED เป็นผล candidate ตามวันตรวจ ไม่ใช่ blocker ของ
+> pilot ที่ทำเสร็จแล้ว Stage 1 ใช้ 6 spatial classes; Stage 1 YOLOv8n/v8s
+> และ Stage 2 SCFD/X3D-S pilots ผ่านการฝึก/ประเมินแล้ว. เจ้าของยอมรับ
+> educational-use risk; ไม่ใช่งานที่กำลังรอ rights clearance. ดูสถานะจริงใน
+> README และบันทึก handoff ใน main worktree.
 
 > **วันที่ประเมิน:** 24 กันยายน 2026  
 > **เป้าหมายเดิมของรายงาน:** ประเมิน Candidate Datasets ทั้งหมด 21 รายการจาก `docs/dataset.md` ตามข้อมูลจากแหล่งปฐมภูมิ โดยผลสำหรับ 6 spatial classes ใช้ประกอบการคัดเลือก Stage 1 ส่วนผล Fight เป็นประวัติและต้องอ่านร่วมกับ [fight_dataset_evaluation.md](fight_dataset_evaluation.md)
@@ -281,22 +279,22 @@
 
 ## ส่วน C: จัดอันดับ Candidate สำหรับ 6 Spatial Classes และ Fight Research เดิม
 
-### 1. หมวด Person & PPE (Classes 0, 1, 2)
-1. **Ultralytics Construction-PPE — SAMPLE AUDITED → HOLD FOR TRAINING**: พบ actor/scene leakage ข้าม split, orphan labels 10 ไฟล์ และ provenance ยังไม่ครบ ดู [รายงาน sample audit](construction_ppe_sample_audit.md)
+### 1. หมวด Person & PPE (Classes 0, 1, 2) — historical candidate ranking
+1. **Ultralytics Construction-PPE:** source audit เดิมพบประเด็น split/orphan-label; ภายหลังมี regroup/remediation และ owner QA ก่อนใช้ใน provisional educational pilot. ดู [รายงาน sample audit](construction_ppe_sample_audit.md)
 2. **SH17 — GO สำหรับ research-only sample audit**: มีข้อมูลจากผู้เขียนชัดกว่า แต่ติด CC BY-NC-SA และข้อกำหนด Pexels
 3. **Beyza / Shlok / Nirav — HOLD**: รูปแบบข้อมูลน่าสนใจ แต่ license authority, provenance หรือ person-label completeness ยังไม่ผ่าน
 
-### 2. หมวด Fall (Class 3)
-ยังไม่มีชุดที่ผ่านสิทธิ์สำหรับ Training แบบไร้เงื่อนไข: **Uttej HOLD** เพราะสิทธิ์ฐานข้อมูลไม่ครอบคลุมภาพต้นฉบับ และ **Simuletic HOLD** เพราะ license ขัดแย้งพร้อมความเสี่ยง provenance; ชุดข้อมูลสำรวจใหม่ **Fall Detection Dataset (State-to-Fall + ADL)** ได้สถานะ **GO สำหรับ sample audit เท่านั้น** ดู [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md)
+### 2. หมวด Fall (Class 3) — historical candidate ranking
+Uttej และ Simuletic ไม่ได้เลือกใช้ใน pilot ปัจจุบัน; ชุด Fall ใน provisional Unified Stage 1 ผ่านการฝึก/ประเมินแล้ว.
 
-### 3. หมวด Fire (Class 4) & Smoke (Class 5)
+### 3. หมวด Fire (Class 4) & Smoke (Class 5) — historical candidate ranking
 ปรับเปลี่ยนจากนโยบาย absolute fire BLOCKED สู่แบบจำลองสถานะอย่างรอบคอบ (Careful Status Model):
 - **D-Fire:** ได้รับสถานะ **CONDITIONAL GO — educational prototype/sample audit only** (มี operative CC0 1.0 license ครอบคลุมชุดข้อมูลและกรอบ Bbox; เข้าสู่การประเมินได้ภายใต้ข้อตกลงโครงการรายวิชามหาวิทยาลัยแบบไม่แสวงหากำไร โดยห้าม commit ข้อมูลดิบเข้า Git, ห้ามเผยแพร่น้ำหนักโมเดลสู่สาธารณะ, อ้างอิงสิทธิ์, เบลอใบหน้าบุคคลในรายงาน, และเปิดเผยข้อจำกัดสิทธิ์ภาพต้นฉบับ; ไม่ใช่การอนุมัติเทรนแบบไร้เงื่อนไขหรือการใช้งานเชิงพาณิชย์)
 - **Boreal Forest Fire (Subset A):** ได้สถานะ **GO สำหรับ sample audit เฉพาะควัน (smoke only)** (CC BY 4.0 โดรนป่าไม้ฟินแลนด์ ไม่มีกรอบ fire)
 - **ชุดข้อมูลที่มีสิทธิ์ไม่ชัดเจนหรือขัดแย้ง:** **Simuletic HOLD/BLOCKED** (license ขัดแย้งกัน), **CQU และ Indoor Fire Smoke HOLD/BLOCKED** (สิทธิ์ภาพต้นฉบับไม่ได้รับการรับรอง), และ **Ironwolf HOLD** (provenance/format ยังไม่ยืนยัน)
 - ดูรายละเอียดใน [fall_fire_replacement_dataset_search.md](fall_fire_replacement_dataset_search.md) และ [stage1_dataset_primary_source_audit.md](stage1_dataset_primary_source_audit.md)
 
-### 4. หมวด Fight (Class 6 ในสถาปัตยกรรมเดิม -> ย้ายไป Stage 2 Temporal Classifier)
+### 4. หมวด Fight (ย้ายไป Stage 2 Temporal Classifier)
 > ⚠️ **หมายเหตุสำคัญและเอกสารอ้างอิงหลัก:** การประเมินและสถานะของชุดข้อมูลในหมวด Fight ได้รับการตรวจสอบและวิจัยเชิงลึกแยกเฉพาะในเอกสาร **[docs/fight_dataset_evaluation.md](fight_dataset_evaluation.md)** และแผนการย้ายระบบใน **[docs/two_stage_architecture_migration.md](two_stage_architecture_migration.md)** โดย **รายละเอียดและสถานะในรายงานดังกล่าวมีอำนาจเหนือข้อความสรุปเดิมในส่วนนี้**
 
 * **สรุปมติและสถานะหมวด Fight ล่าสุด:**
@@ -314,8 +312,8 @@
 
 ## ส่วน D: การจัดกลุ่มเพื่อนำไปใช้งาน (Categorical Recommendation)
 
-### 1. Primary Datasets
-**ยังไม่มีชุดใดได้รับอนุมัติสำหรับ Full Download หรือ Training แบบไร้เงื่อนไข** รายละเอียดหลักฐานปฐมภูมิอยู่ใน [stage1_dataset_primary_source_audit.md](stage1_dataset_primary_source_audit.md)
+### 1. Primary Datasets (historical audit conclusion)
+ผล ณ รอบ audit เดิมคือยังไม่มีชุดใดได้รับอนุมัติสำหรับ Full Download หรือ Training; ต่อมาเจ้าของอนุมัติ provisional educational pilots ซึ่งทำเสร็จแล้ว. รายละเอียด audit อยู่ใน [stage1_dataset_primary_source_audit.md](stage1_dataset_primary_source_audit.md).
 
 ### 2. Sample-audit Candidates
 1. **Ultralytics Construction-PPE:** sample audit เสร็จแล้วและเป็น HOLD จนกว่าจะ regroup split ระดับ scene, แก้ orphan labels และผ่าน provenance/Human QA
@@ -336,9 +334,9 @@
 
 ---
 
-## ส่วน E: รายการ Dataset ที่ควรดาวน์โหลด Sample 50–200 ภาพเพื่อตรวจรอบต่อไป
+## ส่วน E: ข้อเสนอ sample audit จากรอบเดิม (historical; not current tasks)
 
-ยังไม่อนุญาต Full Download ให้เริ่มได้เฉพาะ metadata/file-inventory review และ sample audit ของ:
+ข้อเสนอต่อไปนี้บันทึกก่อน pilot; ไม่ใช่คำสั่งให้ดาวน์โหลดหรือเริ่ม audit เพิ่ม:
 
 1. **Ultralytics Construction-PPE:** ตรวจ sample แล้ว; ห้าม Training ด้วย split เดิมเพราะพบ scene leakage ดู [construction_ppe_sample_audit.md](construction_ppe_sample_audit.md)
 2. **SH17:** อนุญาตให้ตรวจ sample ในขอบเขต research-only; ต้องเก็บ attribution, share-alike, Pexels source records และตรวจ likeness/privacy
@@ -359,7 +357,7 @@
    * **Stage 1 Spatial Detector:** กำหนดเป้าหมายตรวจจับ **6 Spatial Classes** (`0: person`, `1: helmet`, `2: vest`, `3: fall`, `4: fire`, `5: smoke`)
    * **Stage 2 Temporal Fight Detection:** แยกการตรวจจับ `fight` ออกไปเป็นโมดูล Temporal Action Classifier (ByteTrack + Multi-signal Trigger + Video Buffer 1.5–3.0s + X3D/VideoMAE)
    * **สถานะ Dataset:** Simuletic ปิดเป็น NO-GO ถาวร (ห้ามสร้าง labels หรือเทรน, Human QA ยังไม่ได้เริ่ม), TNUE-Fight เป็น optional candidate สำหรับงานวิจัย Stage 2 ในอนาคต (ไม่บล็อก Stage 1)
-   * **สถานะปัจจุบัน:** Migration สู่ Detector Schema v2 จำนวน 6 คลาสและการปรับ Code/Config เสร็จแล้ว แต่ยังไม่ได้ดาวน์โหลด Candidate Dataset หรือเริ่ม Training; Stage 2 ยังคง `BLOCKED / PENDING DATA APPROVAL`
+   * **สถานะปัจจุบัน:** ข้อความนี้เป็น snapshot เดิม; ปัจจุบัน Stage 1 YOLOv8n/v8s และ Stage 2 SCFD/X3D-S pilots ฝึก/ประเมินแล้ว. เหลือ integration และ target-camera evaluation.
 2. **การทำ Exhaustive Annotation สำหรับคลาส Person ในชุด DFire:**
    - ในชุด `DFireDataset` มีภาพบางส่วนที่มีนักผจญเพลิงหรือประชาชนยืนอยู่ หากนำเข้าเทรนโมเดลรวม อาจทำให้โมเดลคิดว่าคนคือ Background (Missing-label penalty) **การใช้ pseudo-labeling เพียงอย่างเดียวไม่สามารถอนุมัติข้อมูลสำหรับฝึกสอนได้** ต้องมีการตรวจสอบและตีกรอบ bounding box โดยมนุษย์ (Human QA) อย่างครบถ้วนทุกกรณี
 3. **การอนุมัติไฟล์คอนฟิก `configs/datasets.local.yaml`:**

@@ -1,0 +1,327 @@
+queue_rank,candidate_id,action,canonical_class,class_name,split,image,old_bbox_norm,new_bbox_norm,reason
+1,CAND_001571,REJECT,1,helmet,train,WEB06284.jpg,"(0.85234012, 0.28073643, 0.05625000, 0.06875969)",None,False positive helmet detection on civilian baseball cap/hair; no safety hardhat/helmet present.
+2,CAND_001604,ADD,1,helmet,train,WEB05963.jpg,"(0.53593750, 0.45000000, 0.03281250, 0.04444444)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+3,CAND_001644,ADD,1,helmet,train,PublicDataset01000.jpg,"(0.16250000, 0.65323529, 0.05040541, 0.06235294)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+4,CAND_001748,ADD,1,helmet,test,WEB11052.jpg,"(0.29199219, 0.54791667, 0.04101562, 0.03333333)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+5,CAND_001769,ADD,1,helmet,val,WEB04118.jpg,"(0.69765625, 0.25208333, 0.04453125, 0.06111111)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+6,CAND_001778,ADD,1,helmet,val,WEB07938.jpg,"(0.18701193, 0.43872587, 0.04432755, 0.07787645)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+7,CAND_001794,ADD,1,helmet,train,WEB07494.jpg,"(0.80547059, 0.51340122, 0.03282353, 0.03788187)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+8,CAND_001795,ADD,1,helmet,val,WEB07945.jpg,"(0.28964632, 0.47528399, 0.04179264, 0.06106713)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+9,CAND_001838,REJECT,1,helmet,test,WEB11131.jpg,"(0.79913542, 0.83594340, 0.24843750, 0.16875000)",None,False positive helmet detection on vehicle light/body reflection; no helmet present.
+10,CAND_001856,REJECT,1,helmet,train,WEB06284.jpg,"(0.48515988, 0.40937984, 0.04845930, 0.05209302)",None,False positive helmet detection on civilian baseball cap/hair; no safety hardhat/helmet present.
+11,CAND_001872,ADD,1,helmet,train,WEB07134.jpg,"(0.73750000, 0.77638889, 0.06484375, 0.11111111)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+12,CAND_001936,ADD,1,helmet,train,WEB04002.jpg,"(0.71405983, 0.42565254, 0.04062271, 0.05313559)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+13,CAND_001937,ADD,1,helmet,train,WEB05962.jpg,"(0.56250000, 0.47777778, 0.03281250, 0.04444444)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+14,CAND_002015,ADJUST_BBOX,1,helmet,val,WEB09160.jpg,"(0.78203076, 0.08979962, 0.36562303, 0.17582061)","(0.78203076, 0.08885496, 0.36562303, 0.17770992)",Firefighter helmet brim in extreme closeup; tightened top edge coordinate to image boundary y=0.0.
+15,CAND_002050,ADD,1,helmet,test,WEB10558.jpg,"(0.09930556, 0.42031250, 0.04305556, 0.02109375)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+16,CAND_002053,ADD,1,helmet,train,WEB04065.jpg,"(0.23828165, 0.65955577, 0.04062016, 0.04799622)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+17,CAND_002066,ADD,1,helmet,train,WEB07274.jpg,"(0.78515504, 0.46254980, 0.02968992, 0.05780876)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+18,CAND_002067,ADD,1,helmet,train,WEB07545.jpg,"(0.16250000, 0.55116317, 0.06094545, 0.09024233)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+19,CAND_002078,ADD,1,helmet,train,WEB04060.jpg,"(0.21503981, 0.67176383, 0.05429936, 0.07333333)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+20,CAND_002170,ADD,1,helmet,train,WEB04066.jpg,"(0.67539267, 0.68996219, 0.03437173, 0.04287335)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+21,CAND_002230,ADD,1,helmet,train,WEB04045.jpg,"(0.18174000, 0.45885333, 0.04472000, 0.04272000)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+22,CAND_002234,ADD,1,helmet,train,WEB08065.jpg,"(0.86171756, 0.48149695, 0.05155725, 0.05419552)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+23,CAND_002236,ADD,1,helmet,val,WEB04118.jpg,"(0.87109375, 0.23680556, 0.04218750, 0.05486111)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+24,CAND_002270,ADD,1,helmet,train,WEB03997.jpg,"(0.56640625, 0.40208333, 0.06718750, 0.08436667)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+25,CAND_002284,ADD,1,helmet,train,WEB08917.jpg,"(0.21719000, 0.29176883, 0.04180000, 0.07183888)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+26,CAND_002303,REJECT,1,helmet,train,WEB07180.jpg,"(0.19091731, 0.13143805, 0.02715762, 0.04013274)",None,False positive helmet detection on civilian baseball cap/hair; no safety hardhat/helmet present.
+27,CAND_002312,ADD,1,helmet,train,PublicDataset00995.jpg,"(0.75546941, 0.39242880, 0.09374473, 0.12685127)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+28,CAND_002316,ADD,1,helmet,train,WEB07855.jpg,"(0.26992187, 0.55894886, 0.02812500, 0.04971591)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+29,CAND_002382,ADD,1,helmet,test,WEB11673.jpg,"(0.32656250, 0.39375000, 0.09166667, 0.06562500)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+30,CAND_002418,ADD,1,helmet,val,WEB03953.jpg,"(0.49257440, 0.58359375, 0.04062500, 0.04921131)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+31,CAND_002435,ADD,1,helmet,val,WEB08872.jpg,"(0.65859500, 0.36536667, 0.03125000, 0.03697333)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+32,CAND_002456,ADD,1,helmet,val,WEB04381.jpg,"(0.73593905, 0.50625207, 0.08359453, 0.06457711)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+33,CAND_002504,ADD,1,helmet,train,WEB07672.jpg,"(0.51328061, 0.47782609, 0.07813265, 0.11789855)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+34,CAND_002514,ADD,1,helmet,train,WEB04065.jpg,"(0.14843669, 0.68013233, 0.03906977, 0.04570888)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+35,CAND_002515,ADD,1,helmet,train,WEB07287.jpg,"(0.12760417, 0.35781250, 0.13020833, 0.10078125)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+36,CAND_002575,ADD,1,helmet,val,WEB04094.jpg,"(0.79140625, 0.27361111, 0.03437500, 0.04305556)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+37,CAND_002602,ADD,1,helmet,train,WEB09036.jpg,"(0.64492187, 0.61111111, 0.02187500, 0.03750000)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+38,CAND_002604,ADD,1,helmet,train,WEB09159.jpg,"(0.04621237, 0.57245257, 0.05746949, 0.06243902)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+39,CAND_002626,ADD,1,helmet,train,WEB07472.jpg,"(0.60351562, 0.61970075, 0.01953125, 0.03491272)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+40,CAND_002627,ADD,1,helmet,train,WEB08546.jpg,"(0.56796957, 0.48845502, 0.03280870, 0.03748370)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+41,CAND_002640,ADD,1,helmet,train,WEB08999.jpg,"(0.33066667, 0.39000000, 0.03554762, 0.06533898)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+42,CAND_002659,ADD,1,helmet,val,WEB04074.jpg,"(0.81074125, 0.51401074, 0.03789134, 0.05725460)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+43,CAND_002676,ADD,1,helmet,train,WEB07675.jpg,"(0.76992445, 0.42449091, 0.03438187, 0.03309091)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+44,CAND_002678,ADD,1,helmet,train,WEB08917.jpg,"(0.16621000, 0.30169002, 0.04550000, 0.07661996)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+45,CAND_002689,ADD,1,helmet,train,WEB07289.jpg,"(0.85833333, 0.46054688, 0.16250000, 0.12578125)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+46,CAND_002707,ADD,1,helmet,test,WEB10623.jpg,"(0.08691406, 0.62145329, 0.03437500, 0.05121107)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+47,CAND_002720,REJECT,1,helmet,train,WEB03730.jpg,"(0.86875000, 0.09468105, 0.07655000, 0.05863039)",None,False positive helmet detection on civilian baseball cap/hair; no safety hardhat/helmet present.
+48,CAND_002721,ADD,1,helmet,train,WEB03924.jpg,"(0.71953125, 0.25937500, 0.03281250, 0.04791667)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+49,CAND_002722,ADD,1,helmet,train,WEB04069.jpg,"(0.14121870, 0.31302083, 0.05195326, 0.07729167)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+50,CAND_002736,ADD,1,helmet,train,WEB07139.jpg,"(0.40390625, 0.31840278, 0.06250000, 0.07986111)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+51,CAND_002748,ADD,1,helmet,val,WEB07339.jpg,"(0.10974249, 0.58644993, 0.03793991, 0.04143043)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+52,CAND_002755,ADD,1,helmet,train,WEB04000.jpg,"(0.78242083, 0.62812222, 0.05547500, 0.04895556)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+53,CAND_002778,ADD,1,helmet,train,WEB04394.jpg,"(0.72266250, 0.50137778, 0.04062500, 0.06248889)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+54,CAND_002782,ADD,1,helmet,train,WEB07476.jpg,"(0.09335706, 0.79215618, 0.05117438, 0.08291375)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+55,CAND_002806,ADD,1,helmet,test,WEB10489.jpg,"(0.35742248, 0.54792751, 0.05156331, 0.06180297)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+56,CAND_002816,ADD,1,helmet,test,WEB10508.jpg,"(0.56093750, 0.44861111, 0.02500000, 0.04027778)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+57,CAND_002822,ADD,1,helmet,train,WEB02902.jpg,"(0.37383750, 0.41648496, 0.04922500, 0.04582707)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+58,CAND_002825,ADD,1,helmet,train,WEB04095.jpg,"(0.93828125, 0.21111111, 0.04218750, 0.05555556)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+59,CAND_002829,ADD,1,helmet,train,WEB07494.jpg,"(0.91093382, 0.51826884, 0.03436765, 0.04109980)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+60,CAND_002830,ADD,1,helmet,val,WEB04118.jpg,"(0.27871094, 0.41944444, 0.03476563, 0.04166667)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+61,CAND_002839,ADD,1,helmet,train,WEB05345.jpg,"(0.22265625, 0.27569444, 0.05193750, 0.07572222)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+62,CAND_002840,REJECT,1,helmet,train,WEB07180.jpg,"(0.64687339, 0.10502212, 0.04062016, 0.05619469)",None,False positive helmet detection on civilian baseball cap/hair; no safety hardhat/helmet present.
+63,CAND_002850,ADD,1,helmet,train,WEB04070.jpg,"(0.57109250, 0.23637329, 0.05703349, 0.08027314)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+64,CAND_002852,ADD,1,helmet,train,WEB07289.jpg,"(0.42864583, 0.45703125, 0.03958333, 0.02656250)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+65,CAND_002856,ADD,1,helmet,val,WEB04118.jpg,"(0.34375000, 0.42083333, 0.04375000, 0.05833333)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+66,CAND_002866,ADD,1,helmet,train,WEB07305.jpg,"(0.35898605, 0.64236349, 0.02968884, 0.03408736)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+67,CAND_002880,ADD,1,helmet,test,WEB11432.jpg,"(0.70625356, 0.43370370, 0.01406458, 0.01712963)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+68,CAND_002887,ADD,1,helmet,train,WEB08808.jpg,"(0.62460996, 0.39086572, 0.02108714, 0.03992933)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+69,CAND_002910,ADD,1,helmet,train,WEB05073.jpg,"(0.77656250, 0.27569444, 0.05000000, 0.07427778)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+70,CAND_002920,ADD,1,helmet,test,WEB10486.jpg,"(0.74921731, 0.35525307, 0.05937385, 0.05986196)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+71,CAND_002923,REJECT,1,helmet,train,WEB06284.jpg,"(0.77969477, 0.24166667, 0.05938953, 0.04736434)",None,False positive helmet detection on civilian baseball cap/hair; no safety hardhat/helmet present.
+72,CAND_002926,ADD,1,helmet,train,WEB08373.jpg,"(0.57734444, 0.46249630, 0.04062222, 0.04167407)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+73,CAND_002935,ADD,1,helmet,test,WEB10944.jpg,"(0.14843874, 0.47165419, 0.04375494, 0.03905689)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+74,CAND_002937,ADD,1,helmet,train,WEB04080.jpg,"(0.80390426, 0.30979266, 0.07187234, 0.08433812)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+75,CAND_002941,ADD,1,helmet,train,WEB09148.jpg,"(0.48866964, 0.44305556, 0.05391071, 0.08055556)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+76,CAND_002950,ADD,1,helmet,test,WEB11375.jpg,"(0.68046818, 0.17632472, 0.09766364, 0.11384491)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+77,CAND_002971,ADD,1,helmet,test,WEB11765.jpg,"(0.50781250, 0.28229167, 0.06640625, 0.15208333)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+78,CAND_002973,ADD,1,helmet,train,WEB04032.jpg,"(0.62695166, 0.40569260, 0.05155774, 0.08113852)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+79,CAND_002986,ADD,1,helmet,train,WEB04069.jpg,"(0.07957429, 0.34662202, 0.08479132, 0.14241071)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+80,CAND_002998,ADD,1,helmet,test,WEB11783.jpg,"(0.86093750, 0.36527778, 0.04687500, 0.06388889)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+81,CAND_003023,ADD,1,helmet,val,WEB07173.jpg,"(0.61836293, 0.26905000, 0.08984462, 0.07821111)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+82,CAND_003039,ADD,1,helmet,train,WEB05510.jpg,"(0.68086290, 0.57612121, 0.03672581, 0.04109091)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+83,CAND_003040,ADD,1,helmet,train,WEB07660.jpg,"(0.49453061, 0.54440217, 0.03281633, 0.04855072)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+84,CAND_003060,ADD,1,helmet,train,WEB04046.jpg,"(0.40312500, 0.28169627, 0.05313000, 0.06452931)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+85,CAND_003061,ADD,1,helmet,train,WEB04317.jpg,"(0.61875000, 0.34114744, 0.04296154, 0.05416667)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+86,CAND_003064,ADD,1,helmet,val,WEB04059.jpg,"(0.78242143, 0.34453065, 0.07422240, 0.11515326)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+87,CAND_003071,ADD,1,helmet,test,WEB11538.jpg,"(0.10329384, 0.80009943, 0.04184834, 0.06741477)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+88,CAND_003081,REJECT,1,helmet,train,WEB08730.jpg,"(0.31630859, 0.44921843, 0.08628906, 0.09688055)",None,False positive helmet detection on civilian baseball cap/hair; no safety hardhat/helmet present.
+89,CAND_003102,REJECT,1,helmet,test,WEB11805.jpg,"(0.62031250, 0.56010638, 0.03593750, 0.05744681)",None,False positive helmet detection on fabric fire-resistant balaclava/hood; no rigid safety helmet.
+90,CAND_003118,ADD,1,helmet,train,WEB04000.jpg,"(0.91406250, 0.65625556, 0.06562500, 0.05833333)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+91,CAND_003127,REJECT,1,helmet,val,WEB07339.jpg,"(0.47265665, 0.51247724, 0.05156223, 0.06391417)",None,False positive helmet detection on fabric fire-resistant balaclava/hood; no rigid safety helmet.
+92,CAND_003139,REJECT,1,helmet,val,WEB07339.jpg,"(0.37695279, 0.44382965, 0.06563090, 0.07574772)",None,False positive helmet detection on fabric fire-resistant balaclava/hood; no rigid safety helmet.
+93,CAND_003159,ESCALATE,1,helmet,test,WEB11783.jpg,"(0.71250000, 0.49722222, 0.02812500, 0.03888889)",None,Heavily blurred distant head in smoke haze (18x14 px); ambiguous whether white safety helmet or civilian cap.
+94,CAND_003176,ADD,1,helmet,train,WEB07291.jpg,"(0.22421875, 0.26631944, 0.04218750, 0.07986111)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+95,CAND_003178,ADD,1,helmet,train,WEB07850.jpg,"(0.16737500, 0.59375000, 0.04218750, 0.06818182)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+96,CAND_003202,ADD,1,helmet,train,WEB07344.jpg,"(0.77584112, 0.87968750, 0.01841121, 0.01562500)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+97,CAND_003259,ADD,1,helmet,train,PublicDataset01000.jpg,"(0.29160811, 0.64754902, 0.04608108, 0.05950980)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+98,CAND_003289,REJECT,1,helmet,train,WEB08006.jpg,"(0.02235000, 0.58697329, 0.04470000, 0.15299703)",None,False positive helmet detection on civilian baseball cap/hair; no safety hardhat/helmet present.
+99,CAND_003296,ADD,1,helmet,train,WEB03930.jpg,"(0.18417969, 0.33888889, 0.02382812, 0.03472222)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+100,CAND_003310,REJECT,1,helmet,train,WEB07261.jpg,"(0.71953214, 0.52743655, 0.09843571, 0.08883249)",None,False positive helmet detection on civilian baseball cap/hair; no safety hardhat/helmet present.
+101,CAND_003311,ADD,1,helmet,train,WEB07673.jpg,"(0.72226531, 0.37102355, 0.05077551, 0.10817029)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+102,CAND_003318,ADD,1,helmet,train,WEB01047.jpg,"(0.49843750, 0.56979167, 0.02187500, 0.03402778)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+103,CAND_003332,ADD,1,helmet,train,WEB07562.jpg,"(0.67187768, 0.66225329, 0.02656652, 0.03592105)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+104,CAND_003353,ADD,1,helmet,train,WEB09097.jpg,"(0.18467302, 0.87174584, 0.02675749, 0.04358670)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+105,CAND_003364,ADD,1,helmet,test,WEB11255.jpg,"(0.72152593, 0.42812500, 0.09306667, 0.05311667)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+106,CAND_003365,ADD,1,helmet,test,WEB11377.jpg,"(0.47656481, 0.27395062, 0.06875926, 0.06770370)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+107,CAND_003366,ADD,1,helmet,train,PublicDataset00999.jpg,"(0.57030833, 0.76107221, 0.03125000, 0.04411379)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+108,CAND_003373,ADD,1,helmet,train,WEB09098.jpg,"(0.28203187, 0.17258725, 0.14960956, 0.16216995)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+109,CAND_003384,ADD,1,helmet,train,PublicDataset00996.jpg,"(0.69296823, 0.38124691, 0.04687291, 0.06229630)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+110,CAND_003388,ADD,1,helmet,train,WEB07252.jpg,"(0.32929583, 0.59077150, 0.03867500, 0.05631331)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+111,CAND_003391,ADD,1,helmet,train,WEB09035.jpg,"(0.55000000, 0.60277778, 0.02343750, 0.04027778)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+112,CAND_003397,REJECT,1,helmet,test,WEB10690.jpg,"(0.91406250, 0.25138889, 0.16562500, 0.22500000)",None,Oversized false positive detection on non-helmet background structure.
+113,CAND_003401,ADD,1,helmet,train,WEB04194.jpg,"(0.24570388, 0.82784146, 0.04140777, 0.06124390)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+114,CAND_003407,ADD,1,helmet,train,WEB09143.jpg,"(0.13007500, 0.61149936, 0.03125000, 0.03890724)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+115,CAND_003416,ADD,1,helmet,train,WEB07855.jpg,"(0.05577344, 0.51278409, 0.03610937, 0.04261364)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+116,CAND_003424,ADD,1,helmet,test,WEB11005.jpg,"(0.36093750, 0.11718750, 0.09687500, 0.08229167)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+117,CAND_003427,ADD,1,helmet,train,WEB03816.jpg,"(0.50000000, 0.06527778, 0.04843750, 0.08194444)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+118,CAND_003428,ADD,1,helmet,train,WEB04080.jpg,"(0.33242021, 0.23775917, 0.07264894, 0.07261563)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+119,CAND_003432,ADD,1,helmet,train,WEB09143.jpg,"(0.30976429, 0.60733164, 0.03320000, 0.04170267)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+120,CAND_003442,ADD,1,helmet,test,WEB11641.jpg,"(0.82675781, 0.24027778, 0.12773438, 0.15488889)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+121,CAND_003445,REJECT,1,helmet,train,WEB06789.jpg,"(0.84055208, 0.46757665, 0.31468750, 0.20234670)",None,False positive detection on large curved motorcycle vehicle structure; no safety helmet.
+122,CAND_003456,ADD,1,helmet,test,WEB10621.jpg,"(0.47890537, 0.31317987, 0.03593424, 0.04119914)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+123,CAND_003489,ADD,1,helmet,test,WEB11053.jpg,"(0.68007812, 0.42135417, 0.02656250, 0.03125000)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+124,CAND_003490,ESCALATE,1,helmet,test,WEB11783.jpg,"(0.56328125, 0.50208333, 0.02578125, 0.03611111)",None,Heavily pixelated head in smoke haze (16x13 px); ambiguous whether safety headgear or bare head/fabric cap.
+125,CAND_003493,ADD,1,helmet,train,WEB03810.jpg,"(0.42851563, 0.16805556, 0.04609375, 0.07083333)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+126,CAND_003531,ADD,1,helmet,train,WEB07660.jpg,"(0.19726531, 0.79614130, 0.04648980, 0.06934783)",None,Genuine safety hardhat/firefighter helmet on personnel; tight usable bounding box.
+127,CAND_001572,REJECT,0,person,train,WEB07584.jpg,"(0.42656442, 0.52575980, 0.82656442, 0.92602941)",None,False positive person detection on stone sculpture/statue; non-human monument object.
+128,CAND_001584,ADD,0,person,val,WEB03334.jpg,"(0.26406493, 0.71578082, 0.02656316, 0.13649315)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+129,CAND_001588,ADD,0,person,train,WEB07835.jpg,"(0.60820000, 0.63263333, 0.05000000, 0.19584444)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+130,CAND_001586,ADD,0,person,test,WEB11700.jpg,"(0.37539106, 0.74442280, 0.05078212, 0.25144300)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+131,CAND_001596,ADD,0,person,train,WEB09073.jpg,"(0.39746424, 0.80688564, 0.03555267, 0.17542579)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+132,CAND_001611,REJECT,0,person,train,WEB06789.jpg,"(0.05313542, 0.67226415, 0.10352083, 0.46172170)",None,Unusable extreme frame edge truncation (aspect=7.88) showing only marginal body sliver.
+133,CAND_001614,ADD,0,person,train,WEB08422.jpg,"(0.95781250, 0.69652778, 0.08437500, 0.58472222)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+134,CAND_001626,ADD,0,person,test,WEB10081.jpg,"(0.98359576, 0.94018405, 0.03280847, 0.11711656)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+135,CAND_001667,ADD,0,person,train,WEB03946.jpg,"(0.81328420, 0.67561458, 0.37187500, 0.48306250)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+136,CAND_001681,ADD,0,person,train,WEB02150.jpg,"(0.25527477, 0.67734708, 0.06523730, 0.37770982)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+137,CAND_001682,ADD,0,person,train,WEB03193.jpg,"(0.10387985, 0.84378089, 0.05356696, 0.20258649)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+138,CAND_001702,ADD,0,person,train,WEB07973.jpg,"(0.32343750, 0.44230174, 0.08360000, 0.25176015)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+139,CAND_001706,ADD,0,person,val,WEB07857.jpg,"(0.97031250, 0.60085227, 0.05781250, 0.22727273)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+140,CAND_001724,ADD,0,person,test,WEB11538.jpg,"(0.82793049, 0.90336648, 0.09102686, 0.18826705)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+141,CAND_001731,ADD,0,person,train,WEB06798.jpg,"(0.92681250, 0.65078420, 0.14354167, 0.30468160)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+142,CAND_001730,ADD,0,person,train,WEB06286.jpg,"(0.18622656, 0.89583333, 0.06582812, 0.15833333)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+143,CAND_001733,REJECT,0,person,train,WEB08196.jpg,"(0.77890625, 0.94553571, 0.08437500, 0.10535714)",None,Unusable extreme frame edge truncation (aspect=0.55) showing only marginal body sliver.
+144,CAND_001752,ADD,0,person,train,WEB06781.jpg,"(0.96201042, 0.62577830, 0.07177083, 0.20625000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+145,CAND_001749,ADD,0,person,train,WEB02258.jpg,"(0.26132743, 0.46347345, 0.02460177, 0.13243363)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+146,CAND_001762,ADD,0,person,train,WEB09035.jpg,"(0.55351562, 0.70138889, 0.05000000, 0.24722222)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+147,CAND_001772,ADD,0,person,train,PublicDataset00904.jpg,"(0.42656250, 0.82578125, 0.03281250, 0.06875000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+148,CAND_001783,ADD,0,person,test,WEB11237.jpg,"(0.97109375, 0.49444444, 0.05625000, 0.21805556)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+149,CAND_001802,ADD,0,person,val,WEB08726.jpg,"(0.70172500, 0.79452778, 0.06465000, 0.07500000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+150,CAND_001810,REJECT,0,person,test,WEB10682.jpg,"(0.98594004, 0.75349278, 0.02811992, 0.30250903)",None,Unusable extreme frame edge truncation (aspect=6.06) showing only marginal body sliver.
+151,CAND_001822,ADD,0,person,train,WEB03714.jpg,"(0.32617612, 0.86941589, 0.07421986, 0.25635514)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+152,CAND_001830,ADD,0,person,train,WEB08695.jpg,"(0.15653906, 0.86647727, 0.04239062, 0.12784091)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+153,CAND_001829,ADD,0,person,train,WEB07470.jpg,"(0.38515421, 0.88668578, 0.14219454, 0.22204128)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+154,CAND_001832,ADD,0,person,train,AoF02445.jpg,"(0.42265625, 0.19027778, 0.11875000, 0.37430556)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+155,CAND_001835,ADD,0,person,val,WEB03041.jpg,"(0.67343750, 0.71527778, 0.43125000, 0.55555556)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+156,CAND_001841,ADD,0,person,train,WEB04949.jpg,"(0.81171875, 0.57500000, 0.23281250, 0.71944444)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+157,CAND_001868,ADD,0,person,train,WEB06264.jpg,"(0.68594000, 0.86034636, 0.07656000, 0.27753108)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+158,CAND_001865,ADD,0,person,train,WEB03714.jpg,"(0.58203310, 0.95588785, 0.03905437, 0.08649533)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+159,CAND_001873,ADD,0,person,train,WEB07470.jpg,"(0.47460854, 0.90178899, 0.04141163, 0.19637615)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+160,CAND_001882,ADD,0,person,train,WEB07322.jpg,"(0.07917305, 0.75000000, 0.15280245, 0.39688200)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+161,CAND_001889,ADD,0,person,train,WEB08312.jpg,"(0.47343750, 0.65694444, 0.03437500, 0.28888889)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+162,CAND_001899,ADD,0,person,val,WEB06223.jpg,"(0.22656293, 0.96688192, 0.03047026, 0.06623616)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+163,CAND_001913,ADD,0,person,train,WEB05136.jpg,"(0.39765625, 0.65486111, 0.06406250, 0.27500000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+164,CAND_001927,ADD,0,person,train,WEB09213.jpg,"(0.54531349, 0.82201183, 0.02969048, 0.15289941)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+165,CAND_001942,ADD,0,person,test,WEB11237.jpg,"(0.41796875, 0.40000000, 0.03203125, 0.15277778)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+166,CAND_001968,ADD,0,person,train,WEB08197.jpg,"(0.83125000, 0.90972222, 0.03437500, 0.17777778)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+167,CAND_001969,ADD,0,person,train,WEB08897.jpg,"(0.60195312, 0.92638889, 0.03671875, 0.14444444)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+168,CAND_001987,ADD,0,person,train,WEB08713.jpg,"(0.62694969, 0.92956944, 0.09610063, 0.13525000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+169,CAND_002036,ADD,0,person,train,AoF02413.jpg,"(0.42070313, 0.18229167, 0.12187500, 0.35763889)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+170,CAND_002042,ADD,0,person,train,WEB07208.jpg,"(0.93828125, 0.94444444, 0.09375000, 0.10000000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+171,CAND_002044,ADD,0,person,test,WEB11113.jpg,"(0.17099219, 0.71718750, 0.06348437, 0.28229167)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+172,CAND_002054,ADD,0,person,train,WEB05408.jpg,"(0.78280833, 0.39178889, 0.07031667, 0.24348889)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+173,CAND_002058,REJECT,0,person,val,WEB07295.jpg,"(0.65039516, 0.51489971, 0.05859677, 0.16378223)",None,False positive person detection on flame region (IoU=0.74 with GT fire).
+174,CAND_002052,ADD,0,person,test,WEB11558.jpg,"(0.90390625, 0.42777778, 0.08906250, 0.19166667)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+175,CAND_002083,ADD,0,person,val,WEB07957.jpg,"(0.48854005, 0.63281008, 0.03124031, 0.06718992)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+176,CAND_002091,ADD,0,person,train,WEB07602.jpg,"(0.95000000, 0.94421788, 0.09063963, 0.10910615)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+177,CAND_002099,ADD,0,person,train,WEB07226.jpg,"(0.03153646, 0.91640625, 0.06269097, 0.16562500)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+178,CAND_002097,ADD,0,person,train,WEB03714.jpg,"(0.92812648, 0.91617991, 0.04062648, 0.16764019)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+179,CAND_002116,ADD,0,person,train,WEB09384.jpg,"(0.47031250, 0.73153409, 0.05000000, 0.25000000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+180,CAND_002131,REJECT,0,person,test,WEB11729.jpg,"(0.04900524, 0.81719085, 0.09382199, 0.31093476)",None,Unusable extreme frame edge truncation (aspect=5.94) showing only marginal body sliver.
+181,CAND_002143,ADD,0,person,val,WEB07664.jpg,"(0.72031633, 0.72817935, 0.02500000, 0.09987319)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+182,CAND_002148,ADD,0,person,val,WEB03818.jpg,"(0.66093750, 0.91111111, 0.17734375, 0.16944444)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+183,CAND_002177,ADD,0,person,train,WEB03998.jpg,"(0.68671580, 0.78809375, 0.30937500, 0.40439583)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+184,CAND_002187,ADD,0,person,train,WEB07202.jpg,"(0.51250000, 0.44583333, 0.02968750, 0.14722222)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+185,CAND_002192,ADD,0,person,train,WEB07213.jpg,"(0.36523438, 0.43472222, 0.02890625, 0.13611111)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+186,CAND_002200,ADD,0,person,train,WEB09759.jpg,"(0.15156250, 0.68750000, 0.02693750, 0.13888889)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+187,CAND_002229,ADD,0,person,train,WEB09883.jpg,"(0.68984375, 0.62777778, 0.03906250, 0.21250000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+188,CAND_002231,ADD,0,person,train,WEB04342.jpg,"(0.48945252, 0.64270672, 0.03047481, 0.11042636)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+189,CAND_002244,ADD,0,person,val,WEB03827.jpg,"(0.02595313, 0.83055556, 0.05151562, 0.33333333)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+190,CAND_002249,REJECT,0,person,train,WEB02610.jpg,"(0.15703523, 0.96607612, 0.23360078, 0.06706037)",None,Unusable extreme frame edge truncation (aspect=0.21) showing only marginal body sliver.
+191,CAND_002271,ADD,0,person,train,WEB04810.jpg,"(0.63593750, 0.61388889, 0.04531762, 0.21251366)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+192,CAND_002268,ADD,0,person,test,WEB10223.jpg,"(0.25585990, 0.76969388, 0.02656039, 0.07661808)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+193,CAND_002281,ADD,0,person,train,WEB03948.jpg,"(0.76328125, 0.46944444, 0.06718750, 0.27500000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+194,CAND_002296,ADD,0,person,train,WEB06481.jpg,"(0.63046875, 0.37667411, 0.02578750, 0.11160714)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+195,CAND_002294,ADD,0,person,train,WEB02755.jpg,"(0.36172154, 0.97208092, 0.03125118, 0.05520231)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+196,CAND_002299,ADD,0,person,train,WEB02755.jpg,"(0.62656162, 0.97044075, 0.02968015, 0.05911850)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+197,CAND_002305,ADD,0,person,train,WEB04812.jpg,"(0.57382937, 0.63551416, 0.05859127, 0.17839046)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+198,CAND_002325,REJECT,0,person,val,WEB06078.jpg,"(0.49753333, 0.76093617, 0.99020000, 0.38280851)",None,False positive person detection on volcano eruption smoke plume; landscape scene.
+199,CAND_002326,ADD,0,person,val,WEB07957.jpg,"(0.41301680, 0.73828004, 0.03125323, 0.08593992)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+200,CAND_002348,ADD,0,person,test,WEB11553.jpg,"(0.91015625, 0.96527778, 0.04218750, 0.06666667)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+201,CAND_002362,REJECT,0,person,train,WEB07444.jpg,"(0.62177640, 0.38046512, 0.75488199, 0.74387597)",None,False positive person detection on dark billowing smoke plume on boat (IoU=0.94 with GT smoke).
+202,CAND_002398,ADD,0,person,train,WEB06619.jpg,"(0.60781250, 0.95667614, 0.02187500, 0.08664773)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+203,CAND_002409,ADD,0,person,train,WEB08808.jpg,"(0.54101660, 0.50729682, 0.03124481, 0.20459364)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+204,CAND_002417,ADD,0,person,train,WEB07972.jpg,"(0.65859585, 0.91605206, 0.12891331, 0.15822126)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+205,CAND_002423,ADD,0,person,train,WEB05428.jpg,"(0.49005051, 0.55702778, 0.11080808, 0.13750000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+206,CAND_002445,REJECT,0,person,train,WEB07657.jpg,"(0.64257653, 0.66020833, 0.70390816, 0.64911232)",None,Misaligned hybrid box covering mountain smoke and cutting off person head/body.
+207,CAND_002462,ADD,0,person,train,WEB05464.jpg,"(0.79218023, 0.49741935, 0.41406977, 0.96103226)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+208,CAND_002465,ADD,0,person,train,WEB08450.jpg,"(0.81718750, 0.51944444, 0.04531250, 0.33333333)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+209,CAND_002473,ADD,0,person,train,WEB08058.jpg,"(0.48320313, 0.57712610, 0.02890625, 0.09853372)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+210,CAND_002495,ADD,0,person,val,WEB03939.jpg,"(0.33632812, 0.43402778, 0.03828125, 0.17361111)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+211,CAND_002497,ADD,0,person,train,AoF02461.jpg,"(0.42773438, 0.20000000, 0.11015625, 0.39166667)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+212,CAND_002513,ADD,0,person,test,WEB11452.jpg,"(0.98280997, 0.90046112, 0.03438005, 0.16352622)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+213,CAND_002512,ADD,0,person,test,WEB09849.jpg,"(0.29375000, 0.68194444, 0.08006250, 0.25833333)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+214,CAND_002520,ADD,0,person,train,WEB07191.jpg,"(0.50507813, 0.45625000, 0.02734375, 0.12222222)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+215,CAND_002530,ADD,0,person,val,WEB07459.jpg,"(0.93203070, 0.86744780, 0.13438017, 0.25331787)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+216,CAND_002541,REJECT,0,person,train,WEB09356.jpg,"(0.12802344, 0.97500000, 0.04648438, 0.04861111)",None,Unusable extreme frame edge truncation (aspect=0.59) showing only marginal body sliver.
+217,CAND_002549,ADD,0,person,val,WEB03130.jpg,"(0.15527344, 0.34652778, 0.24257813, 0.34444444)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+218,CAND_002553,ADD,0,person,train,WEB05072.jpg,"(0.94218750, 0.47152778, 0.11562500, 0.30555556)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+219,CAND_002555,ADD,0,person,train,WEB05411.jpg,"(0.04687500, 0.69375000, 0.02275000, 0.10972222)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+220,CAND_002573,ADD,0,person,test,WEB10213.jpg,"(0.71171920, 0.46278642, 0.04374403, 0.12727016)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+221,CAND_002579,ADD,0,person,train,WEB07322.jpg,"(0.13126340, 0.79140827, 0.15278714, 0.41718346)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+222,CAND_002577,ADD,0,person,test,WEB11556.jpg,"(0.16796875, 0.47638889, 0.03750000, 0.08611111)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+223,CAND_002584,ADD,0,person,train,WEB06500.jpg,"(0.61171875, 0.44983184, 0.02266250, 0.08549327)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+224,CAND_002582,REJECT,0,person,train,WEB04774.jpg,"(0.34296875, 0.33806818, 0.68203125, 0.65340909)",None,Unusable extreme frame edge truncation (aspect=0.53) showing only marginal body sliver.
+225,CAND_002596,ADD,0,person,train,WEB03878.jpg,"(0.72031250, 0.84027778, 0.07968750, 0.25277778)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+226,CAND_002603,REJECT,0,person,train,WEB09080.jpg,"(0.98593750, 0.75416667, 0.02812500, 0.35000000)",None,Unusable extreme frame edge truncation (aspect=9.33) showing only marginal body sliver.
+227,CAND_002611,ADD,0,person,train,WEB08901.jpg,"(0.39570312, 0.92916667, 0.10703125, 0.13888889)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+228,CAND_002606,ADD,0,person,test,WEB10047.jpg,"(0.29151188, 0.91563018, 0.04272138, 0.16406302)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+229,CAND_002621,ADD,0,person,train,WEB08709.jpg,"(0.73202830, 0.75359722, 0.02968553, 0.16425000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+230,CAND_002617,ADD,0,person,test,WEB09528.jpg,"(0.17333594, 0.95555556, 0.06660937, 0.08333333)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+231,CAND_002633,ADD,0,person,train,WEB08552.jpg,"(0.19883130, 0.89828755, 0.07148374, 0.19712454)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+232,CAND_002632,ADD,0,person,train,WEB04419.jpg,"(0.03662109, 0.84305556, 0.07246094, 0.28888889)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+233,CAND_002656,ADD,0,person,train,WEB04227.jpg,"(0.15458667, 0.70082516, 0.29589333, 0.57446078)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+234,CAND_002655,REJECT,0,person,train,WEB03965.jpg,"(0.82011792, 0.70183333, 0.35665094, 0.57279167)",None,Redundant multi-person group box spanning across two partial individuals.
+235,CAND_002670,REJECT,0,person,train,WEB09163.jpg,"(0.26660305, 0.65137975, 0.30351145, 0.67779747)",None,False positive person detection on dark billowing smoke plume (IoU=0.71 with GT smoke).
+236,CAND_002681,ADD,0,person,train,AoF04553.jpg,"(0.69609358, 0.33046214, 0.11093583, 0.26315145)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+237,CAND_002700,ADD,0,person,train,WEB07458.jpg,"(0.93750297, 0.88629977, 0.12499405, 0.21540984)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+238,CAND_002723,ADD,0,person,train,WEB09249.jpg,"(0.22968750, 0.66275660, 0.03046875, 0.09618768)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+239,CAND_002728,ADD,0,person,val,WEB07131.jpg,"(0.15605625, 0.42482719, 0.02891250, 0.10513825)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+240,CAND_002738,ADD,0,person,train,WEB07220.jpg,"(0.72578125, 0.50833333, 0.03437500, 0.18333333)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+241,CAND_002731,REJECT,0,person,test,WEB11460.jpg,"(0.45781395, 0.49760417, 0.54767442, 0.96579167)",None,False positive person detection on dark billowing smoke plume (IoU=0.84 with GT smoke).
+242,CAND_002759,ADD,0,person,train,WEB03933.jpg,"(0.19062500, 0.52708333, 0.05078125, 0.21527778)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+243,CAND_002769,ADD,0,person,train,WEB08902.jpg,"(0.35546875, 0.64305556, 0.02578125, 0.27222222)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+244,CAND_002780,ADD,0,person,train,WEB07149.jpg,"(0.40390625, 0.74027778, 0.04218750, 0.14722222)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+245,CAND_002779,ADD,0,person,train,WEB06590.jpg,"(0.49896825, 0.89531746, 0.03333333, 0.06563492)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+246,CAND_002776,ADD,0,person,train,WEB03527.jpg,"(0.80019065, 0.69348080, 0.02773678, 0.09754591)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+247,CAND_002783,REJECT,0,person,train,WEB08426.jpg,"(0.98203125, 0.81527778, 0.03593750, 0.35555556)",None,Unusable extreme frame edge truncation (aspect=5.57) showing only marginal body sliver.
+248,CAND_002787,ADD,0,person,test,WEB11312.jpg,"(0.03398469, 0.95218297, 0.06796939, 0.09153986)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+249,CAND_002795,ADD,0,person,train,WEB07211.jpg,"(0.77187500, 0.50416667, 0.06250000, 0.23611111)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+250,CAND_002796,ADD,0,person,val,WEB04709.jpg,"(0.58671875, 0.79375000, 0.05781250, 0.16805556)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+251,CAND_002803,ADD,0,person,train,WEB05949.jpg,"(0.29961458, 0.39583333, 0.04960417, 0.05311111)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+252,CAND_002798,ADD,0,person,train,WEB03178.jpg,"(0.80702964, 0.93860129, 0.08905928, 0.12279743)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+253,CAND_002799,ADD,0,person,train,WEB03376.jpg,"(0.83828159, 0.66899866, 0.01093141, 0.05525538)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+254,CAND_002827,REJECT,0,person,train,WEB05660.jpg,"(0.12048177, 0.60833333, 0.08832813, 0.46388889)",None,False positive person detection on flame region (IoU=0.84 with GT fire).
+255,CAND_002838,ADD,0,person,train,WEB03457.jpg,"(0.25078414, 0.56307143, 0.05781498, 0.05320000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+256,CAND_002837,ADD,0,person,train,WEB02755.jpg,"(0.85468485, 0.96848266, 0.02812794, 0.06239884)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+257,CAND_002844,ADD,0,person,train,WEB06286.jpg,"(0.20839844, 0.93958333, 0.07773437, 0.12083333)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+258,CAND_002871,REJECT,0,person,train,WEB06639.jpg,"(0.08417969, 0.35972222, 0.01484375, 0.06944444)",None,False positive person detection on dark billowing smoke plume (IoU=0.49 with GT smoke).
+259,CAND_002894,ADD,0,person,train,WEB07935.jpg,"(0.06645312, 0.60529891, 0.13253125, 0.48097826)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+260,CAND_002891,ADD,0,person,train,WEB02918.jpg,"(0.32070275, 0.85429487, 0.02148148, 0.07733618)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+261,CAND_002895,ADD,0,person,train,WEB08753.jpg,"(0.69071078, 0.58437500, 0.03583333, 0.05625000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+262,CAND_002917,ADD,0,person,train,WEB04609.jpg,"(0.98750000, 0.52638889, 0.02187500, 0.20972222)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+263,CAND_002929,REJECT,0,person,train,WEB02755.jpg,"(0.89218721, 0.97088150, 0.01874882, 0.05760116)",None,"Unusable extreme frame edge truncation (aspect=2.00, w=0.019) showing marginal crowd edge sliver."
+264,CAND_002938,ADD,0,person,train,WEB04252.jpg,"(0.74218814, 0.54960890, 0.02343558, 0.04452454)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+265,CAND_002945,ADD,0,person,train,WEB04922.jpg,"(0.64675743, 0.55468056, 0.25480198, 0.16875000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+266,CAND_002944,REJECT,0,person,train,WEB04022.jpg,"(0.00709845, 0.60642117, 0.01414508, 0.10722670)",None,Unusable extreme frame edge truncation (aspect=5.69) showing only marginal body sliver.
+267,CAND_002949,ADD,0,person,test,WEB11039.jpg,"(0.83437500, 0.91316024, 0.05000000, 0.16830861)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+268,CAND_002960,ADD,0,person,train,WEB04437.jpg,"(0.60937500, 0.49033613, 0.12031250, 0.15882353)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+269,CAND_002968,ADD,0,person,val,PublicDataset00923.jpg,"(0.29297500, 0.66955910, 0.02500000, 0.12429644)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+270,CAND_002982,REJECT,0,person,train,WEB03702.jpg,"(0.67578512, 0.36663130, 0.64531287, 0.69198939)",None,False positive person detection on dark billowing smoke plume (IoU=0.82 with GT smoke).
+271,CAND_002995,ADD,0,person,train,WEB09123.jpg,"(0.85781008, 0.69583333, 0.02812016, 0.11042636)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+272,CAND_002994,ADD,0,person,train,WEB08321.jpg,"(0.11357031, 0.58194444, 0.22635938, 0.27916667)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+273,CAND_003004,ADD,0,person,train,WEB08589.jpg,"(0.65234375, 0.76111111, 0.17421875, 0.45555556)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+274,CAND_003005,REJECT,0,person,train,WEB08793.jpg,"(0.34140625, 0.48888889, 0.26484375, 0.84166667)",None,False positive person detection on dark billowing smoke plume (IoU=0.50 with GT smoke).
+275,CAND_003002,ADD,0,person,train,WEB03967.jpg,"(0.97656008, 0.82706540, 0.04687984, 0.33027539)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+276,CAND_003037,REJECT,0,person,val,WEB08973.jpg,"(0.31014851, 0.60068056, 0.61613861, 0.79552778)",None,False positive person detection on dark billowing smoke plume (IoU=0.86 with GT smoke).
+277,CAND_003066,ADD,0,person,test,WEB11434.jpg,"(0.17395556, 0.68203125, 0.34653333, 0.53906250)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+278,CAND_003079,ADD,0,person,train,WEB08381.jpg,"(0.96640000, 0.81212500, 0.06720000, 0.36095000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+279,CAND_003074,ADD,0,person,train,WEB02755.jpg,"(0.03200847, 0.95063584, 0.02866416, 0.09872832)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+280,CAND_003073,ADD,0,person,train,WEB02244.jpg,"(0.55703237, 0.47574586, 0.10471223, 0.31558011)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+281,CAND_003085,REJECT,0,person,train,WEB03362.jpg,"(0.31621245, 0.97265773, 0.09671674, 0.05468454)",None,Unusable extreme frame edge truncation (aspect=0.33) showing only face/scalp sliver at boundary.
+282,CAND_003093,ADD,0,person,train,WEB06028.jpg,"(0.13212934, 0.85767368, 0.12851735, 0.20124211)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+283,CAND_003091,ADD,0,person,train,WEB02877.jpg,"(0.30546798, 0.78753691, 0.01484870, 0.04022819)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+284,CAND_003095,REJECT,0,person,train,WEB08982.jpg,"(0.77554455, 0.25877778, 0.44554455, 0.51211111)",None,False positive person detection on dark billowing smoke plume (IoU=0.64 with GT smoke).
+285,CAND_003106,REJECT,0,person,train,WEB08931.jpg,"(0.72680693, 0.23788889, 0.54024752, 0.40388889)",None,False positive person detection on dark billowing smoke plume (IoU=0.50 with GT smoke).
+286,CAND_003137,ADD,0,person,train,WEB07943.jpg,"(0.33066500, 0.54062667, 0.03945000, 0.15000000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+287,CAND_003140,ADD,0,person,train,WEB03965.jpg,"(0.76953420, 0.27707292, 0.45937500, 0.52931250)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+288,CAND_003163,ADD,0,person,train,WEB07602.jpg,"(0.33632605, 0.93022346, 0.08594384, 0.13290503)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+289,CAND_003187,ADD,0,person,train,WEB02755.jpg,"(0.30468485, 0.97567919, 0.02968956, 0.04800578)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+290,CAND_003198,ADD,0,person,test,WEB10431.jpg,"(0.24609209, 0.43088372, 0.02734357, 0.06772093)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+291,CAND_003208,ADD,0,person,test,WEB11392.jpg,"(0.82891026, 0.94980769, 0.10469231, 0.09961538)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+292,CAND_003221,ADD,0,person,train,WEB05538.jpg,"(0.51250000, 0.66666667, 0.04218750, 0.25833333)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+293,CAND_003216,REJECT,0,person,train,PublicDataset00978.jpg,"(0.64609783, 0.55365217, 0.03202174, 0.03750725)",None,False positive person detection on ground rock/rubble debris in snow scene.
+294,CAND_003233,ADD,0,person,train,WEB03470.jpg,"(0.92968724, 0.96402985, 0.04375309, 0.06824966)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+295,CAND_003234,ADD,0,person,train,WEB07165.jpg,"(0.07061667, 0.90976331, 0.14043333, 0.18023669)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+296,CAND_003269,ADD,0,person,val,WEB09331.jpg,"(0.47812500, 0.55833333, 0.13437500, 0.31111111)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+297,CAND_003290,ADD,0,person,val,WEB07997.jpg,"(0.98906250, 0.54114583, 0.02187500, 0.12812500)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+298,CAND_003292,REJECT,0,person,train,WEB03998.jpg,"(0.75234670, 0.29778125, 0.49530660, 0.44927083)",None,Unusable extreme frame edge truncation (aspect=0.51) showing only marginal body sliver.
+299,CAND_003303,ADD,0,person,train,WEB08985.jpg,"(0.83672000, 0.73301205, 0.01406000, 0.05882530)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+300,CAND_003301,ADD,0,person,train,WEB03193.jpg,"(0.34277847, 0.89283361, 0.06132666, 0.21433278)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+301,CAND_003309,ADD,0,person,train,WEB06028.jpg,"(0.12187697, 0.88217895, 0.24296530, 0.21896842)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+302,CAND_003307,ADD,0,person,train,WEB01618.jpg,"(0.89531250, 0.48888889, 0.03281250, 0.11666667)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+303,CAND_003319,ADD,0,person,train,WEB02516.jpg,"(0.35195312, 0.62812500, 0.01601042, 0.06666667)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+304,CAND_003331,REJECT,0,person,train,WEB04247.jpg,"(0.03955250, 0.78476744, 0.07425129, 0.42734496)",None,Unusable extreme frame edge truncation (aspect=10.22) showing only marginal arm/back sliver.
+305,CAND_003335,REJECT,0,person,val,WEB03980.jpg,"(0.93906840, 0.48014583, 0.11875000, 0.85883333)",None,Unusable vertical edge strip (aspect=4.09) showing disconnected hands with red nail polish.
+306,CAND_003347,ADD,0,person,val,WEB08377.jpg,"(0.72187500, 0.52508143, 0.05156250, 0.18241042)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+307,CAND_003369,ADD,0,person,train,WEB06528.jpg,"(0.22500000, 0.59809955, 0.02266553, 0.08746606)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+308,CAND_003363,REJECT,0,person,test,WEB10519.jpg,"(0.71875000, 0.51250000, 0.10781250, 0.26666667)",None,False positive person detection on torch/burner flame region (IoU=0.70 with GT fire).
+309,CAND_003376,ADD,0,person,train,WEB01083.jpg,"(0.83906250, 0.69861111, 0.02031250, 0.12500000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+310,CAND_003379,ADD,0,person,train,WEB08641.jpg,"(0.21875000, 0.69305556, 0.05390625, 0.27777778)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+311,CAND_003375,ADD,0,person,test,WEB11392.jpg,"(0.78671795, 0.90703846, 0.02030769, 0.15469231)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+312,CAND_003403,ADD,0,person,train,WEB07209.jpg,"(0.50468750, 0.42500000, 0.05468750, 0.17222222)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+313,CAND_003409,ADD,0,person,test,WEB10571.jpg,"(0.64804748, 0.61250000, 0.03202519, 0.09998708)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+314,CAND_003408,ADD,0,person,test,WEB10096.jpg,"(0.07080078, 0.53472222, 0.01825781, 0.06944444)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+315,CAND_003419,ADD,0,person,train,WEB02938.jpg,"(0.01620313, 0.85744382, 0.03225000, 0.08848315)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+316,CAND_003425,REJECT,0,person,test,WEB11630.jpg,"(0.41601276, 0.57312680, 0.50312600, 0.51103746)",None,False positive person detection on dark billowing smoke plume (IoU=0.31 with GT smoke).
+317,CAND_003451,REJECT,0,person,train,WEB04037.jpg,"(0.46328000, 0.51925645, 0.08750000, 0.14937785)",None,False positive person detection on flame region (IoU=0.60 with GT fire).
+318,CAND_003455,ADD,0,person,test,WEB10391.jpg,"(0.20820312, 0.43338214, 0.00703125, 0.03279649)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+319,CAND_003477,REJECT,0,person,train,WEB03918.jpg,"(0.67500000, 0.47133333, 0.64530660, 0.91645833)",None,"Massive scene-level false detection covering entire street scene, house, and smoke."
+320,CAND_003481,REJECT,0,person,train,WEB04437.jpg,"(0.23989583, 0.82500000, 0.13505208, 0.07184874)",None,False positive person detection on flame region (IoU=0.79 with GT fire).
+321,CAND_003486,ADD,0,person,train,WEB03976.jpg,"(0.94453333, 0.42660079, 0.06562222, 0.09169960)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+322,CAND_003491,ADD,0,person,train,AoF04542.jpg,"(0.67929754, 0.33333152, 0.11953526, 0.26155943)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+323,CAND_003488,REJECT,0,person,test,WEB10021.jpg,"(0.97968905, 0.69855482, 0.02813433, 0.02817276)",None,False positive person detection on distant horizon tree silhouette at sunset.
+324,CAND_003499,REJECT,0,person,train,WEB07133.jpg,"(0.08945312, 0.95208333, 0.15429688, 0.09027778)",None,Unusable extreme frame edge truncation (aspect=0.33) showing only marginal body sliver.
+325,CAND_003514,ADD,0,person,train,WEB07230.jpg,"(0.44023438, 0.38194444, 0.04218750, 0.18750000)",None,Visible usable person instance (pedestrian/firefighter/civilian); tight accurate bounding box.
+326,CAND_003533,REJECT,0,person,test,WEB10515.jpg,"(0.10146484, 0.55416667, 0.20214844, 0.86388889)",None,False positive person detection on flame region (IoU=0.79 with GT fire).

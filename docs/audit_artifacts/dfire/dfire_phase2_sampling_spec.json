@@ -1,0 +1,25 @@
+{
+  "seed": 42,
+  "total_medium_candidates": 1966,
+  "helmets_total": 126,
+  "helmets_evaluated": 126,
+  "persons_total": 1840,
+  "persons_sampled": 200,
+  "split_distribution": {
+    "train": 146,
+    "val": 23,
+    "test": 31
+  },
+  "feature_strata_distribution": {
+    "smoke_fire_overlap": 26,
+    "extreme_aspect_ratio": 44,
+    "border_touching": 46,
+    "multi_candidate_image": 44,
+    "standard_geometry": 40
+  },
+  "confidence_bands_distribution": {
+    "upper_0.60_0.70": 62,
+    "mid_0.50_0.60": 69,
+    "lower_0.40_0.50": 69
+  }
+}

@@ -1,5 +1,7 @@
 # Stage 1 Dataset Primary-Source Audit
 
+> **Current-status note (2026-09-28):** This document records a primary-source candidate screen performed on 25 September 2026. Its “HOLD,” “BLOCKED,” sample-audit, and training-gate labels describe that historical decision point and are not the project’s current readiness status. The owner later chose to proceed for this educational project; Stage 1 six-class pilot training/evaluation has since been completed. Source/license limitations remain documented risk notes, not active clearance tasks. See [README.md](../README.md) and [stage2_scfd_pilot_readiness.md](stage2_scfd_pilot_readiness.md) for current status.
+
 ## Project CCTV Safety — Spatial Detector (6 Classes)
 
 > **Audit date:** 25 September 2026
@@ -23,7 +25,7 @@
 
 ## Executive decision
 
-The earlier `APPROVED` labels in [dataset_evaluation.md](dataset_evaluation.md) are **not supported by the current primary-source evidence**. There is presently **no candidate approved for full download or training**.
+At the time of this audit, earlier `APPROVED` labels in [dataset_evaluation.md](dataset_evaluation.md) were **not supported by the primary-source evidence then reviewed**, and no candidate had been approved for full download or training. This historical assessment was later superseded by the owner’s educational-project decision and subsequent dataset QA and pilot training; it must not be read as a current training blocker.
 
 The most important corrections are:
 
@@ -42,7 +44,7 @@ The most important corrections are:
 
 ## Recommended shortlist
 
-| Priority | Candidate | Category | Status now | Why |
+| Priority | Candidate | Category | Status at 25 Sep audit | Why recorded at that time |
 |---:|---|---|---|---|
 | 1 | Ultralytics Construction-PPE | PPE | **SAMPLE AUDITED → HOLD FOR TRAINING** | Structure and labels parse, but related frames from the same actor/scene cross train/val/test; 10 orphan labels and unresolved source-image provenance also require remediation. |
 | 2 | SH17 | PPE | **GO — research-only sample audit (owner accepted non-commercial scope)** | Author repository and paper document 8,099 images, 75,994 instances, 17 classes, and source URLs; CC BY-NC-SA 4.0, attribution/share-alike and Pexels terms remain binding. |
@@ -52,7 +54,7 @@ The most important corrections are:
 | 6 | Uttej Fall Detection | Fall | **HOLD** | Useful YOLO boxes and three postures, but image contents remain © original authors and were gathered from unspecified sources. |
 | 7 | Shlok PPE COCO | PPE | **HOLD** | Apache 2.0 is stated on Kaggle, but the card provides no source-image provenance or license authority. |
 
-**Training gate:** A candidate may move from this shortlist to training only after (1) primary license/authority verification, (2) source provenance review, (3) sample annotation audit, (4) duplicate/sequence-leakage audit, and (5) confirmation that every visible canonical class is labeled or remediated.
+**Historical training gate:** The criteria below were used for the audit-era candidate review. The owner later accepted the documented educational-project risks and authorized progression after QA; this paragraph is not a current approval gate. The trained artifacts and remaining integration work are tracked in the current project handoff documents.
 
 ## Candidate findings
 
@@ -202,7 +204,9 @@ Before the next dataset decision, [dataset_evaluation.md](dataset_evaluation.md)
 | Shlok PPE: ready supplementary source | License label exists, but source authority and person-label completeness are unverified; **HOLD**. |
 | SH17: restricted but generally usable | Preserve research-only restriction and add Pexels/source/likeness audit requirements. |
 
-## Recommended next action
+## Historical recommended next actions (superseded)
+
+The recommendations below describe the project state on 25 September 2026. They are preserved as decision history only; do not treat them as current instructions to acquire datasets, perform rights clearance, or repeat sample audits. Stage 1 pilot training has since completed.
 
 1. Keep the corrected `HOLD`/`REJECT` statuses in [dataset_evaluation.md](dataset_evaluation.md) synchronized with future audit evidence.
 2. Apply the binding owner risk posture (25 September 2026): non-commercial datasets may enter sample audit or bounded educational prototype evaluation, but non-commercial education does not automatically cure copyright or license issues; explicit source terms still control. Dataset originals must not be redistributed in Git, public model weights will not be released, sources and licenses will be cited, identifiable faces in reports/presentations must be blurred, and unresolved upstream-rights limitations must be disclosed.

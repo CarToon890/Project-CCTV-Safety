@@ -1,0 +1,31 @@
+queue_rank,candidate_id,action,class_name,canonical_class,split,image,old_bbox_norm,new_bbox_norm,reason_and_evidence
+1,CAND_000014,PASS,helmet,1,train,WEB09361.jpg,Unchanged,Unchanged,CAL FIRE yellow helmet with goggles and chin strap tightly bounded in closeup shot.
+2,CAND_000122,FIX,helmet,1,train,WEB09297.jpg,"(0.75507813, 0.46666667, 0.31484375, 0.51111111)","(0.75507813, 0.41666667, 0.31484375, 0.41111111)","Genuine firefighter helmet in interview scene, but bottom boundary extended over face/mouth (y2=520). Tightened y2 from 520 to 448 to precisely encompass helmet dome, visor, and ear flaps without face."
+3,CAND_001232,PASS,helmet,1,test,WEB11547.jpg,Unchanged,Unchanged,Yellow construction hardhat on person head clearly visible and tightly bounded.
+4,CAND_001233,PASS,helmet,1,test,WEB11640.jpg,Unchanged,Unchanged,Hardhat dome and brim clearly visible on person head; box is tight and accurate.
+5,CAND_001405,REMOVE,helmet,1,test,WEB11805.jpg,"(0.75703125, 0.49547872, 0.07343750, 0.08457447)",None,False positive helmet detection on fabric fire-resistant hood/balaclava; no rigid safety helmet/hardhat present.
+6,CAND_001436,PASS,helmet,1,test,WEB11547.jpg,Unchanged,Unchanged,Yellow structural firefighting helmet with ear cover on second firefighter; tight and accurate bbox.
+7,CAND_001488,PASS,helmet,1,train,WEB07274.jpg,Unchanged,Unchanged,Yellow safety hardhat on worker; dome and brim clearly visible and tightly bounded.
+8,CAND_001499,PASS,helmet,1,train,WEB04803.jpg,Unchanged,Unchanged,White/yellow construction safety helmet on person; clearly visible and tightly bounded.
+9,CAND_001547,PASS,helmet,1,test,WEB10620.jpg,Unchanged,Unchanged,Yellow firefighter helmet on firefighter in turnout bunker gear in night scene; verified.
+10,CAND_001420,REMOVE,person,0,train,WEB04681.jpg,"(0.45312500, 0.28196023, 0.34921875, 0.55539773)",None,False positive person detection on dark vertical industrial smoke plume rising from burning warehouse in aerial shot; no person present.
+11,CAND_000593,REMOVE,person,0,test,WEB10675.jpg,"(0.36425781, 0.49076705, 0.72773438, 0.80681818)",None,False positive person detection on vehicle windshield suction cup/dashboard camera mount filming fire; no person present.
+12,CAND_001228,REMOVE,person,0,train,WEB07625.jpg,"(0.33789557, 0.52197443, 0.24297468, 0.50463068)",None,False positive person detection on dark billowing smoke plume rising from crash/wildfire site; no person present.
+13,CAND_000704,PASS,person,0,train,WEB07526.jpg,Unchanged,Unchanged,Real person (man on left in suit with arm raised); accurate tight individual bbox.
+14,CAND_001383,REMOVE,person,0,train,WEB07526.jpg,"(0.38476531, 0.65673913, 0.39610204, 0.66159420)",None,Redundant multi-person group box spanning across multiple individuals already bounded by individual person detections.
+15,CAND_000851,PASS,person,0,train,WEB06797.jpg,Unchanged,Unchanged,Real person (woman in pink shirt in foreground); accurate tight individual bbox.
+16,CAND_001297,PASS,person,0,train,WEB06797.jpg,Unchanged,Unchanged,Real person (man in lime green shirt walking directly behind woman); accurate tight individual bbox.
+17,CAND_000325,PASS,person,0,train,WEB04194.jpg,Unchanged,Unchanged,Real person (firefighter on left fighting fire); accurate individual bbox.
+18,CAND_000910,PASS,person,0,train,WEB04194.jpg,Unchanged,Unchanged,Real person (firefighter on right in red gear facing away); accurate individual bbox.
+19,CAND_000241,PASS,person,0,test,WEB11113.jpg,Unchanged,Unchanged,Real person (man in orange t-shirt in crowd); accurate individual bbox.
+20,CAND_000895,PASS,person,0,test,WEB11113.jpg,Unchanged,Unchanged,Real person (shirtless man to left of orange shirt); accurate individual bbox.
+21,CAND_000088,PASS,person,0,train,WEB07139.jpg,Unchanged,Unchanged,Real person (Japanese volunteer firefighter with back emblem); accurate tight bbox.
+22,CAND_000089,PASS,person,0,train,WEB07139.jpg,Unchanged,Unchanged,Real person (Japanese volunteer firefighter holding hose); accurate tight bbox.
+23,CAND_000001,PASS,person,0,train,WEB07059.jpg,Unchanged,Unchanged,"Real person in foreground plaid shirt; naturally truncated by camera frame edges, tight bbox."
+24,CAND_000493,PASS,person,0,val,WEB07656.jpg,Unchanged,Unchanged,Real person leaning on pickup truck tailgate with outstretched arm; tight and accurate visible bbox.
+25,CAND_000593,REMOVE,person,0,test,WEB10675.jpg,"(0.36425781, 0.49076705, 0.72773438, 0.80681818)",None,Duplicate queue entry for CAND_000593 (windshield suction cup mount false positive); removed.
+26,CAND_000705,REMOVE,person,0,test,WEB10118.jpg,"(0.84921875, 0.93854167, 0.14375000, 0.10833333)",None,"Unusable extreme edge truncation showing only partial dark scalp/hair at bottom frame border with zero face, torso, or limbs."
+27,CAND_000894,REMOVE,person,0,test,WEB10414.jpg,"(0.26601562, 0.85625000, 0.30390625, 0.26944444)",None,Unusable extreme edge truncation / photobomb showing only forehead and glasses at bottom corner of scenic roof landscape.
+28,CAND_000907,PASS,person,0,train,WEB09157.jpg,Unchanged,Unchanged,Real pedestrian walking along street edge with backpack; tight and accurate bbox from head to toe.
+29,CAND_000965,PASS,person,0,val,WEB07394.jpg,Unchanged,Unchanged,"Real person speaking at microphones during press conference; tight bbox on visible head, shoulders, and upper torso."
+30,CAND_001011,PASS,person,0,train,WEB07291.jpg,Unchanged,Unchanged,Real security officer/policeman in dark uniform walking along left edge; tight and accurate bbox.

@@ -1,5 +1,12 @@
 # Project CCTV Safety
 
+> **Current project status (2026-09-28):** The provisional Stage 1 six-class
+> dataset has completed YOLOv8n (81/100 epochs) and YOLOv8s (86/100 epochs)
+> pilot runs and held-out evaluation. Stage 2 SCFD/X3D-S completed a small
+> trained/evaluated pilot. Both are educational pilots, not production-ready.
+> Stage 2 integration, person tracking/event logic, and target-CCTV evaluation
+> remain future work. Dated readiness reports below are historical snapshots.
+
 Public-dataset AI baseline สำหรับตรวจจับเหตุความปลอดภัยจากภาพ CCTV ด้วย YOLOv8
 
 ---
@@ -26,8 +33,9 @@ Stage 1 ใช้โมเดลตรวจจับ 6 คลาสเชิง
 `no_helmet` และ `no_vest` ไม่ใช่คลาสของโมเดล แต่คำนวณจากความสัมพันธ์ระหว่าง
 `person`, `helmet` และ `vest` ดูกติกาฉบับเต็มใน `docs/data_schema_6classes.md`
 
-`fight` ถูกย้ายไป Stage 2 Temporal Event Classification และยังมีสถานะ
-`BLOCKED / PENDING DATA APPROVAL`; ไม่ใช่ YOLO bounding-box class ใน Stage 1
+`fight` ถูกย้ายไป Stage 2 Temporal Event Classification; มี SCFD/X3D-S pilot
+ที่ฝึกและประเมินแล้ว แต่ยังไม่เชื่อมกับ Stage 1 และไม่ใช่ YOLO bounding-box
+class ใน Stage 1
 
 ---
 
@@ -36,7 +44,7 @@ Stage 1 ใช้โมเดลตรวจจับ 6 คลาสเชิง
 - AI Model: YOLOv8 (เริ่มต้นด้วย `yolov8n` สำหรับ Low-latency Inference และเปรียบเทียบกับ `yolov8s`)
 - Frameworks & Libraries: PyTorch, Ultralytics YOLO, OpenCV, Roboflow
 - Experiment: YOLOv8n เป็น baseline และ YOLOv8s เป็นตัวเปรียบเทียบภายใต้ config เดียวกัน
-- Runtime target: Google Colab GPU; export ผลเป็น ONNX
+- Recorded pilot runtime: Kaggle GPU. Colab remains an optional reproducibility workflow.
 - Web mockup อยู่นอกขอบเขต AI baseline และยังไม่เชื่อมต่อโมเดล/API
 
 ---
@@ -80,6 +88,9 @@ Project-CCTV-Safety/
 
 ### ขั้นตอนการติดตั้งและเตรียมการ
 
+> คำสั่งดาวน์โหลด/เตรียมข้อมูล/ฝึกด้านล่างเป็น workflow ทั่วไปสำหรับทำซ้ำ
+> ไม่ใช่งานที่ยังค้างหรือคำสั่งให้เริ่ม run ใหม่; การฝึกใหม่ต้องได้ owner approval.
+
 1. Clone repository:
    ```bash
    git clone https://github.com/CarToon890/Project-CCTV-Safety.git
@@ -119,8 +130,10 @@ Project-CCTV-Safety/
 
 - [x] ปรับเป็น Detector Schema v2 จำนวน 6 Spatial Classes และ PPE association baseline
 - [x] จัดทำ reproducible data/training/evaluation pipeline
-- [ ] ตรวจ license, ดาวน์โหลด และทำ exhaustive annotation ของ Dataset จริง
-- [ ] ฝึกและเปรียบเทียบ YOLOv8n กับ YOLOv8s บน Colab
+- [x] จัดทำ provisional Unified Stage 1 dataset และฝึก/ประเมิน YOLOv8n กับ YOLOv8s
+- [x] ฝึก/ประเมิน SCFD Stage 2 X3D-S pilot
+- [ ] เชื่อม Stage 1 กับ Stage 2 และทดสอบ end-to-end
 - [ ] ทดสอบกับข้อมูลกล้อง CCTV เป้าหมายเมื่อมีข้อมูล
 > ข้อจำกัด: ผลจาก public datasets ยังไม่ใช่หลักฐานว่าโมเดลพร้อมใช้งานกับกล้องจริง
-> Fall ต้องมี temporal confirmation ในระบบจริง ส่วน Fight แยกอยู่ใน Stage 2 ซึ่งยังถูกบล็อกจนกว่าจะมีข้อมูลวิดีโอที่ผ่านการอนุมัติ
+> Fall ต้องมี temporal confirmation ในระบบจริง; Stage 2 pilot ยังต้องเชื่อมกับ
+> Stage 1 และประเมินกับข้อมูลกล้องเป้าหมายก่อนกล่าวอ้างความพร้อมใช้งานจริง

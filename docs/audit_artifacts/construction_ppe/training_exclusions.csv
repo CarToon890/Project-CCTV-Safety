@@ -1,0 +1,2 @@
+filename,source_split,decision,reason,decision_date,scope
+image556.jpg,train,EXCLUDE_FROM_TRAINING,"Low resolution; annotation/detection quality inadequate for training per project owner",2026-09-26,"Do not include image or paired label in any future training package; preserve raw and corrected audit source copies"

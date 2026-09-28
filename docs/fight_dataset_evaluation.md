@@ -1,4 +1,6 @@
 # รายงานการวิจัยและประเมินชุดข้อมูลสำหรับ Class `fight` และแผนการปรับสู่ Two-Stage Architecture (ฉบับปรับปรุงครั้งที่ 3)
+
+> **สถานะปัจจุบัน (2026-09-28):** เอกสารนี้เป็นบันทึกประเมิน candidate ณ วันที่ 25 กันยายน 2026; สถานะ `BLOCKED`, `ยังไม่เริ่ม`, และข้อเสนอให้หา/ขออนุญาต dataset ที่ปรากฏในเนื้อหาด้านล่างเป็นข้อมูลย้อนหลัง ไม่ใช่สถานะปัจจุบัน โครงการได้จัดเตรียม SCFD จำนวน 300 คลิป (train/val/test 210/45/45), ทำ Human QA/sign-off และเทรน X3D-S pilot แล้ว 9 epochs ก่อน early stop; ผล test: accuracy 0.800, macro-F1 0.7984, balanced accuracy 0.8024. งานที่เหลือคือ integration เข้ากับ pipeline และประเมินกับกล้องเป้าหมาย ไม่ใช่การเริ่ม Stage 2 training ใหม่ ดู [stage2_scfd_pilot_readiness.md](stage2_scfd_pilot_readiness.md).
 ## โครงการ Project CCTV Safety — Two-Stage Pipeline Architecture
 
 > **วันที่ประเมิน:** 25 กันยายน 2026  
@@ -33,6 +35,7 @@
 | 5 | **BEHAVE Video Dataset (2010)** | Blunsden & Fisher (Univ. of Edinburgh) | [Edinburgh BEHAVE](http://homepages.inf.ed.ac.uk/rbf/BEHAVE/) | Academic Research Use | วิดีโอแคมปัส (90k เฟรม) | รายบุคคล + Interaction Tag | VIPER XML | ❌ ไม่พร้อม | **HOLD / REQUIRES CONVERSION — Rejected for current baseline** |
 | 6 | **RWF-2000** | M. Soliman et al. | [Kaggle](https://www.kaggle.com/datasets/mohamedmustafa/real-life-violence-situations-dataset) / [Paper](https://arxiv.org/abs/1911.11868) | License not confirmed; research access/citation terms observed | วิดีโอ 2,000 คลิป (CCTV จริง) | **ไม่มี Bounding Box** | Video Label (Binary) | ❌ ไม่พร้อม | **BLOCKED pending license clarification** |
 | 7 | **Violence Combined (`yash07yadav`)** | Yash07Yadav | [Kaggle](https://www.kaggle.com/datasets/yash07yadav/project-data) | **MIT** (บนหน้า Kaggle Card) | วิดีโอรวมหลายแหล่ง | **ไม่มี Bounding Box** | Video Label (Multiclass) | ❌ ไม่พร้อม | **HOLD — Provenance and source-license audit required** |
+| 8 | **SCFD (Surveillance Camera Fight Dataset)** | Şeymanur Aktı et al. (IPTA 2019) | [GitHub](https://github.com/sayibet/fight-detection-surv-dataset) | **UNVERIFIED — OWNER-ACCEPTED EDUCATIONAL RISK** (Repo license covers software/docs; does not establish video media license) | วิดีโอ 300 คลิป (150 Fight, 150 Non-Fight) | **ไม่มี Bounding Box** | Video Label (Binary, 2.0s clips; FPS/res to be measured) | ❌ ไม่พร้อม | **PILOT SPECIFICATION COMPLETE / DATA READINESS BLOCKED** (Curating/QA/Split exit only; not training approval) |
 
 ---
 
@@ -150,6 +153,27 @@
   * สัญญาอนุญาต MIT ที่ปรากฏบนหน้า Kaggle Card ครอบคลุมเฉพาะสิ่งที่ผู้รวบรวม (Compiler) จัดทำขึ้นเอง เช่น โค้ดหรือการจัดระเบียบไฟล์ แต่**ไม่ได้เป็นการรับรองสิทธิ์ในเนื้อหาวิดีโอต้นฉบับ**ที่นำมารวม (ซึ่งประกอบด้วยคลิปจาก YouTube, RWF-2000, Hockey Fights และภาพยนตร์)
   * **ข้อกำหนด:** **ห้ามนำวิดีโอนี้ไปสกัดเฟรม ตีกรอบ Annotation หรือใช้ฝึกสอนโมเดลโดยเด็ดขาด** จนกว่าจะมีการตรวจสอบและยืนยันสิทธิ์ของวิดีโอต้นฉบับรายแหล่งได้อย่างชัดเจน
 * **สรุปสถานะ:** **HOLD — Provenance and source-license audit required**
+
+---
+
+### 3.8 Surveillance Camera Fight Dataset (SCFD)
+* **Official URL & Repository:** [https://github.com/sayibet/fight-detection-surv-dataset](https://github.com/sayibet/fight-detection-surv-dataset)
+* **Original Paper:** *"Vision-based Fight Detection from Surveillance Cameras"*, Şeymanur Aktı, Gözde Ayşe Tataroğlu, Hazım K. Ekenel (Presented at 9th International Conference on Image Processing Theory, Tools and Applications - IPTA 2019; DOI: [10.1109/IPTA.2019.8936070](https://doi.org/10.1109/IPTA.2019.8936070); [arXiv:2002.04355](https://arxiv.org/abs/2002.04355))
+* **ลักษณะข้อมูลและขนาด (Data Modality & Scale):**
+  * จำนวนคลิปวิดีโอทั้งหมด **300 คลิป** (แบ่งเป็น **150 Fight** และ **150 Non-Fight**)
+  * ความยาวคลิปคงที่ **2.0 วินาที** (README ระบุความยาว 2 วินาที แต่ไม่ได้ระบุ native FPS หรือจำนวนเฟรมแน่นอน โดย FPS และ resolution จริงจะต้องวัดผลหลังการดาวน์โหลดที่ได้รับอนุญาต)
+  * ขอบเขตของแหล่งข้อมูล (Source Scope): README ระบุว่าคลิป Fight รวบรวมมาจาก YouTube และคลิป Non-Fight รวบรวมมาจากวิดีโอกล้องวงจรปิดทั่วไป (Regular surveillance videos)
+  * ป้ายกำกับเป็นระดับคลิป (Clip-level Binary Classification) โดยไม่มี Bounding Box
+* **การตรวจสอบสิทธิ์และสถานะทางกฎหมาย (Legal Audit & Provenance Analysis):**
+  * *ขอบเขตสัญญาอนุญาตใน Repository:* หน้า GitHub ระบุสัญญาอนุญาต MIT License ซึ่งตามนิยามมาตรฐานครอบคลุมเฉพาะ "software and associated documentation files" ของผู้จัดทำเท่านั้น ไม่ได้เป็นการระบุหรือสร้างสัญญาอนุญาตแยกต่างหากสำหรับเนื้อหาวิดีโอ (video media) ที่รวบรวมมาจากบุคคลภายนอก
+  * *มติและการตัดสินใจของเจ้าของโครงการ (Project Owner Decision & Exception):* เจ้าของโครงการได้อนุมัติแนวทางขอยกเว้นการติดต่อคณะผู้จัดทำ SCFD สำหรับการศึกษาและวิจัยเชิงวิชาการภายใน (Non-commercial educational prototype)
+  * *การกระทบยอดระหว่างมติโครงการกับเกณฑ์มาตรฐาน (Gate Reconciliation):* บันทึกสถานะสิทธิ์ของสื่อวิดีโอ SCFD ตามจริงว่า **"UNVERIFIED — OWNER-ACCEPTED EDUCATIONAL RISK"** โดยไม่ถือว่ามตินี้เป็นการสร้างสิทธิ์หรืออนุญาตให้นำไปใช้งานเชิงพาณิชย์หรือแจกจ่ายต่อ (Commercial deployment and redistribution remain outside project scope and rights remain unresolved)
+* **ข้อจำกัดเชิงเทคนิคและบทบาทในโครงการ (Technical Limitations & Project Role):**
+  1. **ข้อจำกัดความยาว 2.0 วินาที:** ความยาว 2.0 วินาทีสั้นกว่าหน้าต่าง Circular Rolling Buffer มาตรฐานของ Stage 2 ($T_{\text{pre}} = 1.5\text{s} + T_{\text{post}} = 1.0\text{s} = 2.5\text{s}$) ทำให้ต้องใช้ Adapter Temporal Sampling ในการดึงเฟรม และอาจไม่ครอบคลุมบริบทก่อนเกิดเหตุ (Pre-conflict) ได้ครบถ้วน
+  2. **ขนาดกลุ่มตัวอย่างขนาดเล็ก (Small Scale):** ขนาด 300 คลิป เหมาะสำหรับการทำ **Lightweight Pilot Benchmark / Proof-of-Concept** เท่านั้น ไม่เพียงพอต่อการนำไปฝึกสอนโมเดล Production ที่พร้อมใช้งานจริงในสภาพแวดล้อมทั่วไป
+  3. **ไม่มี Spatial Annotation:** เป็น Binary Label ระดับคลิป ต้องอาศัย Stage 1 Spatial Detector ในการสร้าง Person Proposals หากต้องการเชื่อมโยงใน Two-stage Pipeline
+* **สรุปสถานะ:** **PILOT SPECIFICATION COMPLETE / DATA READINESS BLOCKED**
+  * SCFD ถูกจำกัดขอบเขตไว้ที่การเตรียมเกณฑ์การคัดกรอง (Dataset Curation), QA และ Split Exit เท่านั้น **การประเมิน GO ของ Pilot ในขั้นนี้ไม่ถือเป็นการอนุมัติให้เทรนโมเดล (GO is NOT training approval)** การฝึกสอนโมเดลหรือการรัน Inference ยังคงถูกระงับ (Disabled) จนกว่าจะได้รับความเห็นชอบและอนุมัติแยกต่างหากอย่างเป็นลายลักษณ์อักษรจากเจ้าของโครงการ
 
 ---
 
@@ -273,6 +297,7 @@ flowchart TD
 * **Primary Ready-to-use (Spatial YOLO):** **None สำหรับ Fight (เนื่องจากย้าย Fight ไปเป็น Stage 2 Temporal Classifier แล้ว)**
 * **Synthetic Pilot (Track 1):** **Simuletic CCTV Aggressive Poses — OFFICIALLY CLOSED / NO-GO** (ห้ามนำมาสร้าง Labels หรือเทรน)
 * **Permission Candidate (Temporal Research):** **TNUE-Fight Detection** (รอการขอสิทธิ์เป็นลายลักษณ์อักษร 4 ประการสำหรับงานวิจัย Stage 2 ในอนาคต; ไม่บล็อก Stage 1)
+* **Pilot Candidate (Temporal Action Classifier):** **SCFD (Surveillance Camera Fight Dataset)** — PILOT SPECIFICATION COMPLETE / DATA READINESS BLOCKED (300 คลิป, 150 Fight / 150 Non-Fight, 2.0s; สิทธิ์สื่อบันทึกสถานะ UNVERIFIED — OWNER-ACCEPTED EDUCATIONAL RISK; ติด Gate Stage 1, การดาวน์โหลดข้อมูล และการทำ Human QA/Split; เกณฑ์ GO จำกัดเฉพาะการตรวจรับข้อมูล ไม่ใช่การอนุมัติให้เทรนโมเดล)
 * **Hard-Negative Candidates:** ภาพสภาวะปกติจากชุดต่างๆ นำมาใช้ใน Spatial Stage 1 หรือ Stage 2 ได้เมื่อผ่านการตรวจสิทธิ์
 * **Roboflow Datasets:** ไม่นำมาใช้เป็น Primary Dataset
 * **Yash Combined:** HOLD ระงับการใช้งานจนกว่าจะตรวจสอบสิทธิ์รายแหล่งสำเร็จ
@@ -294,7 +319,7 @@ flowchart TD
 
 ---
 
-## 8. สถานะการดำเนินงานปัจจุบันของโปรเจกต์ (Current Operating State)
+## 8. สถานะ ณ วันที่ 25 กันยายน 2026 (Historical Operating Snapshot)
 
 เพื่อความโปร่งใสและการควบคุมกระบวนการทางวิศวกรรมอย่างรัดกุม ขอประกาศสถานะการดำเนินงาน ณ วันที่ 25 กันยายน 2026 ดังนี้:
 1. **รอบการทำงานนี้เป็นขั้นตอน Documentation and Migration Planning เท่านั้น**

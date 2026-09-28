@@ -1,5 +1,7 @@
 # D-Fire Corrected Dataset — Worker Audit & Machine QA Report
 
+> **Historical QA snapshot — superseded (2026-09-28):** This report records the D-Fire worker-review state on 25 September 2026. Its `PENDING_INDEPENDENT_HUMAN_QA` status was later superseded by project-owner sample sign-off and inclusion in the provisional Stage 1 pilot. This is not a current clearance or training blocker. See [owner sign-off](../owner_human_signoff_2026-09-26.md) and [current Stage 1 readiness](../../stage1_pretraining_readiness.md).
+
 > **Audit Date:** 25 September 2026  
 > **Dataset Scope:** D-Fire Dataset (`gaia-solutions-on-demand/DFireDataset`), 21,527 images  
 > **Target Schema:** Canonical Stage 1 Detector Schema v2 (6 spatial classes: `0:person`, `1:helmet`, `2:vest`, `3:fall`, `4:fire`, `5:smoke`)  

@@ -1,0 +1,3 @@
+candidate_id,tier,split,image,class_name,canonical_class,confidence,verdict,action,owner_policy,reviewer,timestamp
+CAND_003159,MEDIUM,test,WEB11783.jpg,helmet,1,0.455078,REMOVE,REJECT,Owner decision: insufficient pixels to verify safety helmet.,ANTIGRAVITY_VISUAL_QA,2026-09-26T03:55:00+07:00
+CAND_003490,MEDIUM,test,WEB11783.jpg,helmet,1,0.407227,REMOVE,REJECT,Owner decision: insufficient pixels to verify safety helmet.,ANTIGRAVITY_VISUAL_QA,2026-09-26T03:55:00+07:00

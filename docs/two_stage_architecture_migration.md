@@ -3,11 +3,16 @@
 
 > **สถานะเอกสาร:** ได้รับการอนุมัติอย่างเป็นทางการจากเจ้าของโครงการ (Project Owner Approved)  
 > **วันที่จัดทำ:** 25 กันยายน 2026 (ฉบับปรับปรุงตามข้อกำหนดวิศวกรรม)  
+> **สถานะปัจจุบัน (2026-09-28):** เอกสารนี้เป็นแผนเดิม ไม่ใช่สถานะงานล่าสุด
+> Stage 1 YOLOv8n/YOLOv8s และ Stage 2 SCFD/X3D-S pilots ฝึก/ประเมินแล้ว;
+> เหลือ integration และ target-camera evaluation. ข้อความ BLOCKED ด้านล่างเป็น
+> snapshot ก่อน pilot และไม่ใช่ blocker ปัจจุบัน.
 > **เป้าหมาย:** กำหนดขั้นตอน มาตรฐานข้อมูล อินเทอร์เฟซ และแผนการทดสอบในการปรับปรุงระบบตรวจจับความปลอดภัยกล้องวงจรปิด จากระบบตรวจจับภาพนิ่ง 7 คลาสเดิม (v1) สู่ระบบสองระยะ (v2 Two-Stage Pipeline):  
 > 1. **Stage 1 (Spatial Object Detection):** YOLOv8 รับผิดชอบ 6 คลาสเชิงพื้นที่ (`0: person`, `1: helmet`, `2: vest`, `3: fall`, `4: fire`, `5: smoke`)  
 > 2. **Stage 2 (Temporal Event Classification):** โมดูลวิดีโอเชิงเวลารับผิดชอบการจำแนกเหตุการณ์ทะเลาะวิวาท (`fight`)  
-> **สถานะการนำไปใช้:** Detector schema และ configuration ถูกปรับเป็น v2 จำนวน
-> 6 spatial classes แล้ว ส่วน Dataset download, Training และ Stage 2 ยังไม่เริ่ม
+> **Historical snapshot (25 ก.ย. 2026):** ตอนนั้น schema/config ถูกปรับเป็น 6
+> คลาสแล้ว แต่ยังไม่มี download/training. สถานะนี้ถูกแทนที่ด้วย pilot ที่ทำ
+> เสร็จภายหลัง; ดู current-status note ด้านบน.
 
 ---
 
@@ -19,7 +24,7 @@
 2. **Missing-label Penalty ข้ามโดเมน:** ชุดข้อมูล Candidate เชิงพื้นที่ เช่น Person/PPE (`beyzakucuk`), Fire/Smoke (`DFire`), และ Fall (`kandagatla`) ไม่มีป้ายกำกับ Fight หากนำภาพที่มีคนยืนใกล้กันเข้ามาฝึกสอน โมเดลจะสับสนว่าภาพนั้นคือ Non-fight หรือไม่
 3. **ปัญหาความพร้อมของ Dataset คลาส Fight:**
    * ชุดข้อมูล **Simuletic CCTV Aggressive Poses** ถูกตัดสินสถานะ **NO-GO FOR PHASE 3 / CLOSED** เนื่องจากพบข้อขัดแย้งของ Provenance (ภาพคนจริงขัดแย้งกับข้ออ้างว่า Synthetic), สิทธิ์ CC BY 4.0 ไม่สมบูรณ์, มี Active Fight เพียง 48 ภาพ, และ Human QA ยังไม่ได้เริ่ม
-   * ชุดข้อมูล **TNUE-Fight Detection** ยังติดข้อจำกัดด้านลิขสิทธิ์ (BLOCKED pending permission) ซึ่งต้องใช้เวลาขอหนังสืออนุญาต 4 ประการ และไม่ควรเป็นตัวบล็อกการพัฒนา 6 คลาสเชิงพื้นที่
+   * ชุดข้อมูล **TNUE-Fight Detection** ไม่ได้เลือกใช้ใน SCFD/X3D-S pilot; ไม่มีงานติดตาม candidate นี้อยู่ในขอบเขตปัจจุบัน.
 
 ### 1.2 มติเลือกแนวทาง A: Two-Stage Pipeline
 เจ้าของโครงการได้มีคำวินิจฉัยอนุมัติเลือก **แนวทาง A (Two-Stage Pipeline)** อย่างเป็นทางการ:
@@ -670,7 +675,7 @@ flowchart TD
         C1 --> C2 --> C3 --> C4 --> C5
     end
 
-    Gate{"Stage 2 Entry Gate Verification<br/>(4 Critical Criteria)"}
+    Gate{"Integration Readiness Review<br/>(3 Criteria)"}
 
     subgraph M2["Milestone 2: Stage 2 Temporal Fight Pipeline (Subsequent Phase)"]
         C6["Commit 6: ByteTrack Wrapper & Multi-signal Trigger Primitives"]
@@ -678,24 +683,25 @@ flowchart TD
         C6 --> C7
     end
 
-    Blocked["Stage 2 Status: BLOCKED / PENDING DATA APPROVAL<br/>(Halt Stage 2 Implementation)"]
+    OpenItems["Stage 2 pilot complete<br/>Integration pending"]
 
     M1 --> Gate
-    Gate -- "All 4 Criteria Satisfied" --> M2
-    Gate -- "Any Criterion Not Met" --> Blocked
+    Gate -- "Integration criteria satisfied" --> M2
+    Gate -- "Integration remains" --> OpenItems
 ```
 
-### 11.1 เงื่อนไขประตูผ่านสู่ Stage 2 (Stage 2 Mandatory Entry Gate)
+### 11.1 เงื่อนไขก่อนเชื่อม Stage 2 เข้ากับระบบ (Integration Readiness)
 
-ก่อนที่โครงการจะเริ่มดำเนินการใน Milestone 2 (Stage 2 Temporal Fight Pipeline หรือ Commit 6–7) จะต้องผ่าน **Stage 2 Entry Gate** ครบถ้วนทั้ง 4 ประการดังต่อไปนี้:
+Stage 2 pilot ฝึกและประเมินแล้ว; เกณฑ์เดิมก่อนเริ่ม pilot ไม่ใช่สถานะปัจจุบัน
+งานที่เหลือก่อนเรียกระบบว่า end-to-end complete คือ:
 
-1. **Stage 1 Verification:** โมเดล Stage 1 Spatial Baseline (6 Classes) ต้องผ่านการฝึกสอน ประเมินผล และตรวจรับอย่างเป็นทางการเรียบร้อยแล้ว
-2. **Primary License / Permission Verification:** มีชุดข้อมูล Temporal Fight Video Dataset อย่างน้อย 1 ชุด ที่ผ่านการยืนยันสิทธิ์สัญญาอนุญาตปฐมภูมิ หรือได้รับหนังสืออนุญาตการใช้งาน 4 ประการเป็นลายลักษณ์อักษร (เช่น ได้รับหนังสืออนุญาตจาก ICTU สำหรับ TNUE-Fight)
-3. **Provenance Audit:** ผ่านการตรวจสอบที่มาของวิดีโอ (Source Provenance Audit) อย่างโปร่งใส ไม่มีความขัดแย้งด้านสิทธิ์ และไม่ละเมิดลิขสิทธิ์ของบุคคลภายนอก
-4. **Human QA & Scene Split:** ผ่านการตรวจสอบคุณภาพโดยมนุษย์ (Human QA) ครบถ้วน และมีการแบ่งชุดข้อมูล `train/val/test` ในระดับ **Video/Scene-based Split** เพื่อป้องกันปัญหา Overfitting และ Data Leakage อย่างเด็ดขาด
+1. **Model handoff:** Make the selected Stage 1 checkpoints and Stage 2 pilot artifacts available to the integration code.
+2. **Pipeline integration:** Implement person tracking, candidate triggering, temporal window buffering, and X3D-S inference dispatch.
+3. **End-to-end evaluation:** Test latency and false alerts using representative target-camera footage.
 
-> ⛔ **การบังคับใช้สถานะ BLOCKED (Strict Gate Enforcement):**  
-> **หากยังไม่มีชุดข้อมูลวิดีโอใดที่ผ่านเกณฑ์ครบทั้ง 4 ข้อข้างต้น ให้ Milestone 2 (Stage 2) คงสถานะ `BLOCKED / PENDING DATA APPROVAL` โดยเด็ดขาด** ห้ามเริ่มเขียนโค้ด Commit 6–7 หรือดำเนินการสร้างโมเดล Temporal จนกว่าจะมีชุดข้อมูลที่ผ่านการอนุมัติอย่างเป็นทางการ
+> **Current status:** Stage 2 pilot complete; integration and target-camera
+> evaluation remain. The owner-accepted educational-use risk is not a current
+> project blocker; this does not imply production or commercial readiness.
 
 ---
 
@@ -750,8 +756,7 @@ flowchart TD
 
 ---
 
-### Milestone 2: Stage 2 Temporal Fight Pipeline (สถานะ: BLOCKED / PENDING DATA APPROVAL)
-*(จะเริ่มดำเนินการได้ต่อเมื่อผ่าน Stage 2 Entry Gate ครบทั้ง 4 ประการเท่านั้น)*
+### Milestone 2: Stage 2 Temporal Fight Pipeline (สถานะ: Pilot complete; integration pending)
 
 #### Commit 6: ByteTrack Wrapper & Multi-signal Trigger Primitives
 * **Commit Message:** `feat(tracking): implement ByteTrack integration and multi-signal candidate trigger`
@@ -770,10 +775,13 @@ flowchart TD
 
 ## 12. สรุปสถานะปัจจุบันและขั้นตอนถัดไป (Current Status & Next Steps)
 
-ณ วันที่ 25 กันยายน 2026:
+**Historical snapshot ณ วันที่ 25 กันยายน 2026 (superseded):**
 1. **Detector contract:** Schema, configs, dataset preparation guard, class-name
    inference guard และ tests ถูกปรับให้สอดคล้องกับ v2 จำนวน 6 spatial classes แล้ว
    ส่วน mandatory model manifest ยังเป็นงาน implementation ถัดไป
-2. **ข้อมูลและการฝึก:** ยังไม่มีการดาวน์โหลด Candidate Dataset หรือเริ่ม Training
-3. **Stage 2:** คงสถานะ `BLOCKED / PENDING DATA APPROVAL` ตาม Entry Gate
-4. **ขั้นตอนถัดไป:** ตรวจและอนุมัติ Candidate Dataset สำหรับ Stage 1 ก่อนเตรียมข้อมูลและฝึกโมเดล
+2. **ข้อมูลและการฝึก:** ข้อความนี้ถูกแทนที่; ปัจจุบัน Stage 1 และ Stage 2 pilots
+   ฝึก/ประเมินแล้ว.
+3. **Stage 2:** pilot complete; integration, target-camera evaluation และ
+   end-to-end testing ยังเหลือ.
+4. **สถานะล่าสุด:** อ่านสรุปโครงการ/ผลโมเดลจากเอกสาร current-status ใน main
+   worktree ก่อน merge.

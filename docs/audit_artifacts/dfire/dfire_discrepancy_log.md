@@ -1,5 +1,7 @@
 # D-Fire Dataset Machine Inventory & Worker Discrepancy Log
 
+> **Historical audit snapshot — superseded (2026-09-28):** This log records worker findings from 25 September 2026. The independent-human-QA-pending statement below was later superseded by the owner’s documented D-Fire sample sign-off and completed Stage 1 pilot training/evaluation. Source/provenance limitations remain an owner-accepted educational-project risk note, not a current training gate. See [owner sign-off](../owner_human_signoff_2026-09-26.md) and [current Stage 1 readiness](../../stage1_pretraining_readiness.md).
+
 > **Audit Date:** 25 September 2026  
 > **Audited Dataset:** D-Fire Dataset (`gaia-solutions-on-demand/DFireDataset`)  
 > **Source Directory:** `data/raw/dfire/data/` (raw data preserved immutably)  

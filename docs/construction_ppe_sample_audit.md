@@ -1,5 +1,9 @@
 # Construction-PPE Sample Audit and Split Regrouping
 
+> **Current-status note (2026-09-28):** This is the audit/remediation snapshot, not an open QA queue. The project owner later completed the PPE human review/sign-off for the remaining queue; `image472.jpg` is PASS and `image556.jpg` is excluded from training per the recorded decision. The Stage 1 pilot has since been trained/evaluated. Preserve the dated findings below as an audit trail; they do not mean independent QA or training is still pending. See [owner sign-off](audit_artifacts/owner_human_signoff_2026-09-26.md) and [Stage 1 readiness](stage1_pretraining_readiness.md).
+
+> **Owner decision update (2026-09-26):** `image472.jpg` is accepted (PASS). `image556.jpg` is rejected for training due to inadequate low-resolution annotation quality; the raw and corrected audit source files are retained, and the future training package must exclude the image and its label via [`training_exclusions.csv`](audit_artifacts/construction_ppe/training_exclusions.csv). These two item decisions do not sign off the remaining queue. Full scope and Fall/D-Fire owner sign-off are recorded in [owner_human_signoff_2026-09-26.md](audit_artifacts/owner_human_signoff_2026-09-26.md).
+
 > Audit Date: 25 September 2026
 >
 > Scope: Local machine inventory (100% paired coverage), human visual QA (stratified sample of 42 images), cross-split sequence leakage analysis, canonical Stage 1 label quality assessment (`person`, `helmet`, `vest`), non-destructive regroup manifest generation.
@@ -14,7 +18,7 @@
 
 ## 1. Audit Verdict and Decision Gate
 
-### Verdict: WORKER_REMEDIATION_COMPLETE / PENDING_INDEPENDENT_HUMAN_QA
+### Historical verdict at audit time: WORKER_REMEDIATION_COMPLETE / PARTIAL PROJECT-OWNER REVIEW RECORDED
 
 All worker-side visual QA remediation tasks have been completed and verified across all 88 defect rows (85 unique images) cataloged in [`label_remediation_manifest.csv`](audit_artifacts/construction_ppe/label_remediation_manifest.csv):
 1. **77 zero-Person label files**: Every visible human worker or actor has been inspected and annotated with canonical `person` (0) bounding boxes.
@@ -23,13 +27,13 @@ All worker-side visual QA remediation tasks have been completed and verified acr
 4. **Duplicate annotations deduplicated**: Overlapping bounding boxes for single individuals have been merged into single accurate boxes.
 5. **Raw immutability strictly preserved**: Source raw dataset at `data/raw/construction-ppe/` remains untouched and read-only. The complete corrected dataset has been built under `data/processed/construction_ppe_corrected/` with 1,416 paired images (train 1,151 / val 129 / test 136) and canonical Stage-1 mapping (`person: 2,379`, `helmet: 1,733`, `vest: 1,626`).
 
-**Remaining Decision Gate**: Final model training remains gated on **independent human QA sign-off** using the concise human QA queue ([`remediation_qa_queue.csv`](audit_artifacts/construction_ppe/remediation_qa_queue.csv)) and visual overlays in `data/processed/construction_ppe_corrected/qa_overlays/`.
+**Historical remaining gate (superseded):** At the time this audit was written, the queue still showed human QA as pending. The owner later completed the review/sign-off recorded in [owner_human_signoff_2026-09-26.md](audit_artifacts/owner_human_signoff_2026-09-26.md); this is no longer a training gate.
 
 ### GO / HOLD / REJECT Decision Criteria
 
-| Decision | Criteria | Current Status |
+| Decision | Criteria | Status recorded at audit time |
 |---|---|---|
-| **GO** | All canonical classes (`person`, `helmet`, `vest`) exhaustively and accurately labeled; no cross-split scene or sequence leakage; zero orphan/duplicate label anomalies; training-ready with human sign-off. | Pending final independent human QA review on the 85 remediated images. |
+| **GO** | All canonical classes (`person`, `helmet`, `vest`) exhaustively and accurately labeled; no cross-split scene or sequence leakage; zero orphan/duplicate label anomalies; training-ready with human sign-off. | At audit time: pending owner review of the remaining images; later superseded by owner sign-off and the Stage 1 pilot. |
 | **HOLD** | Usable real-world visual imagery with recoverable annotation or split defects; non-destructive split manifest available; targeted relabeling required before training. | **TRANSITIONED TO WORKER_REMEDIATION_COMPLETE**: Worker visual QA remediation complete (88/88 defect rows resolved, dataset built, zero leakage). Handoff queue prepared for independent human QA. |
 | **REJECT** | Fundamentally corrupted imagery, unrecoverable domain mismatch, insurmountable licensing embargo, or irremediable labeling corruption. | Not applicable: Defects successfully remediated in processed dataset. |
 
@@ -277,9 +281,9 @@ All seven engineering remediation steps have been executed and verified across t
 6. **Applied Non-Destructive Regroup Manifest**: Applied `docs/audit_artifacts/construction_ppe/proposed_regroup_manifest.csv` to partition 1,416 paired images into leak-free splits: **train: 1,151 (81.29%)**, **val: 129 (9.11%)**, **test: 136 (9.60%)**.
 7. **Production Dataset Built**: Generated full corrected dataset under `data/processed/construction_ppe_corrected/` with class instances: `Person: 2,379`, `Helmet: 1,733`, `Vest: 1,626`; classes 3/4/5: 0.
 
-### Remaining Decision Gate: Independent Human QA Sign-Off
+### Historical handoff queue status (superseded by owner sign-off)
 
-The dataset has passed all worker-side automated validation checks (`scripts/validate_construction_ppe.py`). The sole remaining gate before training is **independent human QA sign-off**:
+The dataset had passed the worker-side checks listed below. These queue paths/statuses are preserved as they appeared before the owner completed QA; `PENDING_HUMAN_QA` is historical, not current:
 - **Handoff Queue**: [`docs/audit_artifacts/construction_ppe/remediation_qa_queue.csv`](audit_artifacts/construction_ppe/remediation_qa_queue.csv) (85 unique images, status: `WORKER_VISUAL_QA_VERIFIED`, verdict: `PENDING_HUMAN_QA`).
 - **QA Overlays**: `data/processed/construction_ppe_corrected/qa_overlays/{train,val,test}/<stem>_qa.jpg` (bounding boxes color-coded: green=person, cyan=helmet, orange=vest).
 - **Contact Sheets**: `data/processed/construction_ppe_corrected/contact_sheets/*.jpg` (9 cluster contact sheets for rapid visual review).

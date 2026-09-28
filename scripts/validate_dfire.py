@@ -3,7 +3,8 @@
 Validates:
 1. Exact 1:1 image-to-label pairing across train, val, test splits.
 2. Canonical 6-class schema compliance:
-   - Only canonical class IDs 4 (fire) and 5 (smoke) are present.
+   - Only canonical class IDs 0 through 5 are accepted.
+   - D-Fire fire/smoke boxes use IDs 4/5; remediation may add person boxes as ID 0.
    - Zero unexpected or legacy class IDs.
 3. Coordinate validity:
    - All bounding boxes strictly within [0.0, 1.0].
@@ -104,8 +105,8 @@ def validate():
                     continue
 
                 # Check class IDs
-                if cid not in (4, 5):
-                    errors.append(f"{s}/{p.name}:{line_no}: Invalid class ID {cid} (must be canonical 4 or 5)")
+                if cid not in range(6):
+                    errors.append(f"{s}/{p.name}:{line_no}: Invalid class ID {cid} (must be canonical 0 through 5)")
                 canonical_classes[cid] += 1
                 split_class_counts[s][cid] += 1
 
@@ -125,7 +126,11 @@ def validate():
                     errors.append(f"{s}/{p.name}:{line_no}: Box boundary exceeds [0, 1] bounds")
 
     print(f"Empty labels (negative images): {dict(empty_labels)} (total = {sum(empty_labels.values())})")
-    print(f"Canonical classes: {dict(canonical_classes)} (class 4 [fire]={canonical_classes[4]}, class 5 [smoke]={canonical_classes[5]})")
+    print(
+        f"Canonical classes: {dict(canonical_classes)} "
+        f"(class 0 [person]={canonical_classes[0]}, "
+        f"class 4 [fire]={canonical_classes[4]}, class 5 [smoke]={canonical_classes[5]})"
+    )
     print(f"Per-split classes: {dict(split_class_counts)}")
     print(f"Syntax errors: {syntax_errors}")
     print(f"OOB / edge violations: {oob_count}")

@@ -49,7 +49,9 @@ as the primary objective.
 The geometric PPE association is an explicit baseline and must be evaluated on
 crowded and occluded scenes. Fall detections are frame-level hypotheses and need
 temporal confirmation. Fight is not emitted by this detector; its Stage 2
-temporal pipeline remains blocked pending an approved video dataset.
+temporal pipeline has a completed SCFD/X3D-S pilot; pipeline integration and
+target-camera evaluation remain pending. See
+`stage2_scfd_pilot_readiness.md` for the current pilot results and limitations.
 
 This workflow uses public data only until a target-camera holdout set exists.
 Reports must carry that limitation and must not claim production readiness.

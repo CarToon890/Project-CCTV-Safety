@@ -1,10 +1,12 @@
 # Replacement Dataset Search: Fall and Fire/Smoke
 
+> **Current project status (2026-09-28):** This is a historical candidate-search and sample-audit plan, not a current approval gate. Stage 1 has since been trained as a provisional six-class dataset (`person`, `helmet`, `vest`, `fall`, `fire`, `smoke`); Stage 2 `fight` (SCFD/X3D-S) has also completed pilot training and held-out evaluation. Dataset/source limitations remain documented educational-project risks accepted by the owner, not pending clearance tasks. Remaining work is Stage 2 pipeline integration and evaluation on target CCTV footage. See [stage2_scfd_pilot_readiness.md](stage2_scfd_pilot_readiness.md).
+
 ## Project CCTV Safety — Stage 1 Spatial Detector
 
 > **Review date:** 25 September 2026
 > **Binding owner decision (25 September 2026):** This is a non-commercial university course project submitted to an instructor. Dataset originals will not be redistributed in Git, public model weights will not be released, sources and licenses will be cited, identifiable faces in reports and presentations must be blurred, and unresolved upstream-rights limitations must be disclosed.
-> **Method:** Primary-source desk review of creator repositories, institutional dataset records, peer-reviewed data descriptors, and license metadata. No dataset archive was downloaded, and no model training was performed.
+> **Method (as of 25 September 2026):** Primary-source desk review of creator repositories, institutional dataset records, peer-reviewed data descriptors, and license metadata. No dataset archive had been downloaded and no model training had been performed at that review date; later curation and pilot training are recorded in the current-status note above.
 > **Scope:** Replacement candidates for `fall`, `fire`, and `smoke` in the Stage 1 spatial detector.
 > **Legal and license principle:** Non-commercial education does not automatically cure copyright or license issues. Explicit source license terms still control. Unverified or contradictory license terms remain HOLD/BLOCKED.
 > **Authorization scope:** GO / CONDITIONAL GO authorizes small-scale sample audit or bounded educational prototype only, **never unrestricted training approval**, commercial deployment, or clean provenance claims.
@@ -14,7 +16,7 @@
 > - CONDITIONAL GO is never approval to redistribute dataset files, publish weights, deploy commercially, or claim clean provenance.
 > **Architecture & schema alignment:**
 > - Stage 1 Spatial Detector comprises **exactly six canonical classes**: `0: person`, `1: helmet`, `2: vest`, `3: fall`, `4: fire`, `5: smoke` (see [data_schema_6classes.md](data_schema_6classes.md)).
-> - `fight` remains strictly outside Stage 1 and is deferred to the Stage 2 temporal video classifier; Stage 2 remains **BLOCKED / PENDING DATA APPROVAL** (see [two_stage_architecture_migration.md](two_stage_architecture_migration.md) and [fight_dataset_evaluation.md](fight_dataset_evaluation.md)).
+> - `fight` remains strictly outside Stage 1 and is handled by the Stage 2 temporal video classifier; its SCFD/X3D-S pilot has since been trained and evaluated, with pipeline integration still pending (see [two_stage_architecture_migration.md](two_stage_architecture_migration.md) and [stage2_scfd_pilot_readiness.md](stage2_scfd_pilot_readiness.md)).
 > - `no_helmet` and `no_vest` are geometric post-processing events computed by `cctv_safety/ppe.py`, not detector classes.
 > - Consistency baseline: Aligned with findings in [stage1_dataset_primary_source_audit.md](stage1_dataset_primary_source_audit.md), [construction_ppe_sample_audit.md](construction_ppe_sample_audit.md), and [dataset_evaluation.md](dataset_evaluation.md).
 
@@ -48,13 +50,13 @@ A desk review of the raw InvenioRDM metadata on Zenodo revealed that earlier eva
 
 ---
 
-## 2. Decision Table
+## 2. Historical Candidate Decision Table (25 September 2026)
 
-| Priority | Candidate | Target Class | Decision Status | Operative License | Immediate Technical & Provenance Reason |
+| Priority | Candidate | Target Class | Decision Status at audit | Operative License as recorded | Audit-time technical & provenance reason |
 |:---:|---|:---:|:---:|:---:|---|
 | **1** | **Fall Detection Dataset (State-to-Fall + ADL)** | `fall` (and `person`) | **GO — Passed Sample Audit (Build Corrected Labels Only)** | CC BY-NC 4.0 | Sample audit completed 25 Sep 2026. 100% XML-to-video mapping confirmed (8/8 clips, diff=0). 487 stratified frames inspected across 10 clips. Actor grouping defined. Discrepancies cataloged for label remediation; unrestricted training remains gated. |
 | **2** | **Boreal Forest Fire — Subset A** | `smoke` | **GO — sample audit only** | CC BY 4.0 | First-party prescribed-burn UAV capture by Finnish research institutes; CC BY 4.0; human-reviewed YOLO smoke boxes; aerial domain; covers smoke only (zero fire boxes). Sample audit only. |
-| **3** | **D-Fire** | `fire`, `smoke` | **CONDITIONAL GO — Passed Worker Sample Audit (Corrected Build Ready; Hold for Independent Human QA)** | CC0 1.0 (annotations/collection); upstream web images unverified | 21,527 images in YOLO format (14,692 fire boxes, 11,865 smoke boxes). 100% machine inventory complete (0 corrupt, 0 syntax errors, 26 OOB defects cataloged). 106-frame worker visual audit executed. Immutable raw corrected build created at `data/processed/dfire_corrected` with 0 cross-split leakage across 10,010 scene groups (train 17,248 / val 1,488 / test 2,791). Handoff queue in `dfire_audit_handoff_queue.csv`. Bounded educational prototype only; Git redistribution barred, weights private, faces blurred, upstream rights disclosed. |
+| **3** | **D-Fire** | `fire`, `smoke` | **At that time: CONDITIONAL GO — sample audit / worker review in progress; later owner QA and Stage 1 pilot training completed** | CC0 1.0 (annotations/collection); upstream web images unverified | Historical machine inventory and worker review snapshot. Do not treat the old “awaiting independent QA” wording as a current blocker; see the current Stage 1 handoff and owner sign-off records. |
 | **4** | **TsetFall** | `fall` | **HOLD** | GPL-3.0 (repo) | Provides human bbox CSV and sequence IDs, but GPL-3.0 is a software license whose scope over media/likenesses is ambiguous; distributed via MEGA with a Google Form key requirement. |
 | **5** | **GMDCSA-24** | `fall` | **HOLD** | CC BY 4.0 (Zenodo) | First-party recordings of 4 actors across 3 homes; Zenodo metadata specifies CC BY 4.0, but data contains only action video clips without Stage 1 bounding boxes; requires complete relabeling. |
 | **6** | **EDF / OCCU** | `fall` | **HOLD** | CC BY 4.0 (Zenodo) | 26.9 GB Kinect depth + synchronized RGB archive from 5 subjects; Zenodo metadata specifies CC BY 4.0, but contains no Stage 1 bounding boxes and depth domain diverges from surveillance RGB. |
@@ -426,7 +428,7 @@ The D-Fire worker sample audit and defect remediation pipeline was formally exec
   - Color-coded QA overlays rendered under `data/processed/dfire_corrected/qa_overlays/` and multi-frame contact sheets rendered under `data/processed/dfire_corrected/qa_contact_sheets/`.
   - Zero unboxed visible humans in critical flame regions; hard negatives (floodlights, headlights, campfire ash, sunsets) confirmed free of false flame/smoke boxes.
 - **Independent Human QA Handoff:**
-  - Complete handoff queue logged in [`docs/audit_artifacts/dfire/dfire_audit_handoff_queue.csv`](audit_artifacts/dfire/dfire_audit_handoff_queue.csv) (status `WORKER_VISUAL_QA_VERIFIED`, verdict `PENDING_HUMAN_QA` for all 106 rows).
+  - Complete handoff queue logged in [`docs/audit_artifacts/dfire/dfire_audit_handoff_queue.csv`](audit_artifacts/dfire/dfire_audit_handoff_queue.csv) (at that time: status `WORKER_VISUAL_QA_VERIFIED`, verdict `PENDING_HUMAN_QA` for all 106 rows; this pending verdict was later superseded by owner QA/sign-off and Stage 1 pilot training).
   - Independent human QA sign-off across all 106 rows remains the required final gate before training ingestion.
 - **Educational Prototype Risk Note:**
   - Upstream source image rights disclaimed by maintainers; CC0 1.0 covers annotations/structure only. Documented as an educational prototype risk note under the owner's non-commercial course project baseline (Git exclusion active, model weights private, citations required, faces blurred, commercial claims barred).
@@ -470,21 +472,23 @@ flowchart TD
 
 ---
 
-## 9. Cross-Document Consistency Matrix
+## 9. Historical Cross-Document Consistency Matrix
 
 This replacement search has been cross-checked for absolute consistency against all governing project documentation:
 
 | Governing Document | Policy / Decision Alignment | Status in This Document |
 |---|---|---|
 | [data_schema_6classes.md](data_schema_6classes.md) | Stage 1 detector is strictly 6 spatial classes: `person`, `helmet`, `vest`, `fall`, `fire`, `smoke`. | Fully preserved. `fight` is excluded from Stage 1. |
-| [two_stage_architecture_migration.md](two_stage_architecture_migration.md) | `fight` deferred to Stage 2 temporal video classifier; Stage 2 is BLOCKED. `no_helmet`/`no_vest` are derived events. | Fully preserved. Stage 2 remains BLOCKED; derived events are not detector classes. |
+| [two_stage_architecture_migration.md](two_stage_architecture_migration.md) | `fight` is deferred to Stage 2; `no_helmet`/`no_vest` are derived events. | The class separation remains current. The old blocked status is superseded: the SCFD/X3D-S pilot is trained/evaluated and integration remains pending. |
 | [stage1_dataset_primary_source_audit.md](stage1_dataset_primary_source_audit.md) | No dataset approved for unrestricted training; Construction-PPE is HOLD due to split leakage; Fall and Smoke enter sample audit; D-Fire is CONDITIONAL GO for educational prototype; Simuletic is HOLD. | Aligned. Replacement search establishes protocols for `fall`, `smoke`, and `fire`. GO / CONDITIONAL GO authorizes sample audit only. |
 | [construction_ppe_sample_audit.md](construction_ppe_sample_audit.md) | Construction-PPE has split leakage and 10 orphan labels; re-splitting and exhaustive QA required. | Cited as model for sample audit execution; informs grouping and leakage checks. |
 | [dataset_evaluation.md](dataset_evaluation.md) | Historical 7-class schema deprecated; Simuletic Aggressive Poses closed as NO-GO. | Aligned. Retains all HOLD/REJECT decisions and applies careful status model for fire. |
 
 ---
 
-## 10. Recommended Next Actions
+## 10. Historical Next Actions (Superseded)
+
+The actions below describe the plan as of 25 September 2026. They are retained as an audit trail and are not current instructions: the Fall/Smoke/Fire curation and Stage 1 pilot proceeded afterward. No additional dataset search, download, or rights-clearance task is currently required for this project. Current remaining work is Stage 2 integration and target-CCTV evaluation.
 
 1. **Fall Sample Audit Executed (Completed 25 Sep 2026):** 10-clip sample audit successfully completed with **GO** decision to proceed to corrected label generation. Next action: implement programmatic CVAT-to-YOLO dual-box conversion script, truncate unannotated tail frames, and tighten loose bounding boxes.
 2. **Execute Smoke Sample Audit in Parallel:** Sample exactly 80 images from Boreal Forest Fire — Subset A across all four locations. Pay particular attention to detecting and logging any unboxed flames within smoke plumes.

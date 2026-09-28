@@ -1,5 +1,7 @@
 # Fall Detection Corrected Pilot — Human & Machine QA Audit Report
 
+> **Historical QA snapshot — superseded (2026-09-28):** This report covers the original 8-clip CVAT pilot, not the later provisional unified Stage 1 package. The report’s “remaining 46 clips blocked” statement describes the state on 25 September 2026 and is no longer the project-level training status. The owner later approved the Fall campaign sample and decided to keep the 8-clip pilot boxes unchanged where evidence was insufficient to tighten them. Stage 1 pilot training/evaluation has since completed; see [current readiness](../../stage1_pretraining_readiness.md).
+
 > **Audit Date:** 25 September 2026  
 > **Pilot Scope:** 8 CVAT-annotated clips (6 `standing_to_fall`, 2 `sleeping_to_fall`) from Fall Detection Dataset  
 > **Target Schema:** Canonical Stage 1 Detector Schema v2 (6 classes: `0:person`, `1:helmet`, `2:vest`, `3:fall`, `4:fire`, `5:smoke`)  

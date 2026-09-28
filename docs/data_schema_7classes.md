@@ -3,8 +3,8 @@
 > **Deprecated historical schema (v1).** Do not use this schema to prepare,
 > train or run the current detector. The active contract is
 > [Detector Data Schema v2 — 6 Spatial Classes](data_schema_6classes.md).
-> Class `fight` moved to the Stage 2 temporal pipeline, which is currently
-> `BLOCKED / PENDING DATA APPROVAL`.
+> Class `fight` moved to the Stage 2 temporal pipeline. A pilot is trained and
+> evaluated; pipeline integration and target-camera evaluation remain pending.
 
 ## Canonical class mapping
 

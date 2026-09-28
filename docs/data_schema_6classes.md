@@ -14,7 +14,7 @@ This is the canonical schema for the Stage 1 YOLO detector.
 The order is a public contract and must exactly match `configs/classes.yaml`,
 `configs/data.yaml`, model checkpoint names and confidence-threshold keys.
 `fight` is not a detector class. It is reserved as a Stage 2 temporal event,
-which remains blocked pending an approved video dataset.
+which has a completed SCFD/X3D-S pilot; pipeline integration and target-camera evaluation remain pending.
 
 ## Annotation rules
 
@@ -33,9 +33,10 @@ which remains blocked pending an approved video dataset.
 classes. PPE association uses configurable person regions and must not treat an
 occluded body region as proof of non-compliance.
 
-`fight` belongs to the separate temporal pipeline. Its implementation and
-training remain `BLOCKED / PENDING DATA APPROVAL` until all Stage 2 entry gates
-in `two_stage_architecture_migration.md` pass.
+`fight` belongs to the separate temporal pipeline. A SCFD/X3D-S pilot has been
+trained and evaluated; production-style pipeline integration and target-camera
+evaluation remain pending. See `stage2_scfd_pilot_readiness.md` for current
+results and limitations.
 
 ## Required dataset layout
 

@@ -1,24 +1,38 @@
 # Stage 1 Pre-Training Readiness Audit
 
+> **SUPERSEDED CURRENT-STATUS NOTE (2026-09-28):** This document is an archived
+> pre-training gate snapshot from 2026-09-25/26. The owner later authorized and
+> completed the provisional Stage 1 pilot runs: YOLOv8n reached 81/100 epochs
+> and YOLOv8s reached 86/100 epochs, with held-out evaluations recorded. The
+> `HOLD`, `PENDING`, and `NOT TRAINING READY` labels and proposed gates below
+> describe the earlier snapshot, not the current project state. Stage 1 remains
+> a provisional educational pilot; use the current main-worktree status when
+> preparing the merge.
+
+> **Owner decision and gate status at audit time (2026-09-26; superseded):** Project-owner human sign-off was recorded for the 176-row Fall campaign queue and 106-row D-Fire sample queue. For the 8-clip Fall CVAT pilot, the owner found evidence insufficient to redefine box boundaries and directed that existing boxes remain unchanged; this does not certify their tightness. PPE owner QA sign-off was recorded for all 83 remaining queue items, in addition to `image472.jpg` PASS; `image556.jpg` was excluded from the training package. At that time the PPE validator still rejected non-pending queue verdicts and the unified dataset gate was open, so the audit verdict was HOLD. Those gates were later resolved or superseded and the Stage 1 pilot training/evaluation completed. Boreal Smoke was waived; D-Fire is the Smoke source in the provisional dataset. See [owner sign-off record](audit_artifacts/owner_human_signoff_2026-09-26.md).
+
 ## Project CCTV Safety — Canonical Spatial Detector (6 Classes)
 
-> **Document Status:** Authoritative Pre-Training Readiness Baseline<br/>
+> **Document Status:** Historical Pre-Training Readiness Baseline — superseded by completed Stage 1 pilots<br/>
 > **Audit Date:** 25 September 2026<br/>
 > **Target Architecture:** Stage 1 Spatial Object Detector (YOLOv8)<br/>
 > **Canonical Classes (Exactly 6):** `0: person`, `1: helmet`, `2: vest`, `3: fall`, `4: fire`, `5: smoke`<br/>
-> **Scope Exclusions:** `fight` is strictly excluded from Stage 1 (deferred to Stage 2 temporal video classifier; Stage 2 remains **BLOCKED / PENDING DATA APPROVAL** per [two_stage_architecture_migration.md](two_stage_architecture_migration.md)).<br/>
+> **Scope Exclusions:** `fight` is strictly excluded from Stage 1 and belongs to Stage 2 temporal classification. The SCFD/X3D-S Stage 2 pilot has since been trained/evaluated; integration remains pending.<br/>
 > **Negative Event Semantics:** `no_helmet` and `no_vest` are post-processing geometric events evaluated by [`cctv_safety/ppe.py`](../cctv_safety/ppe.py), **never positive detector classes or trained labels**. The absence of worn PPE on a detected human is a legitimate negative condition, not a missing annotation box.<br/>
 > **Project Governance & Legal Baseline:** Non-commercial university course project submitted to an instructor. Under the 25 September 2026 binding project-owner decision, provenance and upstream copyright limitations are **recorded owner-accepted non-blocking limitations** for this educational course project. Dataset originals will not be redistributed in Git (`data/raw/` remains excluded via `.gitignore`), public model weights will not be released, sources and licenses will be cited, identifiable human faces in reports and presentations must be blurred, and unresolved upstream-rights limitations must be disclosed.<br/>
-> **Physical Data Presence Disclosure:** Raw image archives for Smoke and Fire candidates remain **absent locally from disk** (`data/raw/` does not contain them), and their actual physical sample audits have **not been executed** on disk (audit protocols approved via primary-source desk reviews). The Fall Detection Dataset (54 MP4 clips) is present locally in `data/raw/`, with its 8-clip CVAT pilot and 10-clip targeted annotation campaign executed on disk.
+> **Physical data presence at audit time (2026-09-25/26):** This snapshot predates the later D-Fire acquisition and unified dataset build. It must not be used to infer current local data presence. The Fall Detection Dataset (54 MP4 clips) and its 8-clip CVAT pilot/10-clip targeted annotation campaign were present at the time; later Stage 1 training used the built provisional unified dataset.
 <br/>
 
 ---
 
 ## 1. Executive Summary & Readiness Verdict
 
-### Overall Stage 1 Verdict: HOLD FOR TRAINING / NOT TRAINING READY
+### Historical Stage 1 Verdict (as of 2026-09-26): HOLD FOR TRAINING — SUPERSEDED
 
-The Stage 1 spatial detector pipeline is **NOT ready for model training**. While primary candidate datasets have been identified, license terms and educational safeguards established, and cross-split leakage resolved for the primary PPE candidate, critical data-readiness gates remain open across all six canonical classes:
+At that time, the Stage 1 spatial detector pipeline was deemed **not ready for
+training**. Owner-authorized pilot training and held-out evaluation have since
+completed; the detailed readiness items below remain an audit trail, not current
+blockers:
 
 1. **PPE (`person`, `helmet`, `vest`):** Ultralytics Construction-PPE has completed 100% machine inventory and a 42-image stratified human visual QA sample. All 88 defect rows (85 unique images) cataloged in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv) have undergone 100% worker visual QA remediation. The complete corrected dataset has been generated at `data/processed/construction_ppe_corrected` (1,416 paired images: train 1,151 / val 129 / test 136; Person 2,379, Helmet 1,733, Vest 1,626; zero instances of classes 3, 4, 5). Zero group leakage across splits is verified. A concise human QA review queue ([remediation_qa_queue.csv](audit_artifacts/construction_ppe/remediation_qa_queue.csv)) and QA overlays have been emitted. The verdict is **`WORKER_REMEDIATION_COMPLETE` / `PENDING_INDEPENDENT_HUMAN_QA`**.
 2. **Fall (`fall`):** The Fall Detection Dataset ([samruddhi-2308/FallDetectionDataset](https://github.com/samruddhi-2308/FallDetectionDataset)) has completed its 8-clip CVAT pilot (227 pairs) and the 10-clip targeted annotation campaign across 10 selected clips (all 6 ADL negative controls plus 4 diverse sitting-to-fall clips: `FD0007`, `FD0010`, `FD0014`, `FD0020`). Across the 10 campaign clips, all 176 retained review frames were visually inspected and annotated via worker visual QA, resulting in **176 completed frames and 0 pending frames (`PENDING_MANUAL_BBOX: 0`)**. The pilot extension dataset yields class counts: **`Person 185`**, **`Fall 60`**, with classes 1/2/4/5 strictly `0`, across splits **train: 67, val: 76, test: 33**. Actor-group regrouping in `fall_actor_grouping.csv` confirms zero actor-group split leakage across 9 groups. The campaign verdict is **`FALL_CAMPAIGN_COMPLETE` / `FALL_REMEDIATION_COMPLETE`**. Model training remains on hold pending independent human sign-off (open governance gate) and non-fall pre-training gates. Provenance and upstream CC BY-NC 4.0 licensing are documented as a course-project risk note (under owner educational prototype baseline), not the present execution blocker.
@@ -269,8 +283,8 @@ flowchart TD
 
 ### The Seven Mandatory Gates:
 1. `OWNER_TRAINING_AUTHORIZATION == TRUE`: Explicit owner authorization to begin training. License and provenance remain documented educational-project risk notes and are not execution blockers under the current owner decision.
-2. `LOCAL_DATA_ACQUIRED == TRUE`: Physical retrieval of Fall Detection Dataset (54 clips), Boreal Forest Fire Subset A (4,954 images), and D-Fire (21,527 images) into local `.gitignore`-protected directories.
-3. `LOCAL_SAMPLE_AUDITS_PASSED == TRUE`: Physical execution of the 10-clip Fall audit, 80-image Smoke audit, and 80-image Fire audit with documented QA overlay artifacts and zero blocking defects.
+2. `LOCAL_DATA_ACQUIRED == TRUE`: Physical retrieval of Fall Detection Dataset (54 clips) and D-Fire (21,527 images) into local `.gitignore`-protected directories; Boreal is waived by the owner and excluded from scope.
+3. `LOCAL_SAMPLE_AUDITS_PASSED == TRUE`: Fall campaign and D-Fire sample audit have project-owner human sign-off recorded in [owner_human_signoff_2026-09-26.md](audit_artifacts/owner_human_signoff_2026-09-26.md). No Boreal audit is required. Fall pilot box tightening remains an open technical gate.
 4. `PPE_REMEDIATION_ACCEPTED == TRUE`: Completion of all edits in [label_remediation_manifest.csv](audit_artifacts/construction_ppe/label_remediation_manifest.csv) and 100% verification by the Pass 2 independent reviewer meeting quantitative thresholds (GATE-Q1 through GATE-Q9).
 5. `EXHAUSTIVE_6CLASS_COMPLETENESS == TRUE`: Confirmation that every visible entity across the unified dataset is mapped to one of the six canonical classes (`person`, `helmet`, `vest`, `fall`, `fire`, `smoke`) or confirmed background.
 6. `LEAKAGE_MANIFESTS_ACTIVE == TRUE`: Data ingestion pipeline strictly uses [proposed_regroup_manifest.csv](audit_artifacts/construction_ppe/proposed_regroup_manifest.csv) and group manifests for all external sets.
@@ -326,11 +340,9 @@ The following sequential, decision-free task queue specifies the exact order of 
                       fall_campaign_decimation_stats.csv, fall_actor_grouping.csv,
                       fall_campaign_qa_report.md, fall_pilot_manifest.csv, fall_pilot_qa_report.md.
 
-[QUEUE-06] EXECUTE BOREAL SMOKE DATASET SAMPLE AUDIT
-           Action: Inspect the 80 stratified drone images across Evo, Ruokolahti, Karkkila, Heinola.
-           Verification: Assess large-box smoke annotations, screen against clouds/water reflections,
-                         and strictly audit for unboxed visible flames (flame contamination check).
-           Artifacts: Emit smoke_sample_inventory.csv and flame_contamination_log.md.
+[QUEUE-06] BOREAL SMOKE DATASET — WAIVED BY PROJECT OWNER (2026-09-26)
+           Status: OUT OF SCOPE. D-Fire is the sole planned Smoke source; no Boreal download or audit.
+           Record: docs/audit_artifacts/owner_human_signoff_2026-09-26.md.
 
 [QUEUE-07] EXECUTE D-FIRE DATASET SAMPLE AUDIT
            Action: Inspect the 80 stratified web images (fire, fire+smoke, smoke, negatives).
@@ -376,4 +388,4 @@ All 77 zero-Person files ($4 \text{ val} + 8 \text{ test} + 46 \text{ train sequ
 
 ### 8.2 Two-Stage Scope & Architecture Boundary
 - **Stage 1 Detector:** Dedicated strictly to real-time spatial bounding-box detection of the six canonical physical classes (`person`, `helmet`, `vest`, `fall`, `fire`, `smoke`).
-- **Stage 2 Temporal Video Classifier:** The detection of violent physical conflict (`fight`) requires temporal motion tracking, velocity vector analysis, and multi-frame video classification (e.g., X3D-S / VideoMAE). It is strictly excluded from Stage 1 YOLO training. Stage 2 development remains **BLOCKED / PENDING DATA APPROVAL** per [two_stage_architecture_migration.md](two_stage_architecture_migration.md).
+- **Stage 2 Temporal Video Classifier:** `fight` remains strictly excluded from Stage 1 YOLO. The SCFD/X3D-S pilot has since been trained and evaluated; integration with Stage 1 and target-camera evaluation remain pending.
