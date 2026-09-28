@@ -12,6 +12,7 @@ reports/
 configs/datasets.local.yaml
 .env
 .venv/
+.venv-cuda/
 venv/
 env/
 .vscode/
