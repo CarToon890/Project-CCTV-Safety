@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "weights_missing",
+    "message": "Model weights for 'x3d_s' were not found: weights/X3D-S_best.pt. Copy the .pt file into the weights directory (CCTV_WEIGHTS_DIR)."
+  }
+}

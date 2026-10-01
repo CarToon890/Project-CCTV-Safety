@@ -1,4 +1,4 @@
-# Project status — 2026-09-28
+# Project status — 2026-10-01
 
 This is the current status source of truth. Older audit reports, package READMEs,
 and plans are retained as records of what was known or approved at their dates;
@@ -11,9 +11,13 @@ their historical statements are not the current project status.
 - **Stage 2:** the SCFD pilot was Human-QA signed off by the owner and trained
   with X3D-S. It is an evaluated pilot, not a robust or production-ready Fight
   classifier.
-- **Combined system:** not complete. The repository inference entry point is
-  YOLO-only; X3D-S temporal inference, person tracking, event logic, and
+- **Combined system:** not complete. The CLI `scripts/infer.py` is YOLO-only.
+  Reusable X3D-S inference now exists (`cctv_safety/stage2.py`), and the web
+  prototype runs both models, but separately. Person tracking, event logic and
   end-to-end integration/evaluation remain to be implemented.
+- **Web prototype (2026-10-01):** a demo-only Upload & Analyze page. It runs
+  YOLOv8n/s and X3D-S on uploaded images and videos through a local FastAPI
+  backend; see the section below.
 - **Project scope:** educational project; both stages remain pilot work.
 - The recorded Stage 1 and Stage 2 pilot runs were owner-authorized. **This
   status update does not authorize a new run or continuation**; notebook gates
@@ -57,6 +61,26 @@ and background confusions require targeted visual error analysis.
 
 This sample is small, short, and not enough to claim generalization to target
 CCTV. Do not describe this model as a production-ready Fight detector.
+
+## Web prototype — Upload & Analyze (demo only)
+
+- `webapp/` (FastAPI) serves `mockup/` and exposes `POST /api/stage1/analyze`
+  (YOLOv8n/s, image or video, optional dense sampling for video playback) and
+  `POST /api/stage2/analyze` (X3D-S, non-overlapping 2 s windows, video only).
+  Contract: [`web_api_contract.md`](web_api_contract.md).
+- X3D-S preprocessing reproduces the training notebook (13 uniformly sampled
+  frames, aspect-preserving resize, centred 224×224 padding, Kinetics
+  normalization). The server runs in fp32, while the notebook evaluated in fp16,
+  so scores can differ slightly from the recorded test metrics.
+- Weights are not in Git. Put `YOLOv8n_best.pt`, `YOLOv8s_best.pt` and
+  `X3D-S_best.pt` in `weights/`, then run
+  `python -m uvicorn webapp.api:app --port 8000`.
+- Only the Upload & Analyze view shows model output. Dashboard, Live Monitoring
+  and Alert Logs remain mock data and are labelled "ข้อมูลจำลอง".
+- Spot checks on two real images matched the displayed results to the raw API
+  output. They also showed known model errors: smoke predicted indoors, and a
+  person and vest predicted on a bus advertisement. This prototype is not
+  evidence of accuracy or production readiness.
 
 ## Remaining before the project can be called complete
 

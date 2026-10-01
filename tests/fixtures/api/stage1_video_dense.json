@@ -1,0 +1,470 @@
+{
+  "is_model_output": true,
+  "model": "yolov8s",
+  "schema_version": "1.0",
+  "disclaimer": "ต้นแบบเพื่อการศึกษา (pilot) ฝึกด้วยชุดข้อมูลสาธารณะเท่านั้น ไม่ใช่ระบบใช้งานจริง และยังไม่ได้ตรวจสอบความถูกต้องกับกล้อง CCTV เป้าหมาย / Educational pilot trained on public datasets only. Not a production system and not validated on the target CCTV cameras.",
+  "detector_schema_version": 2,
+  "class_names": [
+    "person",
+    "helmet",
+    "vest",
+    "fall",
+    "fire",
+    "smoke"
+  ],
+  "media_type": "video",
+  "source": {
+    "width": 160,
+    "height": 120,
+    "fps": 10.0,
+    "frame_count": 10,
+    "duration_s": 1.0
+  },
+  "thresholds": {
+    "person": 0.25,
+    "helmet": 0.2,
+    "vest": 0.2,
+    "fall": 0.2,
+    "fire": 0.2,
+    "smoke": 0.2
+  },
+  "ppe_min_confidence": 0.2,
+  "mode": "dense",
+  "sample_fps": 10.0,
+  "frames": [
+    {
+      "index": 0,
+      "time_s": 0.0,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.88,
+          "xyxy": [
+            20.0,
+            10.0,
+            60.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.71,
+          "xyxy": [
+            30.0,
+            10.0,
+            48.0,
+            24.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.88,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "time_s": 0.1,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.87,
+          "xyxy": [
+            26.0,
+            10.0,
+            66.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.705,
+          "xyxy": [
+            36.0,
+            10.0,
+            54.0,
+            24.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.87,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "time_s": 0.2,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.86,
+          "xyxy": [
+            32.0,
+            10.0,
+            72.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.7,
+          "xyxy": [
+            42.0,
+            10.0,
+            60.0,
+            24.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.86,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "time_s": 0.3,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.85,
+          "xyxy": [
+            38.0,
+            10.0,
+            78.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.695,
+          "xyxy": [
+            48.0,
+            10.0,
+            66.0,
+            24.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.85,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "time_s": 0.4,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.84,
+          "xyxy": [
+            44.0,
+            10.0,
+            84.0,
+            110.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.84,
+          "has_helmet": false,
+          "has_vest": false,
+          "alerts": [
+            "no_helmet",
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "time_s": 0.5,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.83,
+          "xyxy": [
+            50.0,
+            10.0,
+            90.0,
+            110.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.83,
+          "has_helmet": false,
+          "has_vest": false,
+          "alerts": [
+            "no_helmet",
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "time_s": 0.6,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.82,
+          "xyxy": [
+            56.0,
+            10.0,
+            96.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.68,
+          "xyxy": [
+            66.0,
+            10.0,
+            84.0,
+            24.0
+          ]
+        },
+        {
+          "class_id": 4,
+          "class_name": "fire",
+          "confidence": 0.4,
+          "xyxy": [
+            110.0,
+            70.0,
+            146.0,
+            112.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.82,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "time_s": 0.7,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.81,
+          "xyxy": [
+            62.0,
+            10.0,
+            102.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.675,
+          "xyxy": [
+            72.0,
+            10.0,
+            90.0,
+            24.0
+          ]
+        },
+        {
+          "class_id": 4,
+          "class_name": "fire",
+          "confidence": 0.44,
+          "xyxy": [
+            110.0,
+            70.0,
+            146.0,
+            112.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.81,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "time_s": 0.8,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.8,
+          "xyxy": [
+            68.0,
+            10.0,
+            108.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.67,
+          "xyxy": [
+            78.0,
+            10.0,
+            96.0,
+            24.0
+          ]
+        },
+        {
+          "class_id": 4,
+          "class_name": "fire",
+          "confidence": 0.48,
+          "xyxy": [
+            110.0,
+            70.0,
+            146.0,
+            112.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.8,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "time_s": 0.9,
+      "image_jpeg_b64": null,
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.79,
+          "xyxy": [
+            74.0,
+            10.0,
+            114.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.665,
+          "xyxy": [
+            84.0,
+            10.0,
+            102.0,
+            24.0
+          ]
+        },
+        {
+          "class_id": 4,
+          "class_name": "fire",
+          "confidence": 0.52,
+          "xyxy": [
+            110.0,
+            70.0,
+            146.0,
+            112.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.79,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "video_required",
+    "message": "Stage 2 (X3D-S fight classifier) needs a video file (mp4, avi, mov, mkv); an image was uploaded."
+  }
+}
