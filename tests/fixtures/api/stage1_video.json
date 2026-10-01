@@ -1,0 +1,147 @@
+{
+  "is_model_output": true,
+  "model": "yolov8s",
+  "schema_version": "1.0",
+  "disclaimer": "ต้นแบบเพื่อการศึกษา (pilot) ฝึกด้วยชุดข้อมูลสาธารณะเท่านั้น ไม่ใช่ระบบใช้งานจริง และยังไม่ได้ตรวจสอบความถูกต้องกับกล้อง CCTV เป้าหมาย / Educational pilot trained on public datasets only. Not a production system and not validated on the target CCTV cameras.",
+  "detector_schema_version": 2,
+  "class_names": [
+    "person",
+    "helmet",
+    "vest",
+    "fall",
+    "fire",
+    "smoke"
+  ],
+  "media_type": "video",
+  "source": {
+    "width": 160,
+    "height": 120,
+    "fps": 25.0,
+    "frame_count": 135,
+    "duration_s": 5.4
+  },
+  "thresholds": {
+    "person": 0.25,
+    "helmet": 0.2,
+    "vest": 0.2,
+    "fall": 0.2,
+    "fire": 0.2,
+    "smoke": 0.2
+  },
+  "ppe_min_confidence": 0.2,
+  "mode": "frames",
+  "sample_fps": null,
+  "frames": [
+    {
+      "index": 0,
+      "time_s": 0.0,
+      "image_jpeg_b64": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAB4AKADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwCnRRRVkhRVqyhjl3+YucYxzVv7HB/c/U1m6iTsWoNq5lUVq/Y4P7n6mj7HB/c/U0vaofs2ZVFav2OD+5+pqveQRxRBkXB3Y6mmqibsJwaVylRRRWhAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBe03/AJafh/Wr1UdN/wCWn4f1q9XLU+JnRD4QoooqCwqpqP8AqF/3v6GrdVNR/wBQv+9/Q1UPiRM/hZnUUUV1nMFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAXtN/5afh/Wr1UdN/5afh/Wr1ctT4mdEPhCiiioLCqmo/6hf97+hq3VTUf9Qv8Avf0NVD4kTP4WZ1FFFdZzBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAF7Tf+Wn4f1q9VHTf+Wn4f1q9XLU+JnRD4QoooqCwqpqP+oX/AHv6GrdVNR/1C/739DVQ+JEz+FmdRRRXWcwUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBe03/lp+H9avVR03/lp+H9avVy1PiZ0Q+EKKKKgsKqaj/qF/3v6GrdVNR/1C/739DVQ+JEz+FmdRRRXWcwUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBe03/AJafh/Wr1UdN/wCWn4f1q9XLU+JnRD4QoooqCwqpqP8AqF/3v6GrdVNR/wBQv+9/Q1UPiRM/hZnUUUV1nMFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAXtN/5afh/Wr1Z+nuieZvZVzjqcetXPOi/56p/30K5qifMbwfuklFR+dF/z1T/voUedF/z1T/voVFmXdElVNR/1C/739DU/nRf89U/76FVr6RHhAV1Y7uxz2NVBPmRMmrFCiiiuo5wooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==",
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.8645,
+          "xyxy": [
+            20.0,
+            10.0,
+            60.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.7012,
+          "xyxy": [
+            30.0,
+            10.0,
+            48.0,
+            24.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.8645,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 67,
+      "time_s": 2.68,
+      "image_jpeg_b64": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAB4AKADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwCrRRRTKCiitP7JD/c/U1MpKO40rmZRWn9kh/ufqaPskP8Ac/U1PtEPkZmUVp/ZIf7n6mj7JD/c/U0e0QcjMyinygLK4HQMQKZWhIUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAVtVi1tVjV6FwCiiisjQKKKKAMmb/XSf7x/nUdSTf66T/eP86jrqWxgwooopgFFFFABRRRQAUUUUAFFFFABRRRQAVtVi1tVjV6FwCiiisjQKKKKAMmb/XSf7x/nUdSTf66T/eP86jrqWxgwooopgFFFFABRRRQAUUUUAFFFFABRRRQAVtVi1tVjV6FwCiiisjQKKKKAMmb/AF0n+8f51HUk3+uk/wB4/wA6jrqWxgwooopgFFFFABRRRQAUUUUAFFFFABRRRQAVtVi1tVjV6FwCiiisjQKKKKAMmb/XSf7x/nUdSTf66T/eP86jrqWxgwooopgFFFSwReY2T90VM5qEeZjjFydkMVWY/KCacYJAM7auqAoAAwBS158sbK+i0O5YSNtWZxGDg0lXpIlkHPXsapMCpIIwRXXRrqqvM5qtF035CUUUVuYhRRRQAVtVi1tVjV6FwCiiisjQKKKKAMmb/XSf7x/nUdSTf66T/eP86jrqWxgwooopgFX4l2xqMY4yaoVpVwY1uyR2YRathRRRXmneFVbpcFWA68GrVQXX+rH1rowzaqoxrq9NlSiiivZPKCiiigArarFrW86L/non/fQrKp0LgSUVH50X/PRP++hR50X/AD0T/voVjZl3JKKj86L/AJ6J/wB9Cjzov+eif99CizC5mzf66T/eP86jp8pBmcg5BY0yupbGLCiiimAVegYNEPbiqNSRSeW2eoPUVz4il7SGm6NqFT2ctdi9RTUdXGVP/wBanV47TTsz1U01dBVS6YFwvpUss6pwOW/lVQnJya78JRd+dnFiaqtyISiiivROEKKKKACiiigAooooAKKKKACiiigAooooAKKKKAFBwcilLsRgsSPrRRSsmF2htFFFMAooooA//9k=",
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.8301,
+          "xyxy": [
+            24.0,
+            12.0,
+            62.0,
+            112.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.6877,
+          "xyxy": [
+            33.0,
+            12.0,
+            51.0,
+            26.0
+          ]
+        },
+        {
+          "class_id": 4,
+          "class_name": "fire",
+          "confidence": 0.5523,
+          "xyxy": [
+            104.0,
+            70.0,
+            140.0,
+            112.0
+          ]
+        },
+        {
+          "class_id": 5,
+          "class_name": "smoke",
+          "confidence": 0.417,
+          "xyxy": [
+            96.0,
+            20.0,
+            156.0,
+            72.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.8301,
+          "has_helmet": true,
+          "has_vest": false,
+          "alerts": [
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    },
+    {
+      "index": 134,
+      "time_s": 5.36,
+      "image_jpeg_b64": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAB4AKADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwCCiiig1CiirFpEkm/eM4xjmk3ZXGV6K0fssP8Ac/U0fZYf7n6mo9oh2M6itH7LD/c/U0fZYf7n6mj2iCxnUVauoY44wUXBzjrVWrTuriCiiimIKKKKACiiigAooooAKKKKACiiigAq3Yf8tPw/rVSrdh/y0/D+tRP4RrcuUUUVgWFFFFAFa+/1I/3v8ao1evv9SP8Ae/xqjW8NiGFFFFWIKKKKACiiigAooooAKKKKACiiigAq3Yf8tPw/rVSrdh/y0/D+tRP4RrcuUUUVgWFFFFAFa+/1I/3v8ao1evv9SP8Ae/xqjW8NiGFFFFWIKKKKACiiigAooooAKKKKACiiigAq3Yf8tPw/rVSrdh/y0/D+tRP4RrcuUUUVgWFFFFAFa+/1I/3v8ao1evv9SP8Ae/xqjW8NiGFFFFWIKKKKACiiigAooooAKKKKACiiigAq3Yf8tPw/rVSrdh/y0/D+tRP4RrcuUUUVgWFFFFAFa+/1I/3v8ao1evv9SP8Ae/xqjW8NiGFFFFWIKKKKACiiigAooooAKKKKACiiigAq3Yf8tPw/rVSrdh/y0/D+tRP4RrcuUUUVgWFFFFAFa+/1I/3v8ao1evv9SP8Ae/xqjW8NiGFFFFWIKKKKACiiigAooooAKKKKACiiigAq3Yf8tPw/rVSrVk6rv3MBnHU1M/hGty7RTPNj/wCei/mKPNj/AOei/mK57MsfRTPNj/56L+Yo82P/AJ6L+YoswIb7/Uj/AHv8ao1cvHRogFZSd3Y1TreGxDCiiirEFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB//9k=",
+      "detections": [],
+      "ppe": []
+    }
+  ]
+}

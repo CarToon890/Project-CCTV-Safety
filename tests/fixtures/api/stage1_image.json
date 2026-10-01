@@ -1,0 +1,108 @@
+{
+  "is_model_output": true,
+  "model": "yolov8n",
+  "schema_version": "1.0",
+  "disclaimer": "ต้นแบบเพื่อการศึกษา (pilot) ฝึกด้วยชุดข้อมูลสาธารณะเท่านั้น ไม่ใช่ระบบใช้งานจริง และยังไม่ได้ตรวจสอบความถูกต้องกับกล้อง CCTV เป้าหมาย / Educational pilot trained on public datasets only. Not a production system and not validated on the target CCTV cameras.",
+  "detector_schema_version": 2,
+  "class_names": [
+    "person",
+    "helmet",
+    "vest",
+    "fall",
+    "fire",
+    "smoke"
+  ],
+  "media_type": "image",
+  "source": {
+    "width": 160,
+    "height": 120,
+    "fps": null,
+    "frame_count": null,
+    "duration_s": null
+  },
+  "thresholds": {
+    "person": 0.25,
+    "helmet": 0.2,
+    "vest": 0.2,
+    "fall": 0.2,
+    "fire": 0.2,
+    "smoke": 0.2
+  },
+  "ppe_min_confidence": 0.2,
+  "mode": "frames",
+  "sample_fps": null,
+  "frames": [
+    {
+      "index": 0,
+      "time_s": null,
+      "image_jpeg_b64": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAB4AKADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwCnRRRVkhRVqyhjl3+YucYxzVv7HB/c/U1m6iTsWoNq5lUVq/Y4P7n6mj7HB/c/U0vaofs2ZVFav2OD+5+pqveQRxRBkXB3Y6mmqibsJwaVylRRRWhAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBe03/AJafh/Wr1UdN/wCWn4f1q9XLU+JnRD4QoooqCwqpqP8AqF/3v6GrdVNR/wBQv+9/Q1UPiRM/hZnUUUV1nMFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAXtN/5afh/Wr1UdN/5afh/Wr1ctT4mdEPhCiiioLCqmo/6hf97+hq3VTUf9Qv8Avf0NVD4kTP4WZ1FFFdZzBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAF7Tf+Wn4f1q9VHTf+Wn4f1q9XLU+JnRD4QoooqCwqpqP+oX/AHv6GrdVNR/1C/739DVQ+JEz+FmdRRRXWcwUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBe03/lp+H9avVR03/lp+H9avVy1PiZ0Q+EKKKKgsKqaj/qF/3v6GrdVNR/1C/739DVQ+JEz+FmdRRRXWcwUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBe03/AJafh/Wr1UdN/wCWn4f1q9XLU+JnRD4QoooqCwqpqP8AqF/3v6GrdVNR/wBQv+9/Q1UPiRM/hZnUUUV1nMFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAXtN/5afh/Wr1Z+nuieZvZVzjqcetXPOi/56p/30K5qifMbwfuklFR+dF/z1T/voUedF/z1T/voVFmXdElVNR/1C/739DU/nRf89U/76FVr6RHhAV1Y7uxz2NVBPmRMmrFCiiiuo5wooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==",
+      "detections": [
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.8912,
+          "xyxy": [
+            12.0,
+            8.0,
+            52.0,
+            112.0
+          ]
+        },
+        {
+          "class_id": 1,
+          "class_name": "helmet",
+          "confidence": 0.7731,
+          "xyxy": [
+            22.0,
+            8.0,
+            42.0,
+            24.0
+          ]
+        },
+        {
+          "class_id": 0,
+          "class_name": "person",
+          "confidence": 0.742,
+          "xyxy": [
+            96.0,
+            14.0,
+            132.0,
+            110.0
+          ]
+        },
+        {
+          "class_id": 2,
+          "class_name": "vest",
+          "confidence": 0.6604,
+          "xyxy": [
+            16.0,
+            40.0,
+            48.0,
+            76.0
+          ]
+        }
+      ],
+      "ppe": [
+        {
+          "person_index": 0,
+          "person_confidence": 0.8912,
+          "has_helmet": true,
+          "has_vest": true,
+          "alerts": [],
+          "method": "ppe-centre-in-person-region"
+        },
+        {
+          "person_index": 1,
+          "person_confidence": 0.742,
+          "has_helmet": false,
+          "has_vest": false,
+          "alerts": [
+            "no_helmet",
+            "no_vest"
+          ],
+          "method": "ppe-centre-in-person-region"
+        }
+      ]
+    }
+  ]
+}
