@@ -1,15 +1,20 @@
 # CCTV Safety — Draft Mockup (Handoff Package)
 
 
-> **สถานะ:** Draft Mockup — เป็น static HTML ไฟล์เดียว ข้อมูลทั้งหมดเป็น mock data
-> ที่สุ่มขึ้นในเบราว์เซอร์ **ยังไม่ได้เชื่อมต่อโมเดล YOLOv8, API หรือฐานข้อมูลจริง**
+> **สถานะ:** Draft Mockup — หน้า **Dashboard / Live Monitoring / Alerts-Logs** ยังเป็น
+> mock data ที่สุ่มขึ้นในเบราว์เซอร์ **ไม่ได้เชื่อมต่อโมเดล, API หรือฐานข้อมูลจริง**
+> และทุกหน้ามีแถบเตือน **"ข้อมูลจำลอง — ไม่ใช่ผลจากโมเดล"** แสดงตลอด
 >
-> **หมายเหตุ Schema:** Mockup นี้ใช้ประเภทเหตุการณ์จำลอง 4 กลุ่มเพื่อสาธิต UI
+> หน้าใหม่ **Upload & Analyze** เป็นหน้าเดียวที่แสดง **ผลจากโมเดลจริง** (ต้นแบบ pilot)
+> โดยเรียก API ของ backend (`webapp/`) ตามสัญญา `../docs/web_api_contract.md`
+> หน้านี้ไม่ใช้ mock data เลย
+>
+> **หมายเหตุ Schema:** หน้า mock ใช้ประเภทเหตุการณ์จำลอง 4 กลุ่มเพื่อสาธิต UI
 > เท่านั้น ไม่ใช่ class list ของโมเดล ปัจจุบัน Stage 1 ใช้ detector schema v2
 > จำนวน 6 spatial classes ใน `../docs/data_schema_6classes.md` และคำนวณ
 > `no_helmet`/`no_vest` ด้วย post-processing ส่วน `fight` เป็น Stage 2 temporal
-> event ที่มี X3D-S pilot แยกต่างหากแล้ว แต่ยังไม่เชื่อมกับระบบจริง ดังนั้น
-> mock data ไม่ใช่ผล inference จริง ดู `../docs/project_status.md`.
+> event (X3D-S pilot) ซึ่งเรียกแยกได้ในหน้า Upload & Analyze แต่ยังไม่ได้ผสานกับ
+> Stage 1 เป็นระบบเดียว ดู `../docs/project_status.md`.
 
 ---
 
@@ -17,12 +22,34 @@
 
 ```text
 mockup/
-├── index.html              
-├── README.md               
-
+├── index.html      # UI ทั้งหมด (หน้า mock 3 หน้า + โครง HTML/CSS ของหน้า Upload & Analyze)
+├── analyze.js      # logic ของหน้า Upload & Analyze: เรียก API จริง, วาด box บน canvas
+└── README.md
 ```
 
+---
 
+## วิธีรัน
+
+### หน้า Upload & Analyze (ต้องรันผ่าน backend)
+
+หน้า `index.html` ถูก serve โดย FastAPI ที่ `/` และเรียก API แบบ same-origin
+(`/api/health`, `/api/stage1/analyze`, `/api/stage2/analyze`) — ดู section 5 ของ
+`../docs/web_api_contract.md`
+
+```bash
+# จาก root ของ repo; ไฟล์ .pt อยู่ใน ./weights (หรือกำหนด CCTV_WEIGHTS_DIR)
+.venv-cuda/Scripts/python -m uvicorn webapp.api:app --port 8000
+```
+
+แล้วเปิด `http://localhost:8000/` → เมนู **Upload & Analyze**
+
+ถ้าเปิด `index.html` ตรงๆ จากไฟล์ (`file://`) หน้า mock ยังใช้ได้ แต่หน้า Upload & Analyze
+จะแสดง "เชื่อมต่อ API ไม่ได้ — รัน backend ก่อน"
+
+### หน้า mock อื่นๆ
+
+เปิด `index.html` ในเบราว์เซอร์ได้เลย (ไม่ต้องมี server) — ข้อมูลทั้งหมดเป็นข้อมูลจำลอง
 
 ---
 
@@ -30,50 +57,107 @@ mockup/
 
 | # | หน้า | สิ่งที่แสดง | สถานะ |
 |:--|:---|:---|:---|
-| 1 | **Dashboard** | KPI 4 ตัว, กราฟเหตุการณ์รายชั่วโมง, สัดส่วน 4 classes, สถานะกล้อง 14 ตัว, แจ้งเตือนล่าสุด | UI เสร็จ · ข้อมูลจำลอง |
-| 2 | **Live CCTV Monitoring** | กล้องจำลอง 7 ตัว พร้อม bounding box ครบ 4 เหตุการณ์, สลับ layout, กรองเฉพาะกล้องที่มีเหตุการณ์, live event stream | UI เสร็จ · ยังไม่มี video stream จริง |
-| 3 | **Alert / Logs** | ตาราง 90 รายการ + ตัวกรอง 5 แบบ + แบ่งหน้า + modal รายละเอียด | UI เสร็จ · ตัวกรองทำงานจริงบน mock data |
+| 1 | **Dashboard** | KPI 4 ตัว, กราฟเหตุการณ์รายชั่วโมง, สัดส่วน 4 classes, สถานะกล้อง 14 ตัว, แจ้งเตือนล่าสุด | UI เสร็จ · **ข้อมูลจำลอง** |
+| 2 | **Live CCTV Monitoring** | กล้องจำลอง 7 ตัว พร้อม bounding box ครบ 4 เหตุการณ์, สลับ layout, กรองเฉพาะกล้องที่มีเหตุการณ์, live event stream | UI เสร็จ · **ข้อมูลจำลอง** · ยังไม่มี video stream จริง |
+| 3 | **Alert / Logs** | ตาราง 90 รายการ + ตัวกรอง 5 แบบ + แบ่งหน้า + modal รายละเอียด | UI เสร็จ · **ข้อมูลจำลอง** (ตัวกรองทำงานจริงบน mock data) |
+| 4 | **Upload & Analyze** | อัปโหลดภาพ/วิดีโอ → Stage 1 (YOLOv8n/s) และ Stage 2 (X3D-S, เฉพาะวิดีโอ) | **ผลจากโมเดลจริงผ่าน API** (ต้นแบบ pilot) |
 
 หน้า **จัดการกล้อง** และ **ตั้งค่าระบบ** มีเมนูไว้แล้วแต่ยังไม่ได้ออกแบบ (ปุ่มกดได้แต่ไม่ทำอะไร)
+
+### หน้า Upload & Analyze (`#v-analyze` + `analyze.js`) — plan sections 9.2–9.4
+
+- **อินพุต:** เลือกไฟล์ (`.jpg .jpeg .png .bmp .webp .mp4 .avi .mov .mkv`, ≤ 100 MB) และโมเดล Stage 1
+  (`yolov8n` / `yolov8s`) แล้วกด Analyze — preview ย่อเป็น thumbnail หลังวิเคราะห์ (object URL ถูก revoke เมื่อเปลี่ยนไฟล์)
+- **ทุกอย่างมาจาก response ของการวิเคราะห์ครั้งปัจจุบันเท่านั้น:** เลือกไฟล์ใหม่หรือกด Analyze ใหม่จะล้างผลเดิมทั้งหมด
+  (สรุป, chip, ตาราง PPE, canvas, ไทม์ไลน์, รายละเอียดทางเทคนิค) และ response ของรอบเก่าที่มาช้าจะถูกทิ้ง;
+  ถ้า Stage ใด error จะไม่มีผลเก่าค้าง ตัวกรองการแสดงผลกลับเป็นค่าเริ่มต้นทุกครั้ง
+- **วิดีโอ — ตรวจว่าเบราว์เซอร์เล่นได้ไหม (probe):** `<video>` preview ต้องเกิด `loadeddata` และมี `videoWidth > 0` ภายใน 6 วินาที
+  - เล่นได้ → Stage 1 `mode=dense` (`sample_fps` 1–30, ค่าเริ่มต้น 10) แล้วเล่น **ไฟล์ต้นฉบับ** พร้อม canvas overlay
+    วาดกล่องของตัวอย่าง dense ที่ใกล้ `currentTime` ที่สุด (เฉพาะถ้าห่างไม่เกิน `1/sample_fps`), คำนวณกรอบภาพจริงตาม
+    `object-fit: contain` และวาดใหม่เมื่อ resize / seek / ระหว่างเล่น; มุมขวาบนแสดง "Stage 2: ทะเลาะ / ปกติ" (ไม่มีเวลา)
+  - เล่นไม่ได้ (เช่น mp4 `mp4v` จาก OpenCV) → Stage 1 `mode=frames` (`max_frames` 1–60, ค่าเริ่มต้น 16) แสดงภาพทีละเฟรม
+    และบอกเหตุผล; ถ้า dense ตอบ `video_too_long` จะลองใหม่แบบ `frames` อัตโนมัติ
+- **ไทม์ไลน์เส้นเดียว (9.4.1):** ใต้ภาพมีแถบแบบ slider "▶ ‹ ก่อนหน้า ─●─ ถัดไป ›" — วิดีโอที่เล่นได้ แถบนี้ **คือแถบเลื่อนเวลา**
+  ของวิดีโอ (ลาก/คลิกเพื่อ seek, หัวเลื่อนตามการเล่น, ปุ่มก่อนหน้า/ถัดไป = ±1 ตัวอย่าง); โหมด frames แถบนี้คือ slider เลือกเฟรม;
+  ช่วงที่ Stage 2 ให้ label `fight` แสดงเป็น **แถบแดง** บนเส้น (`<input type="range">` จึงใช้คีย์บอร์ดได้)
+- **Stage 2:** แสดงเพียง "⚠ พบการทะเลาะ" หรือ "✓ ไม่พบการทะเลาะ" (จาก `summary.fight_windows`);
+  เวลาแต่ละช่วง, label, ความน่าจะเป็นดิบ, `max_fight_prob` และ `fight_windows / total_windows` อยู่ใน "รายละเอียดทางเทคนิค"
+- **Stage 1 สรุปสั้น (9.4.2):** เช่น "พบ 2 คน · ไม่สวมหมวก 2 · ไม่สวมเสื้อ 2" (หรือ "· สวม PPE ครบ") ตามด้วย "พบไฟ / พบควัน / พบคนล้ม"
+  เมื่อมี — วิดีโอ (ไม่มี tracking): จำนวนคน = สูงสุดในเฟรมใดเฟรมหนึ่ง, จำนวนแต่ละ alert = สูงสุดในเฟรมใดเฟรมหนึ่ง,
+  ไฟ/ควัน/คนล้ม = พบในเฟรมใดก็ได้ (กฎนี้เขียนไว้ในรายละเอียดทางเทคนิค)
+- **มุมมอง (9.4.8):** ตัวเลือก "แสดงผล: มุมมอง PPE | เลือก class" — ถ้า response มีคน เปิดที่ **มุมมอง PPE** เป็นค่าเริ่มต้น
+  (กล่องคนสีเขียว = ไม่มี alert / แดง = มี alert, หมายเลข #i ตรงกับตาราง PPE, สีมาจาก `ppe` rows ของ API เท่านั้น);
+  **เลือก class** = เลือก class ที่จะวาดด้วย chip (ชื่ออย่างเดียว เช่น "คน (person)") — chip ใช้เฉพาะในมุมมองนี้;
+  ไฟ/ควัน/คนล้มถูกวาดในทั้งสองมุมมอง; ถ้าไม่พบคนหรือปิด "ตรวจ PPE" จะใช้มุมมอง class
+- **"ตรวจ PPE" (9.4.7, ค่าเริ่มต้นเปิด):** ปิดแล้วซ่อน alert PPE จากสรุป ตาราง และสีกล่อง (เช่น ฉากที่ไม่ใช่งานก่อสร้าง) — การแสดงผลเท่านั้น
+- **slider "แสดงเฉพาะคะแนน ≥ X"** (ค่าต่ำสุด = threshold ต่ำสุดของ API) — กรองการแสดงผลเท่านั้น ไม่ส่งไป API
+  ไม่เปลี่ยน threshold และไม่เปลี่ยนผล PPE
+- **กล่องอ่านง่าย (9.3):** label ขนาดคงที่ ~11.5 CSS px ไม่ขึ้นกับความละเอียดภาพ, เส้นบาง, label อยู่ในกรอบภาพ,
+  label ของ person วางเหนือ/ใต้กล่องก่อนเพื่อไม่บังหน้า; วิดีโอและภาพใช้โค้ดวาดเดียวกัน (`drawScene()`)
+- **แผงขวา "ผลตรวจ…"** (ภาพนิ่งและวิดีโอ): จำนวนวัตถุในเฟรม/ภาพนี้ + ตาราง PPE แบบย่อ (แถวที่มี alert ขึ้นก่อน,
+  hover/focus แถวจะไฮไลต์กล่องของคนนั้น)
+- **รายละเอียดทางเทคนิค** (`<details>` ปิดไว้ก่อน): model, mode, sample_fps, fps, schema_version, threshold ต่อ class,
+  ppe_min_confidence, กฎสรุปวิดีโอ, สถานะ API (device / โมเดล / ปุ่มรีเฟรช) และผลรายช่วงของ Stage 2
+- **ป้าย "ผลจากโมเดลจริง — pilot"** แสดงเฉพาะเมื่อ response มี `is_model_output === true` พร้อม `disclaimer` จาก API
+  (chip บน topbar "หน้าเรียก API จริง · pilot" เป็นแค่ป้ายบอกหน้า)
+- **Error:** `{error:{code,message}}` → ข้อความภาษาไทยตาม `code` (+ ข้อความต้นฉบับ); เชื่อมต่อไม่ได้ →
+  "เชื่อมต่อ API ไม่ได้ — รัน backend ก่อน"
+- **ความปลอดภัย:** ข้อความจาก API เขียนด้วย `textContent` / `fillText` เท่านั้น (ไม่ใช้ `innerHTML`);
+  `analyze.js` ไม่ใช้ `Math.random` และไม่อ่าน mock data ของ `index.html`
+
+**ไฟล์วิดีโอทดสอบที่เบราว์เซอร์เล่นได้:** OpenCV `VideoWriter` ด้วย fourcc `'avc1'` ใน `.mp4` ได้ H.264 ที่ Chrome
+เล่นได้ (ในเครื่องนี้ OpenCV เตือนว่าโหลด OpenH264 DLL ไม่ได้ แต่ไฟล์ที่ได้เป็น h264 และเล่นได้);
+`'mp4v'` เล่นใน Chrome ไม่ได้ (ใช้ทดสอบ fallback ได้)
 
 ---
 
 ##  แผนที่โค้ด (Code Map)
 
-`index.html` แบ่งเป็น 3 ส่วนใหญ่ — แก้ตรงไหนดูจากตารางนี้
+`index.html` แบ่งเป็น 3 ส่วนใหญ่ — แก้ตรงไหนดูจากตารางนี้ (เลขบรรทัดโดยประมาณ)
 
 | บรรทัด | ส่วน | หมายเหตุ |
 |---:|:---|:---|
-| 7–363 | `<style>` ทั้งหมด | |
+| 7–521 | `<style>` ทั้งหมด | |
 | **8–18** | `:root` design tokens | **แก้สี/ธีมทั้งระบบที่นี่จุดเดียว** |
-| 369–411 | Sidebar + navigation | |
-| 415–424 | TopBar (ชื่อหน้า, นาฬิกา, avatar) | |
-| 427–493 | HTML หน้า Dashboard | |
-| 496–533 | HTML หน้า Live Monitoring | |
-| 536–603 | HTML หน้า Alert / Logs | |
-| 607–625 | Modal รายละเอียดเหตุการณ์ | |
-| 627–1058 | `<script>` ทั้งหมด | |
-| **628–681** | **Mock data ทั้งหมด** | `CLS`, `CAMS`, `LOGS` — จุดที่ต้องแทนด้วย API call |
-| 629 | `CLS` — นิยาม 4 classes | สี + ชื่อไทย + ระดับความรุนแรง |
-| 636 | `CAMS` — กล้อง 14 ตัว | id, โซน, สถานะ, fps |
-| 660–681 | สร้าง `LOGS` 90 รายการแบบสุ่ม | **ลบทิ้งทั้งบล็อกตอนต่อ API** |
-| 697 | `go(page)` — สลับหน้า | router แบบง่ายๆ |
-| 712–787 | กราฟ Dashboard (SVG เขียนเอง) | `spark()`, `bars()`, `donut()` |
-| 790–849 | `SCENES` — ฉากกล้องจำลอง | **ลบทิ้งเมื่อมี video stream จริง** |
-| 851–877 | `camHTML()` — สร้าง tile กล้อง + bounding box | เก็บ logic bbox ไว้ใช้ต่อได้ |
-| 925 | `pushFeed()` — live event stream | เปลี่ยนเป็น WebSocket handler |
-| 958 | `filtered()` — ตัวกรองตาราง | ย้ายไป query string ฝั่ง server |
-| 978 | `render()` — วาดตาราง + pagination | |
-| 1021 | `openModal()` — modal รายละเอียด | |
+| 344–354 | `.mock-banner`, `.sys-mock` | แถบ/ป้าย "ข้อมูลจำลอง" ของหน้า mock; กล่องสถานะ sidebar ซ่อนในหน้า analyze |
+| 356–500 | สไตล์ `az-*` ของหน้า Upload & Analyze | |
+| 526–574 | Sidebar + navigation (รวมเมนู `data-go="analyze"`) | |
+| 578–588 | TopBar (ชื่อหน้า, chip MOCKUP / "หน้าเรียก API จริง", นาฬิกา, avatar) | chip สลับตามหน้า ผ่าน `body[data-page]` |
+| 591–658 | HTML หน้า Dashboard | |
+| 661–699 | HTML หน้า Live Monitoring | |
+| 702–770 | HTML หน้า Alert / Logs | |
+| 773–913 | HTML หน้า Upload & Analyze (`#v-analyze`) | logic อยู่ใน `analyze.js` |
+| 917–935 | Modal รายละเอียดเหตุการณ์ | |
+| 937–1370 | `<script>` (mock) ทั้งหมด | |
+| **938–991** | **Mock data ทั้งหมด** | `CLS`, `CAMS`, `LOGS` |
+| 939 | `CLS` — นิยาม 4 classes | สี + ชื่อไทย + ระดับความรุนแรง |
+| 946 | `CAMS` — กล้อง 14 ตัว | id, โซน, สถานะ, fps |
+| 970–989 | สร้าง `LOGS` 90 รายการแบบสุ่ม | **ลบทิ้งทั้งบล็อกตอนต่อ API** |
+| 1008 | `go(page)` — สลับหน้า | router แบบง่ายๆ (ตั้ง `body[data-page]` ด้วย) |
+| 1024–1099 | กราฟ Dashboard (SVG เขียนเอง) | `spark()`, `bars()`, `donut()` |
+| 1102–1161 | `SCENES` — ฉากกล้องจำลอง | **ลบทิ้งเมื่อมี video stream จริง** |
+| 1163 | `camHTML()` — สร้าง tile กล้อง + bounding box | |
+| 1237 | `pushFeed()` — live event stream | เปลี่ยนเป็น WebSocket handler |
+| 1270 | `filtered()` — ตัวกรองตาราง | ย้ายไป query string ฝั่ง server |
+| 1290 | `render()` — วาดตาราง + pagination | |
+| 1333 | `openModal()` — modal รายละเอียด | |
+| 1372 | `<script src="analyze.js">` | โหลดหลัง script mock |
+
+`analyze.js` (IIFE เดียว): ค่าคงที่จากสัญญา API → `callApi()` (แปลง error เป็นข้อความไทย) → `loadHealth()` →
+`resetResults()` (ล้างผลทั้งหมด + ยกเลิก response รอบเก่า) → `onFileChange()` + `probeVideo()` →
+`drawScene()` / `drawLabel()` (ใช้ร่วมกันทั้งภาพและวิดีโอ) → `renderNow()` (แผงขวา + ตาราง PPE) →
+โหมด frames: `drawFrame()` / โหมด player: `nearestSample()`, `contentRect()`, `drawOverlay()` →
+ไทม์ไลน์: `setupTrack()`, `trackFrac()`, `renderSeekMarks()` → ตัวกรอง: `applyViewControls()`, `setupFilters()` →
+`stage1Summary()` / `renderStage1()` → `renderStage2()` → `analyze()`
 
 ---
 
-## Mock → Real: ต้องเปลี่ยนอะไรบ้าง
+## Mock → Real: ต้องเปลี่ยนอะไรบ้าง (หน้า mock)
 
 | ตอนนี้ (mock) | ต้องเปลี่ยนเป็น ||
 |:---|:---|:---|
-| `LOGS` สุ่มในเบราว์เซอร์ (บรรทัด 660) | `GET /api/v1/events` | 
-| `CAMS` hardcode 14 ตัว (บรรทัด 636) | `GET /api/v1/cameras` | 
+| `LOGS` สุ่มในเบราว์เซอร์ | `GET /api/v1/events` | 
+| `CAMS` hardcode 14 ตัว | `GET /api/v1/cameras` | 
 | ตัวเลข KPI hardcode ใน HTML | `GET /api/v1/stats/summary` | 
 | กราฟสุ่มใน `bars()` / `donut()` | `GET /api/v1/stats/hourly`, `/by-class` | 
 | `SCENES` ฉาก CSS | `<video>` + HLS / WebRTC | 
@@ -81,5 +165,8 @@ mockup/
 | `pushFeed()` สุ่มทุก 4.2 วิ | WebSocket `alert` event | 
 | `filtered()` กรองใน JS | query params → server | 
 | ปุ่ม "รับทราบเหตุการณ์" ไม่ทำอะไร | `PATCH /api/v1/events/{id}` | 
+
+Endpoint ในตารางนี้เป็นแนวคิดสำหรับอนาคต **ยังไม่มีอยู่จริง** — API ที่มีจริงตอนนี้มีเฉพาะ
+`/api/health`, `/api/stage1/analyze`, `/api/stage2/analyze` (ใช้ในหน้า Upload & Analyze)
 
 ---

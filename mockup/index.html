@@ -341,7 +341,165 @@ tbody tr:hover{background:var(--panel2)}
 .note{margin-top:16px;font-size:11.5px;color:var(--muted2);line-height:1.7;
   border-left:2px solid var(--line2);padding-left:12px}
 
+/* ---------- MOCK BANNER (dashboard / live / logs) ---------- */
+.mock-banner{display:flex;align-items:center;gap:9px;flex:none;margin-bottom:14px;
+  padding:8px 13px;border-radius:9px;border:1px dashed #7c5e12;background:#3a2d0a55;
+  color:#fbbf24;font-size:12.5px;font-weight:700;letter-spacing:.2px}
+.mock-banner svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
+.mock-banner span{font-weight:500;color:#d6b45c;font-size:11.5px}
+body[data-page="analyze"] .chip-mock{display:none}
+/* sidebar system box holds mock numbers: label it, and hide it on the real-API view */
+.sys-mock{font-size:10px;font-weight:700;letter-spacing:.4px;color:#fbbf24;border:1px dashed #7c5e12;
+  background:#3a2d0a55;border-radius:5px;padding:1px 7px;margin-bottom:5px;display:inline-block}
+body[data-page="analyze"] .side-foot{display:none}
+
+/* ---------- UPLOAD & ANALYZE (real API output) ---------- */
+.chip-real{display:none;font-size:10.5px;letter-spacing:.6px;font-weight:700;color:#4ade80;
+  border:1px solid #166534;background:#052e1688;padding:3px 9px;border-radius:6px}
+body[data-page="analyze"] .chip-real{display:inline-block}
+#v-analyze [hidden]{display:none!important}
+.az-top{margin-bottom:14px}
+.az-form{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.az-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.az-controls .field input[type=file]{width:250px;font-size:12px}
+.az-controls .field input[type=number]{width:52px}
+.az-controls .field label{font-size:11.5px;color:var(--muted2);white-space:nowrap}
+.az-fileinfo{font-size:11.5px;color:var(--muted2)}
+.az-preview{background:#05080c;border:1px solid var(--line);border-radius:10px;min-height:120px;
+  display:grid;place-items:center;overflow:hidden}
+.az-preview img,.az-preview video{display:block;max-width:100%;max-height:260px}
+.az-preview.thumb{min-height:0;width:max-content;max-width:100%;background:none;border:none;place-items:start}
+.az-preview.thumb img,.az-preview.thumb video{max-height:72px;border-radius:6px;border:1px solid var(--line)}
+.az-preview.thumb .az-empty{padding:4px 0;text-align:left}
+.az-api{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted)}
+.dot.az-dot-bad{background:var(--crit);box-shadow:0 0 0 3px #ef444422}
+.az-empty{padding:28px;color:var(--muted2);font-size:12px;text-align:center}
+.az-empty-sm{color:var(--muted2);font-size:11.5px;padding:4px 0}
+.az-health{padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.az-hrow{display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:3px 0;color:var(--muted)}
+.az-hrow b{font-family:var(--mono);color:var(--text)}
+.az-hst{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;border:1px solid}
+.az-hst-loaded{color:#86efac;border-color:#14532d;background:#052e1666}
+.az-hst-available{color:#93c5fd;border-color:#1e3a5f;background:#0c1e3366}
+.az-hst-missing{color:#fca5a5;border-color:#7f1d1d;background:#450a0a66}
+.az-hst-unknown{color:var(--muted);border-color:var(--line2)}
+.az-state{display:flex;flex-wrap:wrap;align-items:center;gap:9px;padding:10px 13px;border-radius:9px;font-size:12.5px;border:1px solid var(--line)}
+.az-state-loading{color:#bae6fd;border-color:#0e6c9e;background:#0b4a6f33}
+.az-state-error{color:#fecaca;border-color:#7f1d1d;background:#450a0a66}
+.az-state-warn{color:#fde68a;border-color:#713f12;background:#3a2d0a55}
+.az-state-ok{color:#bbf7d0;border-color:#14532d;background:#052e1666}
+.az-state-info{color:var(--muted);background:var(--panel2)}
+.az-state .az-detail{flex-basis:100%;font-family:var(--mono);font-size:11px;color:var(--muted);word-break:break-word}
+.az-spin{width:13px;height:13px;border-radius:50%;border:2px solid #38bdf855;border-top-color:#38bdf8;animation:azspin .8s linear infinite;flex:none}
+@keyframes azspin{to{transform:rotate(360deg)}}
+.az-stage{margin-bottom:14px}
+.az-stage .card-h{flex-wrap:wrap}
+.az-stage-no{font-family:var(--mono);font-size:11px;font-weight:700;color:#08111a;background:var(--accent);padding:2px 7px;border-radius:5px}
+.az-stage.s2 .az-stage-no{background:var(--c-fight)}
+.az-real{font-size:10.5px;font-weight:700;letter-spacing:.4px;color:#052e16;background:#4ade80;padding:2.5px 9px;border-radius:6px}
+.az-stage-b{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.az-disc{font-size:11px;color:var(--muted2);line-height:1.6;border-left:2px solid #166534;padding-left:10px}
+.az-meta{display:flex;flex-wrap:wrap;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.az-meta>div{background:var(--panel2);padding:7px 11px;flex:1 1 110px}
+.az-meta .k{font-size:10px;color:var(--muted2);letter-spacing:.4px;text-transform:uppercase}
+.az-meta .v{font-size:12px;color:var(--text);margin-top:2px}
+.az-s1grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,1fr);gap:14px;align-items:start}
+.az-canvas{display:block;max-width:100%;background:#05080c;border:1px solid var(--line);border-radius:10px}
+.az-sub{font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--muted2);text-transform:uppercase;margin-bottom:7px}
+.az-counts{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.az-crow{display:grid;grid-template-columns:1.3fr .9fr .8fr .9fr;gap:8px;align-items:center;padding:6px 11px;font-size:12px;border-bottom:1px solid #1a2431}
+.az-crow:last-child{border:none}
+.az-chead{font-size:10.5px;color:var(--muted2);background:var(--panel2);letter-spacing:.3px}
+.az-cls{display:flex;align-items:center;gap:7px}
+.az-cls i{width:9px;height:9px;border-radius:2px;flex:none}
+.az-hit{color:var(--text)!important;font-weight:700}
+.az-ppe{border:1px dashed #9d3a6f;border-radius:9px;padding:8px 11px;margin-bottom:8px;background:#f472b60d}
+.az-ppe-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px}
+.az-flag{font-size:11px;padding:1px 7px;border-radius:5px}
+.az-flag.yes{color:#86efac;background:#052e1666}
+.az-flag.no{color:#fca5a5;background:#450a0a66}
+.az-ppe-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.az-derived{font-size:11px;font-weight:600;padding:2.5px 8px;border-radius:6px;border:1px dashed #f472b6;color:#f9a8d4;background:#f472b61a}
+.az-derived::before{content:"derived · ";font-family:var(--mono);font-weight:700;opacity:.8}
+.az-derived.ok{border-color:#16a34a;color:#86efac;background:#052e1655}
+.az-ppe-method{font-family:var(--mono);font-size:10.5px;color:var(--muted2);margin-top:5px}
+/* round 2: summary-first layout */
+.az-sentence{font-size:15px;font-weight:600;line-height:1.55;padding:11px 14px;border-radius:10px;
+  border:1px solid var(--line2);background:var(--panel2)}
+.az-sentence.ok{border-color:#14532d;background:#052e1655;color:#bbf7d0}
+.az-sentence.warn{border-color:#9a3412;background:#431407aa;color:#fed7aa}
+.az-chips{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 12px}
+.az-chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;padding:4px 10px;border-radius:20px;
+  border:1px solid var(--line2);background:var(--panel2);color:var(--text)}
+.az-chip:hover,.az-chip:focus-visible{border-color:var(--muted)}
+.az-chip.off{opacity:.45;text-decoration:line-through}
+.az-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0 12px}
+.az-tools .az-chips{margin:0}
+.az-mode[aria-pressed="true"]{background:#166534;color:#fff;border-color:#22c55e}
+.az-mode{font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid #166534;color:#86efac;background:#052e1644}
+.az-conf{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-left:auto}
+.az-conf input[type=range]{width:140px;accent-color:var(--accent)}
+.az-conf b{color:var(--text)}
+.az-conf-note{flex-basis:100%;font-size:10.5px;color:var(--muted2);text-align:right}
+.az-nowline{font-size:12.5px;color:var(--text);margin-bottom:10px}
+.az-ppetab{width:100%;border-collapse:collapse;font-size:12px}
+.az-ppetab caption{caption-side:top;text-align:left;font-size:10.5px;color:#f9a8d4;padding:0 0 6px}
+.az-ppetab thead th{position:static;background:var(--panel2);padding:5px 8px;font-size:10.5px;text-transform:none;letter-spacing:0}
+.az-ppetab tbody td{padding:5px 8px;font-size:12px}
+.az-ppetab tbody tr{cursor:default}
+.az-ppetab tbody tr:focus{outline:2px solid var(--accent);outline-offset:-2px}
+.az-ppetab tr.bad td:first-child{box-shadow:inset 3px 0 0 var(--crit)}
+.az-ppetab tr.ok td:first-child{box-shadow:inset 3px 0 0 var(--ok)}
+.az-ppetab td.yes{color:#86efac}
+.az-ppetab td.no{color:#fca5a5;font-weight:700}
+.az-ppetab .az-derived{margin-right:4px;padding:1px 6px;font-size:10.5px}
+.az-chip i{width:8px;height:8px;border-radius:2px;flex:none}
+.az-chip.hot{border-color:#b91c1c;background:#450a0a88}
+.az-muted{color:var(--muted2)!important}
+.az-right{margin-left:auto;text-align:right}
+.az-player{position:relative;background:#000;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.az-player video{display:block;width:100%;height:min(56vh,520px);object-fit:contain;background:#000}
+.az-overlay{position:absolute;left:0;top:0;pointer-events:none}
+.az-corner{position:absolute;font-size:12px;font-weight:700;padding:4px 9px;border-radius:6px;pointer-events:none;
+  background:#0f172acc;color:#e2e8f0;border:1px solid #475569}
+.az-corner.fight{background:#7e22cecc;color:#fff;border-color:#d8b4fe}
+.az-now{min-width:0}
+.az-dets{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.az-det{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:5px 9px;border-radius:7px;background:var(--panel2)}
+.az-det i{width:9px;height:9px;border-radius:2px;flex:none}
+.az-tech{margin-top:14px;border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:#0d141d}
+.az-tech summary{cursor:pointer;font-size:12px;color:var(--muted);font-weight:600}
+.az-tech[open] summary{margin-bottom:10px}
+.az-raw{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.az-rrow{display:grid;grid-template-columns:40px 1.3fr 1fr 1fr 1fr;gap:8px;padding:5px 11px;font-size:11.5px;border-bottom:1px solid #1a2431}
+.az-rrow:last-child{border:none}
+.az-rrow.fight{background:#7f1d1d33}
+.az-rule{font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px}
+.az-seg{display:inline-flex;align-items:center;gap:2px;padding:2px;border-radius:20px;border:1px solid var(--line2);background:var(--panel2)}
+.az-seg-lbl{font-size:11px;color:var(--muted2);padding:0 6px 0 8px}
+.az-seg button{font-size:12px;font-weight:600;padding:4px 11px;border-radius:16px;color:var(--muted)}
+.az-seg button[aria-pressed="true"]{background:#0b4a6f;color:#e0f2fe}
+.az-seg button:disabled{opacity:.4;cursor:not-allowed}
+.az-seek{display:flex;align-items:center;gap:8px;margin-top:9px}
+.az-seek .btn{padding:6px 10px}
+.az-seek .btn:disabled{opacity:.35;cursor:default}
+.az-seekbar{position:relative;flex:1;height:22px;min-width:80px}
+.az-seekbar::before{content:"";position:absolute;left:7px;right:7px;top:9px;height:4px;border-radius:3px;background:var(--panel3)}
+.az-seekmarks{position:absolute;left:7px;right:7px;top:7px;height:8px;pointer-events:none}
+.az-mark{position:absolute;top:0;bottom:0;background:var(--crit);border-radius:2px;box-shadow:0 0 6px #ef444488}
+.az-seekbar input[type=range]{position:absolute;inset:0;width:100%;margin:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+.az-seekbar input[type=range]::-webkit-slider-runnable-track{height:22px;background:transparent}
+.az-seekbar input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:4px;border-radius:50%;background:var(--accent);border:2px solid #e0f2fe;box-shadow:0 0 0 2px #0a0e13}
+.az-seekbar input[type=range]::-moz-range-track{height:22px;background:transparent}
+.az-seekbar input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid #e0f2fe}
+.az-seekbar input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.az-seektime{font-size:11px;color:var(--muted);white-space:nowrap;min-width:84px;text-align:right}
+.az-seeklegend{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2);margin-top:4px}
+.az-seeklegend i{width:14px;height:6px;border-radius:2px;background:var(--crit)}
+.az-player video{cursor:pointer}
+
 @media(max-width:1180px){
+  .az-top,.az-s1grid{grid-template-columns:1fr}
   .kpis{grid-template-columns:repeat(2,1fr)}
   .grid2,.grid2b{grid-template-columns:1fr}
   .live-body{grid-template-columns:1fr}
@@ -389,6 +547,10 @@ tbody tr:hover{background:var(--panel2)}
       Alerts / Logs
       <span class="nav-badge" id="navLogs">12</span>
     </button>
+    <button class="nav-item" data-go="analyze">
+      <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 15v4a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-4"/></svg>
+      Upload &amp; Analyze
+    </button>
 
     <div class="nav-label">อื่นๆ</div>
     <button class="nav-item" data-soon="1">
@@ -402,6 +564,7 @@ tbody tr:hover{background:var(--panel2)}
 
     <div class="side-foot">
       <div class="sysbox">
+        <div class="sys-mock">ข้อมูลจำลอง</div>
         <div class="sysrow"><span>Model</span><b>yolov8n</b></div>
         <div class="sysrow"><span>Inference</span><b>28 ms</b></div>
         <div class="sysrow"><span>GPU</span><b>62%</b></div>
@@ -419,12 +582,14 @@ tbody tr:hover{background:var(--panel2)}
       </div>
       <div class="spacer"></div>
       <span class="chip-mock">MOCKUP · ข้อมูลจำลอง</span>
+      <span class="chip-real">หน้าเรียก API จริง · pilot</span>
       <span class="clock" id="clock">--:--:--</span>
       <div class="avatar">OP</div>
     </header>
 
     <!-- ---------- DASHBOARD ---------- -->
     <section class="view on" id="v-dashboard">
+      <div class="mock-banner" role="note"><svg viewBox="0 0 24 24"><path d="M12 9v4.5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>ข้อมูลจำลอง — ไม่ใช่ผลจากโมเดล <span>(ผลจากโมเดลจริงดูได้ที่เมนู Upload &amp; Analyze)</span></div>
       <div class="kpis">
         <div class="card kpi">
           <div class="lbl"><span class="dot ok"></span>กล้องที่ออนไลน์</div>
@@ -494,6 +659,7 @@ tbody tr:hover{background:var(--panel2)}
 
     <!-- ---------- LIVE ---------- -->
     <section class="view live" id="v-live">
+      <div class="mock-banner" role="note"><svg viewBox="0 0 24 24"><path d="M12 9v4.5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>ข้อมูลจำลอง — ไม่ใช่ผลจากโมเดล <span>(ผลจากโมเดลจริงดูได้ที่เมนู Upload &amp; Analyze)</span></div>
       <div class="live-bar">
         <div class="seg">
           <button class="on" data-lay="3">3 × N</button>
@@ -534,6 +700,7 @@ tbody tr:hover{background:var(--panel2)}
 
     <!-- ---------- LOGS ---------- -->
     <section class="view" id="v-logs">
+      <div class="mock-banner" role="note"><svg viewBox="0 0 24 24"><path d="M12 9v4.5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>ข้อมูลจำลอง — ไม่ใช่ผลจากโมเดล <span>(ผลจากโมเดลจริงดูได้ที่เมนู Upload &amp; Analyze)</span></div>
       <div class="filters">
         <div class="field">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
@@ -600,6 +767,149 @@ tbody tr:hover{background:var(--panel2)}
         ตารางนี้ใช้ข้อมูลจำลอง 90 รายการที่สุ่มขึ้นในเบราว์เซอร์ — ตัวกรอง การแบ่งหน้า และหน้ารายละเอียดใช้งานได้จริง
         เพื่อให้เห็นภาพ flow ก่อนต่อ API จริง (คลิกที่แถวเพื่อดูรายละเอียด)
       </p>
+    </section>
+
+    <!-- ---------- UPLOAD & ANALYZE (real inference via API; logic in analyze.js) ---------- -->
+    <section class="view" id="v-analyze">
+      <div class="az-top">
+        <div class="card">
+          <div class="card-h"><h3>อัปโหลดไฟล์</h3>
+            <span class="az-api" role="status"><span class="dot" id="azApiDot"></span><span id="azApiText">กำลังตรวจสถานะ API …</span></span>
+            <span class="hint">ภาพ: jpg jpeg png bmp webp · วิดีโอ: mp4 avi mov mkv · สูงสุด 100 MB</span></div>
+          <div class="az-form">
+            <div class="az-controls">
+              <div class="field">
+                <input type="file" id="azFile"
+                  accept=".jpg,.jpeg,.png,.bmp,.webp,.mp4,.avi,.mov,.mkv,image/jpeg,image/png,image/bmp,image/webp,video/mp4,video/x-msvideo,video/quicktime,video/x-matroska">
+              </div>
+              <div class="field">
+                <label for="azModel">Stage 1</label>
+                <select id="azModel">
+                  <option value="yolov8n">YOLOv8n</option>
+                  <option value="yolov8s">YOLOv8s</option>
+                </select>
+              </div>
+              <div class="field" id="azSampleFpsWrap" hidden>
+                <label for="azSampleFps">ตรวจกี่ครั้ง/วินาที (1–30)</label>
+                <input type="number" id="azSampleFps" min="1" max="30" step="1" value="10">
+              </div>
+              <div class="field" id="azMaxFramesWrap" hidden>
+                <label for="azMaxFrames">จำนวนเฟรมที่ตรวจ (1–60)</label>
+                <input type="number" id="azMaxFrames" min="1" max="60" step="1" value="16">
+              </div>
+              <button class="btn primary" id="azRun">
+                <svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>
+                Analyze
+              </button>
+            </div>
+            <div class="az-fileinfo" id="azFileInfo">ยังไม่ได้เลือกไฟล์</div>
+            <div class="az-state" id="azStatus" hidden></div>
+            <div class="az-state" id="azProbe" hidden></div>
+            <div class="az-preview" id="azPreview"></div>
+            <details class="az-tech">
+              <summary>รายละเอียดทางเทคนิค (สถานะ API)</summary>
+              <div class="az-health">
+                <div class="az-hrow"><span>device</span><b id="azHealthDevice">—</b></div>
+                <div id="azHealthModels"></div>
+                <div class="az-state az-state-error" id="azHealthMsg" hidden></div>
+                <div><button type="button" class="btn" id="azHealthRefresh">รีเฟรชสถานะ API</button></div>
+              </div>
+            </details>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card az-stage s1">
+        <div class="card-h">
+          <span class="az-stage-no">STAGE 1</span>
+          <h3>Stage 1 — YOLOv8 (spatial detection)</h3>
+          <span class="az-real" id="azS1Badge" hidden>ผลจากโมเดลจริง — pilot</span>
+          <span class="hint">คน · หมวกนิรภัย · เสื้อสะท้อนแสง · คนล้ม · ไฟ · ควัน</span>
+        </div>
+        <div class="az-stage-b">
+          <div class="az-state az-state-info" id="azS1State">เลือกไฟล์แล้วกด Analyze เพื่อเริ่มวิเคราะห์</div>
+          <div id="azS1Body" hidden>
+            <div class="az-sentence" id="azS1Sentence"></div>
+            <div class="az-state az-state-warn" id="azS1Notice" hidden></div>
+            <div class="az-tools">
+              <button type="button" class="az-mode" id="azPpeCheck" aria-pressed="true"
+                title="ปิดเพื่อซ่อนการแจ้งเตือน PPE จากสรุป ตาราง และสีกล่อง (เช่น ฉากที่ไม่ใช่งานก่อสร้าง) — การแสดงผลเท่านั้น">ตรวจ PPE</button>
+              <div class="az-seg" id="azViewGroup" role="group" aria-label="มุมมองการแสดงกล่อง">
+                <span class="az-seg-lbl">แสดงผล:</span>
+                <button type="button" id="azViewPpe" aria-pressed="false"
+                  title="กล่องคน: เขียว = สวม PPE ครบ, แดง = มีการแจ้งเตือน (จากผล PPE ของ API) · ไฟ/ควัน/คนล้มแสดงเสมอ">มุมมอง PPE</button>
+                <button type="button" id="azViewCls" aria-pressed="true" title="เลือก class ที่จะแสดงด้วยปุ่มด้านล่าง">เลือก class</button>
+              </div>
+              <div class="az-chips" id="azS1Chips" role="group" aria-label="แสดง/ซ่อนกล่องแต่ละ class (การแสดงผลเท่านั้น)"></div>
+              <div class="az-conf">
+                <label for="azConf">แสดงเฉพาะคะแนน ≥ <b class="mono" id="azConfVal">—</b></label>
+                <input type="range" id="azConf" min="0" max="1" step="0.01" value="0">
+                <span class="az-conf-note">กรองการแสดงผลเท่านั้น — ไม่เปลี่ยน threshold ของ API และไม่เปลี่ยนผล PPE</span>
+              </div>
+            </div>
+            <div class="az-s1grid">
+              <div>
+                <div class="az-player" id="azPlayer" hidden>
+                  <video id="azVideo" muted playsinline preload="auto"></video>
+                  <canvas class="az-overlay" id="azOverlay" aria-hidden="true"></canvas>
+                  <div class="az-corner" id="azCorner" hidden></div>
+                </div>
+                <div id="azFrameView" hidden>
+                  <canvas class="az-canvas" id="azS1Canvas" width="640" height="360"></canvas>
+                </div>
+                <div class="az-seek" id="azSeek" hidden>
+                  <button type="button" class="btn" id="azPlay" aria-label="เล่นวิดีโอ">▶</button>
+                  <button type="button" class="btn" id="azPrev">‹ ก่อนหน้า</button>
+                  <div class="az-seekbar">
+                    <div class="az-seekmarks" id="azSeekMarks" aria-hidden="true"></div>
+                    <input type="range" id="azSeekRange" min="0" max="0" step="any" value="0" aria-label="เลื่อนเวลาในวิดีโอ">
+                  </div>
+                  <button type="button" class="btn" id="azNext">ถัดไป ›</button>
+                  <span class="az-seektime mono" id="azSeekTime"></span>
+                </div>
+                <div class="az-seeklegend" id="azSeekLegend" hidden><i></i>ช่วงที่ Stage 2 พบการทะเลาะ</div>
+              </div>
+              <div class="az-now">
+                <div class="az-sub" id="azNowTitle">ผลตรวจ ณ เวลานี้</div>
+                <div class="az-nowline" id="azNowDets"></div>
+                <div id="azS1Ppe"></div>
+              </div>
+            </div>
+            <details class="az-tech">
+              <summary>รายละเอียดทางเทคนิค</summary>
+              <div class="az-meta" id="azS1Meta"></div>
+              <p class="az-rule" id="azS1Rule" hidden>วิธีสรุปวิดีโอ (ไม่มีการติดตามตัวบุคคล): จำนวนคน = จำนวนคนสูงสุดในเฟรมใดเฟรมหนึ่งที่ตรวจ ·
+                ไม่สวมหมวก / ไม่สวมเสื้อ = จำนวนสูงสุดของการแจ้งเตือนนั้นในเฟรมใดเฟรมหนึ่ง · พบไฟ / ควัน / คนล้ม = พบในเฟรมใดก็ได้ที่ตรวจ</p>
+              <div class="az-sub" style="margin-top:12px">จำนวน detection ต่อ class (ทุกเฟรมที่ตรวจ) และ threshold ที่ API ใช้</div>
+              <div class="az-counts" id="azS1Counts"></div>
+            </details>
+          </div>
+          <div class="az-disc" id="azS1Disclaimer" hidden></div>
+        </div>
+      </div>
+
+      <div class="card az-stage s2">
+        <div class="card-h">
+          <span class="az-stage-no">STAGE 2</span>
+          <h3>Stage 2 — X3D-S (Fight / Non-Fight)</h3>
+          <span class="az-real" id="azS2Badge" hidden>ผลจากโมเดลจริง — pilot</span>
+          <span class="hint">ใช้กับวิดีโอเท่านั้น</span>
+        </div>
+        <div class="az-stage-b">
+          <div class="az-state az-state-info" id="azS2State">Stage 2 ต้องใช้ไฟล์วิดีโอ — จะเรียกเฉพาะเมื่ออัปโหลดวิดีโอ</div>
+          <div id="azS2Body" hidden>
+            <div class="az-sentence" id="azS2Sentence"></div>
+            <details class="az-tech">
+              <summary>รายละเอียดทางเทคนิค</summary>
+              <div class="az-meta" id="azS2Meta"></div>
+              <div class="az-sub" style="margin-top:12px">ผลรายช่วง 2 วินาที: เวลา, label และความน่าจะเป็นดิบ (softmax) — ช่วงที่เป็น fight แสดงเป็นแถบแดงบนไทม์ไลน์ใต้ภาพ</div>
+              <div class="az-raw" id="azS2Raw"></div>
+            </details>
+          </div>
+          <div class="az-disc" id="azS2Disclaimer" hidden></div>
+        </div>
+      </div>
     </section>
   </main>
 </div>
@@ -684,7 +994,8 @@ const fmtD  = d => pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+String(d.getFull
 const PAGES = {
   dashboard:['ภาพรวมระบบ','สรุปสถานะกล้องและสถิติเหตุการณ์'],
   live:     ['Live CCTV Monitoring','ภาพสดพร้อมผลตรวจจับ 4 เหตุการณ์แบบเรียลไทม์'],
-  logs:     ['Alert / Logs','ประวัติการแจ้งเตือนเหตุการณ์ย้อนหลัง']
+  logs:     ['Alert / Logs','ประวัติการแจ้งเตือนเหตุการณ์ย้อนหลัง'],
+  analyze:  ['Upload & Analyze','วิเคราะห์ภาพ/วิดีโอด้วยโมเดลจริงผ่าน API (ต้นแบบ pilot)']
 };
 document.querySelectorAll('[data-go]').forEach(b=>{
   b.addEventListener('click',()=>go(b.dataset.go));
@@ -700,6 +1011,7 @@ function go(p){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('on', n.dataset.go===p));
   pgTitle.textContent = PAGES[p][0];
   pgSub.textContent   = PAGES[p][1];
+  document.body.dataset.page = p;
 }
 
 /* ============ CLOCK ============ */
@@ -1056,5 +1368,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape') mask.classList.remo
 navLogs.textContent = LOGS.filter(l=>l.status==='new').length;
 navLive.textContent = SCENES.filter(s=>s.boxes.length).length;
 </script>
+<!-- Upload & Analyze: real API calls (no mock data) -->
+<script src="analyze.js"></script>
 </body>
 </html>
