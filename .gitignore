@@ -5,6 +5,9 @@ __pycache__/
 runs/
 *.pt
 *.onnx
+*.png
+*.jpg
+*.jpeg
 dataset/
 data/raw/
 data/processed/
@@ -16,3 +19,18 @@ configs/datasets.local.yaml
 venv/
 env/
 .vscode/
+
+# Local worker coordination and generated QA review state
+docs/worker_control/
+docs/antigravity_import/
+docs/audit_artifacts/dfire/human_qa_medium_person_batch_001/
+docs/audit_artifacts/dfire/human_qa_medium_person_batch_002/
+docs/audit_artifacts/dfire/phase2_crop_stats.json
+docs/audit_artifacts/dfire/phase2_features.json
+docs/audit_artifacts/dfire/phase3_batch_checkpoints.json
+
+# One-off inspection and experiment scripts; retain reusable build/validation tools
+scripts/check_*.py
+scripts/inspect_*.py
+scripts/test_*.py
+scripts/quick_box_check.py
