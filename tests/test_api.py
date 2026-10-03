@@ -22,7 +22,8 @@ from cctv_safety.schema import CLASS_NAMES, CLASS_TO_ID
 from cctv_safety.stage2 import sample_indices
 from conftest import (REPO_ROOT, WEIGHTS_DIR, X3D_WEIGHTS, YOLO_WEIGHTS, image_bytes, load_fixture,
                       require_weights, write_video)
-from webapp.api import create_app
+from webapp.api import _privacy_settings, create_app
+from webapp.media import ApiError
 from webapp.models import WeightsMissing
 
 STAGE1 = "/api/stage1/analyze"
@@ -74,6 +75,19 @@ class StubRegistry:
         return out
 
 
+class NoFaceFixture:
+    """Deterministic empty face detector; API tests do not depend on ignored ONNX weights."""
+    def __init__(self, _weights_dir, **_settings):
+        pass
+
+    def detect(self, _frame):
+        return []
+
+    @staticmethod
+    def blur(frame, _boxes, _blur_strength=0.8):
+        return frame.copy()
+
+
 @pytest.fixture
 def stub():
     return StubRegistry()
@@ -81,7 +95,7 @@ def stub():
 
 @pytest.fixture
 def client(stub):
-    return TestClient(create_app(registry=stub))
+    return TestClient(create_app(registry=stub, face_anonymizer_factory=NoFaceFixture))
 
 
 @pytest.fixture
@@ -171,6 +185,25 @@ def check_envelope(body, model, is_model_output=True):
 
 
 # ---------------------------------------------------------------- health / static
+def test_privacy_settings_defaults_and_validation():
+    assert _privacy_settings(None, None, None) == {
+        "face_confidence": 0.35,
+        "padding_fraction": 0.25,
+        "blur_strength": 0.8,
+    }
+    assert _privacy_settings("0.5", "0.4", "1.2") == {
+        "face_confidence": 0.5,
+        "padding_fraction": 0.4,
+        "blur_strength": 1.2,
+    }
+    with pytest.raises(ApiError, match="face_confidence"):
+        _privacy_settings("0.95", None, None)
+    with pytest.raises(ApiError, match="padding_fraction"):
+        _privacy_settings(None, "-0.1", None)
+    with pytest.raises(ApiError, match="blur_strength"):
+        _privacy_settings(None, None, "nan")
+
+
 def test_health_matches_fixture(client, stub):
     resp = client.get("/api/health")
     assert resp.status_code == 200

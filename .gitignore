@@ -16,6 +16,7 @@ configs/datasets.local.yaml
 .env
 .venv/
 .venv-cuda/
+.venv-test/
 venv/
 env/
 .vscode/

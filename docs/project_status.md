@@ -11,13 +11,17 @@ their historical statements are not the current project status.
 - **Stage 2:** the SCFD pilot was Human-QA signed off by the owner and trained
   with X3D-S. It is an evaluated pilot, not a robust or production-ready Fight
   classifier.
-- **Combined system:** not complete. The CLI `scripts/infer.py` is YOLO-only.
-  Reusable X3D-S inference now exists (`cctv_safety/stage2.py`), and the web
-  prototype runs both models, but separately. Person tracking, event logic and
-  end-to-end integration/evaluation remain to be implemented.
-- **Web prototype (2026-10-01):** a demo-only Upload & Analyze page. It runs
-  YOLOv8n/s and X3D-S on uploaded images and videos through a local FastAPI
-  backend; see the section below.
+- **Combined system:** an initial web shadow-mode integration now runs dense
+  YOLO and X3D on the same uploaded video and reports whether YOLO detected a
+  person in each X3D window. Experimental IoU/centre-distance tracking and
+  proximity/motion candidate signals are now included for comparison. X3D
+  still evaluates every window so missed triggers remain visible. Production
+  tracking, calibrated multi-signal triggers, event/cooldown logic, and
+  end-to-end evaluation remain open. The CLI `scripts/infer.py` remains
+  YOLO-only.
+- **Web prototype (2026-10-02):** a demo-only Upload & Analyze page. It runs
+  YOLOv8n/s and X3D-S on uploaded media through a local FastAPI backend, with
+  a combined shadow-mode endpoint for video; see the section below.
 - **Project scope:** educational project; both stages remain pilot work.
 - The recorded Stage 1 and Stage 2 pilot runs were owner-authorized. **This
   status update does not authorize a new run or continuation**; notebook gates

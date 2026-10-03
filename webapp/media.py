@@ -167,6 +167,25 @@ def iter_frames(path: Path, indices: list[int], transform=None):
             yield index, filler
 
 
+def iter_video_frames(path: Path):
+    """Yield every actually decoded source frame in order without trusting metadata count."""
+    cap = cv2.VideoCapture(str(path))
+    try:
+        if not cap.isOpened():
+            raise decode_failed("OpenCV cannot open this video")
+        index = 0
+        while True:
+            ok, frame = cap.read()
+            if not ok or frame is None:
+                break
+            yield index, frame
+            index += 1
+        if index == 0:
+            raise decode_failed("no decodable frames")
+    finally:
+        cap.release()
+
+
 def read_frames(path: Path, indices: list[int], transform=None) -> dict[int, np.ndarray]:
     """All requested frames as ``{index: frame}`` (see :func:`iter_frames`)."""
     return dict(iter_frames(path, indices, transform))

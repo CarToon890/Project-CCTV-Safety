@@ -364,6 +364,14 @@ body[data-page="analyze"] .chip-real{display:inline-block}
 .az-controls .field input[type=file]{width:250px;font-size:12px}
 .az-controls .field input[type=number]{width:52px}
 .az-controls .field label{font-size:11.5px;color:var(--muted2);white-space:nowrap}
+.az-privacy-settings{border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:#0d141d}
+.az-privacy-settings summary{cursor:pointer;font-size:12px;font-weight:650;color:var(--text)}
+.az-privacy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:12px}
+.az-privacy-control{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid var(--line);border-radius:8px;background:#101923}
+.az-privacy-control label{font-size:11.5px;color:var(--muted)}
+.az-privacy-control input[type=range]{width:100%;accent-color:var(--accent)}
+.az-privacy-control output{font:600 12px var(--mono);color:var(--text)}
+.az-privacy-note{margin:10px 0 0;font-size:11px;line-height:1.55;color:var(--muted2)}
 .az-fileinfo{font-size:11.5px;color:var(--muted2)}
 .az-preview{background:#05080c;border:1px solid var(--line);border-radius:10px;min-height:120px;
   display:grid;place-items:center;overflow:hidden}
@@ -458,9 +466,9 @@ body[data-page="analyze"] .chip-real{display:inline-block}
 .az-muted{color:var(--muted2)!important}
 .az-right{margin-left:auto;text-align:right}
 .az-player{position:relative;background:#000;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.az-player video{display:block;width:100%;height:min(56vh,520px);object-fit:contain;background:#000}
-.az-overlay{position:absolute;left:0;top:0;pointer-events:none}
-.az-corner{position:absolute;font-size:12px;font-weight:700;padding:4px 9px;border-radius:6px;pointer-events:none;
+.az-player video{display:block;width:100%;height:min(56vh,520px);object-fit:contain;background:#000;visibility:hidden}
+.az-overlay{position:absolute;left:0;top:0;z-index:1;pointer-events:none;background:#000}
+.az-corner{position:absolute;z-index:2;font-size:12px;font-weight:700;padding:4px 9px;border-radius:6px;pointer-events:none;
   background:#0f172acc;color:#e2e8f0;border:1px solid #475569}
 .az-corner.fight{background:#7e22cecc;color:#fff;border-color:#d8b4fe}
 .az-now{min-width:0}
@@ -472,6 +480,8 @@ body[data-page="analyze"] .chip-real{display:inline-block}
 .az-tech[open] summary{margin-bottom:10px}
 .az-raw{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:9px;overflow:hidden}
 .az-rrow{display:grid;grid-template-columns:40px 1.3fr 1fr 1fr 1fr;gap:8px;padding:5px 11px;font-size:11.5px;border-bottom:1px solid #1a2431}
+.az-rrow.pipeline{grid-template-columns:32px 1fr .8fr .75fr .75fr .7fr .55fr 1.4fr;min-width:720px}
+.az-raw:has(.az-rrow.pipeline){overflow-x:auto}
 .az-rrow:last-child{border:none}
 .az-rrow.fight{background:#7f1d1d33}
 .az-rule{font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px}
@@ -802,6 +812,27 @@ body[data-page="analyze"] .chip-real{display:inline-block}
                 Analyze
               </button>
             </div>
+            <details class="az-privacy-settings">
+              <summary>ตั้งค่าการตรวจและเบลอใบหน้า (YuNet)</summary>
+              <div class="az-privacy-grid">
+                <div class="az-privacy-control">
+                  <label for="azFaceConfidence">ความไวในการตรวจ · confidence threshold</label>
+                  <input type="range" id="azFaceConfidence" min="0.20" max="0.90" step="0.05" value="0.35">
+                  <output id="azFaceConfidenceValue" for="azFaceConfidence">0.35</output>
+                </div>
+                <div class="az-privacy-control">
+                  <label for="azFacePadding">ขยายพื้นที่รอบใบหน้า · padding</label>
+                  <input type="range" id="azFacePadding" min="0" max="0.50" step="0.05" value="0.25">
+                  <output id="azFacePaddingValue" for="azFacePadding">25%</output>
+                </div>
+                <div class="az-privacy-control">
+                  <label for="azFaceBlur">ความแรงของ Gaussian blur</label>
+                  <input type="range" id="azFaceBlur" min="0.40" max="1.50" step="0.10" value="0.80">
+                  <output id="azFaceBlurValue" for="azFaceBlur">0.80</output>
+                </div>
+              </div>
+              <p class="az-privacy-note">confidence ต่ำลงจะรับใบหน้าที่คะแนนต่ำได้มากขึ้น แต่อาจเบลอบริเวณอื่นเพิ่ม; ค่าสูงขึ้นอาจทำให้ใบหน้าหลุดตรวจ · padding และ blur สูงขึ้นจะปกปิดกว้าง/แรงขึ้น · ระบบตรวจทุกเฟรมเสมอและไม่มีตัวเลือกปิดเบลอ หากตรวจหรือวาดไม่สำเร็จ ภาพจะแสดงเป็นพื้นที่ปิดทับ</p>
+            </details>
             <div class="az-fileinfo" id="azFileInfo">ยังไม่ได้เลือกไฟล์</div>
             <div class="az-state" id="azStatus" hidden></div>
             <div class="az-state" id="azProbe" hidden></div>

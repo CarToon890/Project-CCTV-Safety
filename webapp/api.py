@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging
 import math
 import sys
+from time import perf_counter
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
@@ -25,8 +26,19 @@ if str(_REPO_ROOT) not in sys.path:
 
 from cctv_safety.detector import load_thresholds  # noqa: E402
 from cctv_safety.ppe import assess_ppe  # noqa: E402
+from cctv_safety.privacy import (  # noqa: E402
+    DEFAULT_FACE_BLUR_STRENGTH, DEFAULT_FACE_CONFIDENCE, DEFAULT_FACE_PADDING,
+    FaceModelUnavailable, YuNetFaceAnonymizer, anonymize, elapsed_ms,
+)
 from cctv_safety.schema import CLASS_NAMES, CLASS_TO_ID, DETECTOR_SCHEMA_VERSION  # noqa: E402
 from cctv_safety.stage2 import CLASS_NAMES as STAGE2_CLASS_NAMES, FRAMES  # noqa: E402
+from cctv_safety.tracking import (  # noqa: E402
+    MAX_TRACK_GAP_S,
+    MOTION_DIAGONALS_PER_S,
+    PROXIMITY_DIAGONALS,
+    add_track_ids,
+    summarize_window,
+)
 from webapp import config, media  # noqa: E402
 from webapp.media import ApiError  # noqa: E402
 from webapp.models import ModelLoadFailed, ModelRegistry, WeightsMissing  # noqa: E402
@@ -93,8 +105,29 @@ def _too_long(info: media.VideoInfo) -> ApiError:
                     f"{config.WINDOW_S:g} s; the limit is {config.MAX_WINDOWS} windows (about 60 s).")
 
 
-def create_app(registry=None, weights_dir: Path | None = None) -> FastAPI:
+def _privacy_settings(face_confidence: str | None, face_padding: str | None,
+                      face_blur_strength: str | None) -> dict[str, float]:
+    specs = (
+        ("face_confidence", face_confidence, DEFAULT_FACE_CONFIDENCE, 0.20, 0.90),
+        ("padding_fraction", face_padding, DEFAULT_FACE_PADDING, 0.0, 0.50),
+        ("blur_strength", face_blur_strength, DEFAULT_FACE_BLUR_STRENGTH, 0.40, 1.50),
+    )
+    values = {}
+    for name, raw, default, low, high in specs:
+        try:
+            value = float(raw.strip()) if raw is not None and raw.strip() else default
+        except ValueError:
+            value = float("nan")
+        if not math.isfinite(value) or not low <= value <= high:
+            raise ApiError(400, "invalid_parameter",
+                           f"'{name}' must be a number in {low:g}..{high:g}; got {raw!r}.")
+        values[name] = value
+    return values
+
+
+def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_factory=None) -> FastAPI:
     weights_dir = Path(weights_dir) if weights_dir is not None else config.WEIGHTS_DIR
+    face_anonymizer_factory = face_anonymizer_factory or YuNetFaceAnonymizer
     if registry is None:
         registry = ModelRegistry(weights_dir, load_thresholds(config.THRESHOLDS_PATH))
     thresholds = getattr(registry, "thresholds", None) or load_thresholds(config.THRESHOLDS_PATH)
@@ -115,6 +148,10 @@ def create_app(registry=None, weights_dir: Path | None = None) -> FastAPI:
     @app.exception_handler(ModelLoadFailed)
     async def _load_failed(_: Request, exc: ModelLoadFailed):
         return _error(503, "model_load_failed", str(exc))
+
+    @app.exception_handler(FaceModelUnavailable)
+    async def _face_model_unavailable(_: Request, exc: FaceModelUnavailable):
+        return _error(503, "privacy_model_unavailable", str(exc))
 
     @app.exception_handler(StarletteHTTPException)
     async def _http_error(request: Request, exc: StarletteHTTPException):
@@ -163,6 +200,9 @@ def create_app(registry=None, weights_dir: Path | None = None) -> FastAPI:
         max_frames: str | None = Form(None),
         mode: str | None = Form(None),
         sample_fps: str | None = Form(None),
+        face_confidence: str | None = Form(None),
+        face_padding: str | None = Form(None),
+        face_blur_strength: str | None = Form(None),
     ):
         kind, size = _check_upload(file)
         if model not in config.STAGE1_MODELS:
@@ -197,7 +237,9 @@ def create_app(registry=None, weights_dir: Path | None = None) -> FastAPI:
             raise ApiError(422, "video_required",
                            "Stage 1 dense mode needs a video file (mp4, avi, mov, mkv); an image was uploaded. "
                            "Use mode=frames for images.")
+        privacy_settings = _privacy_settings(face_confidence, face_padding, face_blur_strength)
         ensure_model(model)
+        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings)
 
         frames: list[dict] = []
         info = None
@@ -207,7 +249,8 @@ def create_app(registry=None, weights_dir: Path | None = None) -> FastAPI:
                 frame = media.decode_image(path)
                 height, width = frame.shape[:2]
                 (detections,) = registry.stage1(model, [frame])
-                frames.append(_frame_entry(0, None, media.encode_jpeg_b64(frame), detections))
+                safe_frame, _ = anonymize(face_anonymizer, frame)
+                frames.append(_frame_entry(0, None, media.encode_jpeg_b64(safe_frame), detections))
             elif not dense:
                 info = media.probe_video(path)
                 width, height = info.width, info.height
@@ -215,8 +258,9 @@ def create_app(registry=None, weights_dir: Path | None = None) -> FastAPI:
                 decoded = media.read_frames(path, indices)
                 per_frame = registry.stage1(model, [decoded[index] for index in indices])
                 for index, detections in zip(indices, per_frame):
+                    safe_frame, _ = anonymize(face_anonymizer, decoded[index])
                     frames.append(_frame_entry(index, _r(index / info.fps),
-                                               media.encode_jpeg_b64(decoded[index]), detections))
+                                               media.encode_jpeg_b64(safe_frame), detections))
             else:
                 info = media.probe_video(path)
                 width, height = info.width, info.height
@@ -316,6 +360,168 @@ def create_app(registry=None, weights_dir: Path | None = None) -> FastAPI:
                 "max_fight_prob": max(window["probs"]["fight"] for window in windows),
                 "fight_windows": sum(1 for window in windows if window["label"] == "fight"),
                 "total_windows": len(windows),
+            },
+        }
+
+    @app.post("/api/pipeline/analyze")
+    def pipeline_analyze(
+        file: UploadFile | None = File(None),
+        model: str | None = Form(None),
+        sample_fps: str | None = Form(None),
+        face_confidence: str | None = Form(None),
+        face_padding: str | None = Form(None),
+        face_blur_strength: str | None = Form(None),
+    ):
+        """Run YOLO and X3D as one auditable shadow-mode pipeline.
+
+        X3D is evaluated on every window while the person-trigger is measured,
+        so a missed person cannot silently suppress a possible fight result.
+        """
+        kind, size = _check_upload(file)
+        if model not in config.STAGE1_MODELS:
+            raise ApiError(400, "invalid_parameter",
+                           f"'model' must be one of {list(config.STAGE1_MODELS)}; got {model!r}.")
+        try:
+            fps_used = float(sample_fps.strip()) if sample_fps and sample_fps.strip() else config.DEFAULT_SAMPLE_FPS
+        except ValueError:
+            fps_used = float("nan")
+        if not (math.isfinite(fps_used) and config.MIN_SAMPLE_FPS <= fps_used <= config.MAX_SAMPLE_FPS):
+            raise ApiError(400, "invalid_parameter",
+                           f"'sample_fps' must be a number in {config.MIN_SAMPLE_FPS:g}..{config.MAX_SAMPLE_FPS:g}.")
+        _check_kind_and_size(file, kind, size)
+        if kind != "video":
+            raise ApiError(422, "video_required", "The combined pipeline requires a video file.")
+        privacy_settings = _privacy_settings(face_confidence, face_padding, face_blur_strength)
+        ensure_model(model)
+        ensure_model(config.STAGE2_MODEL)
+        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings)
+
+        path = media.save_to_temp(file.file, Path(file.filename).suffix.lower(), config.MAX_UPLOAD_BYTES)
+        try:
+            info = media.probe_video(path)
+            spans = media.stage2_windows(info.duration_s)
+            if len(spans) > config.MAX_WINDOWS:
+                raise _too_long(info)
+
+            # Scan every decoded display frame for faces. YOLO still receives the original
+            # sampled frames; only encoded/display pixels are anonymized.
+            indices = media.dense_indices(info, fps_used)
+            selected = set(indices)
+            stage1_frames: list[dict] = []
+            batch: list = []
+            faces_by_frame: list[list[list[int]]] = []
+            first_safe_jpeg = None
+            face_scan_start = perf_counter()
+            face_detection_ms = 0.0
+            yolo_batch_ms = 0.0
+            for index, frame in media.iter_video_frames(path):
+                detect_start = perf_counter()
+                boxes = face_anonymizer.detect(frame)
+                face_detection_ms += (perf_counter() - detect_start) * 1000
+                faces_by_frame.append(boxes)
+                if index == 0:
+                    first_safe_jpeg = media.encode_jpeg_b64(
+                        face_anonymizer.blur(frame, boxes, privacy_settings["blur_strength"])
+                    )
+                if index in selected:
+                    batch.append((index, frame))
+                    if len(batch) >= config.DENSE_BATCH:
+                        yolo_start = perf_counter()
+                        stage1_frames.extend(_detect_batch(model, batch, info))
+                        yolo_batch_ms += (perf_counter() - yolo_start) * 1000
+                        batch = []
+            if batch:
+                yolo_start = perf_counter()
+                stage1_frames.extend(_detect_batch(model, batch, info))
+                yolo_batch_ms += (perf_counter() - yolo_start) * 1000
+            face_scan_wall_ms = round(max(0.0, (perf_counter() - face_scan_start) * 1000 - yolo_batch_ms), 2)
+            if len(faces_by_frame) != info.frame_count or first_safe_jpeg is None:
+                raise ApiError(422, "anonymization_incomplete",
+                               "Face anonymization did not process every video frame; no original video was shown.")
+
+            # Stage 2: classify every 2 s window, independent of the trigger.
+            clip_indices = [media.window_frame_indices(start, end, info) for start, end in spans]
+            decoded = media.read_frames(path, [i for clip in clip_indices for i in clip], media.letterbox_bgr)
+        finally:
+            media.remove_quietly(path)
+
+        clips = [[decoded[i] for i in clip] for clip in clip_indices]
+        probs = registry.stage2(clips)
+        add_track_ids(stage1_frames, info.width, info.height)
+        s2_windows = []
+        combined_windows = []
+        for index, ((start, end), (p_non, p_fight)) in enumerate(zip(spans, probs)):
+            label = STAGE2_CLASS_NAMES[1] if p_fight > p_non else STAGE2_CLASS_NAMES[0]
+            person_frames = [frame for frame in stage1_frames
+                             if start <= (frame["time_s"] or 0.0) < end
+                             and any(det["class_name"] == "person" for det in frame["detections"])]
+            trigger_summary = summarize_window(stage1_frames, start, end, info.width, info.height)
+            s2_windows.append({
+                "index": index, "start_s": _r(start), "end_s": _r(end),
+                "probs": {"non_fight": _r(p_non), "fight": _r(p_fight)}, "label": label,
+            })
+            combined_windows.append({
+                "index": index, "start_s": _r(start), "end_s": _r(end),
+                "person_triggered": bool(person_frames),
+                "person_frames": len(person_frames),
+                **trigger_summary,
+                "x3d_evaluated": True,
+                "fight_probability": _r(p_fight),
+                "x3d_label": label,
+            })
+
+        source = _source(info.width, info.height, info)
+        stage1 = {
+            **_envelope(model), "detector_schema_version": DETECTOR_SCHEMA_VERSION,
+            "class_names": list(CLASS_NAMES), "media_type": "video", "source": source,
+            "thresholds": {name: _r(value) for name, value in thresholds.items()},
+            "ppe_min_confidence": _r(ppe_min_confidence), "mode": "dense",
+            "sample_fps": _r(fps_used), "frames": stage1_frames,
+        }
+        fight_windows = sum(window["label"] == "fight" for window in s2_windows)
+        stage2 = {
+            **_envelope(config.STAGE2_MODEL), "source": source,
+            "class_names": list(STAGE2_CLASS_NAMES), "frames_per_window": FRAMES,
+            "window_s": config.WINDOW_S, "windows": s2_windows,
+            "summary": {
+                "max_fight_prob": max(window["probs"]["fight"] for window in s2_windows),
+                "fight_windows": fight_windows, "total_windows": len(s2_windows),
+            },
+        }
+        return {
+            "pipeline_mode": "tracking_trigger_shadow",
+            "trigger": "candidate if person proximity or multi-person motion is observed",
+            "trigger_parameters": {
+                "proximity_max_distance_frame_diagonals": PROXIMITY_DIAGONALS,
+                "motion_min_speed_frame_diagonals_per_s": MOTION_DIAGONALS_PER_S,
+                "track_max_gap_s": MAX_TRACK_GAP_S,
+            },
+            "x3d_policy": "evaluate_every_window_shadow_mode",
+            "face_blur": {
+                "complete": True,
+                "model": "OpenCV YuNet (local)",
+                "settings": privacy_settings,
+                "frame_count": len(faces_by_frame),
+                "faces_detected": sum(len(boxes) for boxes in faces_by_frame),
+                "detection_ms": round(face_detection_ms, 2),
+                "scan_wall_ms": face_scan_wall_ms,
+                "faces_by_frame": faces_by_frame,
+            },
+            "preview_jpeg_b64": first_safe_jpeg,
+            "stage1": stage1,
+            "stage2": stage2,
+            "pipeline": {
+                "source": source,
+                "windows": combined_windows,
+                "summary": {
+                    "total_windows": len(combined_windows),
+                    "person_triggered_windows": sum(w["person_triggered"] for w in combined_windows),
+                    "candidate_triggered_windows": sum(w["candidate_triggered"] for w in combined_windows),
+                    "fight_windows": fight_windows,
+                    "fight_windows_without_candidate_trigger": sum(
+                        w["x3d_label"] == "fight" and not w["candidate_triggered"] for w in combined_windows
+                    ),
+                },
             },
         }
 

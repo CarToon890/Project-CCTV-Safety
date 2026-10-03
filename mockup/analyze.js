@@ -16,7 +16,7 @@
  *
  * Video flow: the browser first probes whether it can play the file
  * (<video> loadeddata / error). Playable → Stage 1 mode=dense, the
- * original file is played with a canvas overlay synced to currentTime and
+ * original file is hidden behind an opaque, face-blurred canvas synced to currentTime and
  * the timeline track is the seek bar. Not playable → Stage 1 mode=frames
  * (JPEG frames) and the same track is the frame slider. Stage 2 "fight"
  * windows are highlighted red on that track.
@@ -30,7 +30,8 @@
   const API = {
     health: '/api/health',
     stage1: '/api/stage1/analyze',
-    stage2: '/api/stage2/analyze'
+    stage2: '/api/stage2/analyze',
+    pipeline: '/api/pipeline/analyze'
   };
   const IMAGE_EXT = ['.jpg', '.jpeg', '.png', '.bmp', '.webp'];
   const VIDEO_EXT = ['.mp4', '.avi', '.mov', '.mkv'];
@@ -51,6 +52,8 @@
     video_too_long: 'วิดีโอยาวเกินไป (เกิน 30 ช่วง × 2 วินาที หรือประมาณ 60 วินาที)',
     weights_missing: 'ไม่พบไฟล์น้ำหนักโมเดล (.pt) — คัดลอกไฟล์ไปไว้ในโฟลเดอร์ weights ก่อน',
     model_load_failed: 'โหลดโมเดลไม่สำเร็จ (ไฟล์น้ำหนักหรือ runtime contract ไม่ถูกต้อง)',
+    privacy_model_unavailable: 'ไม่พบหรือโหลด YuNet ไม่ได้ — ซ่อนไฟล์ต้นฉบับไว้เพื่อความเป็นส่วนตัว',
+    anonymization_incomplete: 'ตรวจใบหน้าไม่ครบทุกเฟรม — ซ่อนไฟล์ต้นฉบับไว้เพื่อความเป็นส่วนตัว',
     internal_error: 'เกิดข้อผิดพลาดภายใน backend ระหว่างประมวลผล — ลองใหม่ หรือตรวจ log ของ server',
     not_found: 'ไม่พบ endpoint ของ API — ตรวจว่ารัน backend เวอร์ชันที่ถูกต้อง',
     method_not_allowed: 'เรียก API ด้วย HTTP method ที่ไม่ถูกต้อง'
@@ -125,6 +128,9 @@
     fileInfo: $('azFileInfo'), preview: $('azPreview'), probe: $('azProbe'),
     maxFrames: $('azMaxFrames'), maxFramesWrap: $('azMaxFramesWrap'),
     sampleFps: $('azSampleFps'), sampleFpsWrap: $('azSampleFpsWrap'),
+    faceConfidence: $('azFaceConfidence'), faceConfidenceValue: $('azFaceConfidenceValue'),
+    facePadding: $('azFacePadding'), facePaddingValue: $('azFacePaddingValue'),
+    faceBlur: $('azFaceBlur'), faceBlurValue: $('azFaceBlurValue'),
     apiDot: $('azApiDot'), apiText: $('azApiText'),
     healthDevice: $('azHealthDevice'), healthModels: $('azHealthModels'), healthMsg: $('azHealthMsg'),
     healthRefresh: $('azHealthRefresh'),
@@ -151,6 +157,7 @@
     view: null,                           // 'player' | 'frames'
     cur: 0,                               // frames view: position in s1.frames
     images: [],                           // frames view: decoded JPEG per frame (current response only)
+    faceBlur: null,                       // face boxes for every dense-video frame
     lastSample: -2,                       // player view: last drawn sample (-1 = none)
     seeking: false,                       // user is dragging the seek track
     // display-only filters (reset to defaults for every new analysis)
@@ -237,7 +244,7 @@
     runToken++;                // in-flight responses of an older run are ignored
     drawToken++;
     stopPlayer();
-    st.s1 = null; st.s2 = null; st.view = null; st.cur = 0; st.images = []; st.lastSample = -2;
+    st.s1 = null; st.s2 = null; st.view = null; st.cur = 0; st.images = []; st.faceBlur = null; st.lastSample = -2;
     st.hidden = {}; st.ppeCheck = true; st.viewMode = 'cls'; st.minConf = 0; st.hl = null; st.seeking = false;
     ui.video.removeAttribute('src');
     ui.video.load();
@@ -297,16 +304,13 @@
       (st.kind === 'image' ? 'ภาพนิ่ง' : st.kind === 'video' ? 'วิดีโอ' : 'ชนิดไฟล์ไม่รองรับ');
     if (!st.kind) return;
     st.url = URL.createObjectURL(f);
+    clear(ui.preview);
+    ui.preview.appendChild(el('div', 'az-empty', 'ซ่อนไฟล์ต้นฉบับระหว่างรอวิเคราะห์ — จะแสดงเฉพาะภาพที่เบลอแล้ว'));
     if (st.kind === 'image') {
-      const img = el('img');
-      img.alt = 'ตัวอย่างไฟล์ที่เลือก';
-      img.onerror = () => { clear(ui.preview); ui.preview.appendChild(el('div', 'az-empty', 'เบราว์เซอร์แสดงตัวอย่างไฟล์นี้ไม่ได้ (ยังส่งไปวิเคราะห์ได้)')); };
-      img.src = st.url;
-      ui.preview.appendChild(img);
       return;
     }
     const v = el('video');
-    v.controls = true; v.muted = true; v.preload = 'auto'; v.playsInline = true;
+    v.controls = false; v.muted = true; v.preload = 'auto'; v.playsInline = true; v.hidden = true;
     ui.preview.appendChild(v);
     st.probe = probeVideo(v);
     v.src = st.url;
@@ -395,7 +399,7 @@
       dets = frame.detections.filter(visibleDet);
     }
     dets.forEach(d => stroke(box(d), colorFor(d.class_name, d.class_id), LINE_PX));
-    dets.forEach(d => drawLabel(ctx, d.class_name + ' ' + num(d.confidence, 2), box(d),
+    dets.forEach(d => drawLabel(ctx, d.class_name + (d.track_id ? ' #' + d.track_id : '') + ' ' + num(d.confidence, 2), box(d),
       colorFor(d.class_name, d.class_id), W, H, placed, d.class_name === 'person'));
     if (hlBox) stroke({ x1: hlBox.x1 - 3, y1: hlBox.y1 - 3, x2: hlBox.x2 + 3, y2: hlBox.y2 + 3 }, HL_COLOR, 2, [5, 3]);
   }
@@ -604,13 +608,43 @@
     ui.corner.style.right = (v.offsetParent ? v.offsetParent.clientWidth - (v.offsetLeft + r.x + r.w) + 8 : 8) + 'px';
     ui.corner.style.top = (v.offsetTop + r.y + 8) + 'px';
     const sampleChanged = i !== st.lastSample;
-    if (!force && !resized && !sampleChanged) return;
     st.lastSample = i;
     if (sampleChanged) st.hl = null;
 
     const ctx = cv.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, r.cw, r.ch);
+    // Opaque canvas covers the original video at all times. Fail closed to a
+    // blank slate if face metadata or canvas drawing is unavailable.
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, r.cw, r.ch);
+    try {
+      const src = st.s1.source;
+      const frameIndex = Math.min(src.frame_count - 1, Math.max(0, Math.floor(t * src.fps + 1e-6)));
+      const faceBoxes = st.faceBlur && st.faceBlur.faces_by_frame[frameIndex];
+      if (!Array.isArray(faceBoxes)) throw new Error('missing face frame');
+      if (r.w > 0 && r.h > 0 && ui.video.readyState >= 2) {
+        ctx.drawImage(v, r.x, r.y, r.w, r.h);
+        faceBoxes.forEach(box => {
+          const x = r.x + box[0] * r.w / src.width;
+          const y = r.y + box[1] * r.h / src.height;
+          const w = (box[2] - box[0]) * r.w / src.width;
+          const h = (box[3] - box[1]) * r.h / src.height;
+          ctx.save(); ctx.beginPath(); ctx.rect(x - 2, y - 2, w + 4, h + 4); ctx.clip();
+          if ('filter' in ctx) {
+            const strength = st.faceBlur.settings && isNum(st.faceBlur.settings.blur_strength)
+              ? st.faceBlur.settings.blur_strength : 0.8;
+            ctx.filter = 'blur(' + Math.max(4, Math.min(w, h) * 0.32 * strength / 0.8) + 'px)';
+            ctx.drawImage(v, box[0], box[1], box[2] - box[0], box[3] - box[1], x, y, w, h);
+          } else {
+            ctx.fillStyle = '#000'; ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
+          }
+          ctx.restore();
+        });
+      }
+    } catch (e) {
+      ctx.fillStyle = '#111827'; ctx.fillRect(0, 0, r.cw, r.ch);
+      ctx.fillStyle = '#fecaca'; ctx.font = '600 14px sans-serif';
+      ctx.fillText('เบลอใบหน้าไม่สำเร็จ — ซ่อนภาพไว้', 12, 24);
+    }
     const frame = i >= 0 ? st.s1.frames[i] : null;
     if (frame && r.cw > 0) {
       const src = st.s1.source;
@@ -883,6 +917,17 @@
       metaItem(ui.s1Meta, 'เฟรมที่ตรวจ', data.frames.length);
     }
     metaItem(ui.s1Meta, 'detector schema', 'v' + data.detector_schema_version);
+    if (data.privacy) {
+      const faceCount = isNum(data.privacy.faces_detected) ? ' · พบ ' + data.privacy.faces_detected + ' ใบหน้า' : '';
+      metaItem(ui.s1Meta, 'face anonymization', data.privacy.model + faceCount);
+      if (isNum(data.privacy.detection_ms)) metaItem(ui.s1Meta, 'YuNet รวมทุกเฟรม', num(data.privacy.detection_ms, 2) + ' ms');
+      if (isNum(data.privacy.scan_wall_ms)) metaItem(ui.s1Meta, 'เวลา scan ทั้งหมด', num(data.privacy.scan_wall_ms, 2) + ' ms');
+      if (data.privacy.settings) {
+        const p = data.privacy.settings;
+        metaItem(ui.s1Meta, 'YuNet confidence / padding / blur',
+          num(p.face_confidence, 2) + ' / ' + Math.round(p.padding_fraction * 100) + '% / ' + num(p.blur_strength, 2));
+      }
+    }
     metaItem(ui.s1Meta, 'ppe_min_confidence', num(data.ppe_min_confidence, 2));
     metaItem(ui.s1Meta, 'schema_version', data.schema_version);
     ui.s1Rule.hidden = data.media_type !== 'video';
@@ -936,6 +981,11 @@
     ui.s1Body.hidden = false;
     ui.s1State.hidden = true;
     if (dense) {
+      if (!st.faceBlur || st.faceBlur.complete !== true || st.faceBlur.faces_by_frame.length !== data.source.frame_count) {
+        setState(ui.s1State, 'error', 'ไม่สามารถยืนยันการเบลอใบหน้าทุกเฟรมได้ — วิดีโอถูกซ่อนไว้');
+        ui.s1Body.hidden = true;
+        return;
+      }
       ui.video.src = st.url;
       ui.video.load();
     }
@@ -983,17 +1033,37 @@
     metaItem(ui.s2Meta, 'fps', num(data.source.fps, 2));
     metaItem(ui.s2Meta, 'window_s', num(data.window_s, 1));
     metaItem(ui.s2Meta, 'frames_per_window', data.frames_per_window);
+    if (data.pipeline) {
+      metaItem(ui.s2Meta, 'pipeline_mode', data.pipeline.mode);
+      metaItem(ui.s2Meta, 'YOLO person-triggered windows', data.pipeline.person_triggered_windows + ' / ' + data.pipeline.total_windows);
+      metaItem(ui.s2Meta, 'tracking trigger windows', data.pipeline.candidate_triggered_windows + ' / ' + data.pipeline.total_windows);
+      metaItem(ui.s2Meta, 'Fight ที่ไม่มี tracking trigger', data.pipeline.fight_without_candidate_trigger);
+      metaItem(ui.s2Meta, 'Tracking', 'IoU + ระยะศูนย์กลางกล่อง');
+      metaItem(ui.s2Meta, 'Proximity trigger', 'ระยะ ≤ ' + num(data.pipeline.proximity_diagonals, 2) + ' เท่าของเส้นทแยงมุมภาพ');
+      metaItem(ui.s2Meta, 'Motion trigger', 'ความเร็ว ≥ ' + num(data.pipeline.motion_diagonals_per_s, 2) + ' เส้นทแยงมุมภาพ/วินาที');
+      metaItem(ui.s2Meta, 'X3D policy', 'ประเมินทุกช่วง (shadow mode)');
+    }
     metaItem(ui.s2Meta, 'schema_version', data.schema_version);
     clear(ui.s2Raw);
-    const head = el('div', 'az-rrow az-chead');
-    ['#', 'start_s – end_s', 'label'].concat(data.class_names).forEach(t => head.appendChild(el('span', null, t)));
+    const head = el('div', 'az-rrow az-chead' + (data.pipeline ? ' pipeline' : ''));
+    ['#', 'เวลา', 'X3D', 'non_fight', 'fight'].concat(data.pipeline ? ['YOLO คน', 'tracks', 'trigger/evidence'] : []).forEach(t => head.appendChild(el('span', null, t)));
     ui.s2Raw.appendChild(head);
     data.windows.forEach(w => {
-      const r = el('div', 'az-rrow' + (w.label === 'fight' ? ' fight' : ''));
+      const pw = data.pipeline && data.pipeline.windows[w.index];
+      const r = el('div', 'az-rrow' + (data.pipeline ? ' pipeline' : '') + (w.label === 'fight' ? ' fight' : ''));
       r.appendChild(el('span', 'mono', w.index));
       r.appendChild(el('span', 'mono', num(w.start_s, 2) + ' – ' + num(w.end_s, 2)));
       r.appendChild(el('span', 'mono', w.label));
       data.class_names.forEach(c => r.appendChild(el('span', 'mono', num(w.probs[c], 4))));
+      if (pw) {
+        r.appendChild(el('span', 'mono', pw.person_triggered ? 'พบ' : 'ไม่พบ'));
+        r.appendChild(el('span', 'mono', pw.max_concurrent_tracks));
+        const reasonText = pw.trigger_reasons.map(x => ({
+          people_in_close_proximity: 'ใกล้กัน', multi_person_motion: 'เคลื่อนไหว'
+        }[x] || x)).join(' + ');
+        r.appendChild(el('span', 'mono', (pw.candidate_triggered ? 'TRIGGER: ' : '— ') +
+          (reasonText || 'ไม่มี') + ' (P' + pw.proximity_frames + '/M' + pw.motion_frames + ')'));
+      }
       ui.s2Raw.appendChild(r);
     });
 
@@ -1004,10 +1074,11 @@
   }
 
   /* ---------------- analyze flow ---------------- */
-  function stage1Form(file, mode) {
+  function stage1Form(file, mode, privacy) {
     const fd = new FormData();
     fd.append('file', file, file.name);
     fd.append('model', ui.model.value);
+    appendPrivacySettings(fd, privacy);
     if (mode === 'dense') {
       fd.append('mode', 'dense');
       fd.append('sample_fps', String(clampFloat(ui.sampleFps.value, SAMPLE_FPS)));
@@ -1018,16 +1089,37 @@
     return fd;
   }
 
+  function privacySettings() {
+    return {
+      face_confidence: clampFloat(ui.faceConfidence.value, { min: 0.20, max: 0.90, def: 0.35 }),
+      face_padding: clampFloat(ui.facePadding.value, { min: 0, max: 0.50, def: 0.25 }),
+      face_blur_strength: clampFloat(ui.faceBlur.value, { min: 0.40, max: 1.50, def: 0.80 })
+    };
+  }
+
+  function appendPrivacySettings(form, settings) {
+    const p = settings || privacySettings();
+    Object.keys(p).forEach(key => form.append(key, String(p[key])));
+  }
+
+  function updatePrivacySettingLabels() {
+    const p = privacySettings();
+    ui.faceConfidenceValue.textContent = p.face_confidence.toFixed(2);
+    ui.facePaddingValue.textContent = Math.round(p.face_padding * 100) + '%';
+    ui.faceBlurValue.textContent = p.face_blur_strength.toFixed(2);
+  }
+
   async function runStage1(file, mode, notice, token) {
+    const usedPrivacy = privacySettings();
     setState(ui.s1State, 'loading', mode === 'dense'
       ? 'กำลังตรวจจับด้วย YOLOv8 ตลอดทั้งวิดีโอ …'
       : 'กำลังวิเคราะห์ด้วย YOLOv8 …');
-    let r = await callApi(API.stage1, { method: 'POST', body: stage1Form(file, mode) });
+    let r = await callApi(API.stage1, { method: 'POST', body: stage1Form(file, mode, usedPrivacy) });
     if (token !== runToken) return null;
     if (!r.ok && mode === 'dense' && r.code === 'video_too_long') {
       notice = 'วิดีโอยาวเกินกว่าจะตรวจต่อเนื่องได้ → แสดงผลเป็นภาพทีละเฟรมแทน';
       setState(ui.s1State, 'loading', 'วิดีโอยาวเกินสำหรับโหมดต่อเนื่อง — กำลังลองแบบเลือกเฟรม …');
-      r = await callApi(API.stage1, { method: 'POST', body: stage1Form(file, 'frames') });
+      r = await callApi(API.stage1, { method: 'POST', body: stage1Form(file, 'frames', usedPrivacy) });
       if (token !== runToken) return null;
     }
     if (!r.ok) { setState(ui.s1State, 'error', errorText(r), r.detail); return r; }
@@ -1036,7 +1128,13 @@
       setState(ui.s1State, 'error', 'API ตอบกลับในรูปแบบที่ไม่รู้จัก (Stage 1)');
       return { ok: false };
     }
+    d.privacy = { model: 'OpenCV YuNet (local)', settings: {
+      face_confidence: usedPrivacy.face_confidence,
+      padding_fraction: usedPrivacy.face_padding,
+      blur_strength: usedPrivacy.face_blur_strength
+    } };
     renderStage1(d, notice);
+    if (d.frames[0] && d.frames[0].image_jpeg_b64) setSafePreview(d.frames[0].image_jpeg_b64);
     return r;
   }
 
@@ -1054,6 +1152,66 @@
     }
     renderStage2(d);
     return r;
+  }
+
+  async function runPipeline(file, token) {
+    const usedPrivacy = privacySettings();
+    setState(ui.s1State, 'loading', 'กำลังตรวจใบหน้าทุกเฟรมและรัน YOLO; X3D ประเมินทุกช่วง …');
+    setState(ui.s2State, 'loading', 'กำลังรัน X3D พร้อมบันทึก person-trigger แบบ shadow …');
+    const fd = new FormData();
+    fd.append('file', file, file.name);
+    fd.append('model', ui.model.value);
+    fd.append('sample_fps', String(clampFloat(ui.sampleFps.value, SAMPLE_FPS)));
+    appendPrivacySettings(fd, usedPrivacy);
+    const r = await callApi(API.pipeline, { method: 'POST', body: fd });
+    if (token !== runToken) return null;
+    if (!r.ok) {
+      const msg = errorText(r);
+      setState(ui.s1State, 'error', msg, r.detail);
+      setState(ui.s2State, 'error', msg, r.detail);
+      return r;
+    }
+    const d = r.data;
+    if (!d.stage1 || !d.stage2 || !d.pipeline || !d.face_blur || d.face_blur.complete !== true ||
+        !Array.isArray(d.face_blur.faces_by_frame) || !d.stage1.source ||
+        d.face_blur.faces_by_frame.length !== d.stage1.source.frame_count ||
+        !Array.isArray(d.stage1.frames) ||
+        !Array.isArray(d.stage2.windows) || !Array.isArray(d.pipeline.windows)) {
+      setState(ui.s1State, 'error', 'API ตอบกลับในรูปแบบ pipeline ที่ไม่รู้จัก');
+      setState(ui.s2State, 'error', 'API ตอบกลับในรูปแบบ pipeline ที่ไม่รู้จัก');
+      return { ok: false };
+    }
+    st.faceBlur = d.face_blur;
+    d.stage1.privacy = {
+      model: d.face_blur.model,
+      faces_detected: d.face_blur.faces_detected,
+      detection_ms: d.face_blur.detection_ms,
+      scan_wall_ms: d.face_blur.scan_wall_ms,
+      settings: d.face_blur.settings
+    };
+    renderStage1(d.stage1, '');
+    const p = d.pipeline.summary;
+    d.stage2.pipeline = {
+      mode: d.pipeline_mode,
+      total_windows: p.total_windows,
+      person_triggered_windows: p.person_triggered_windows,
+      candidate_triggered_windows: p.candidate_triggered_windows,
+      fight_without_candidate_trigger: p.fight_windows_without_candidate_trigger,
+      proximity_diagonals: d.trigger_parameters.proximity_max_distance_frame_diagonals,
+      motion_diagonals_per_s: d.trigger_parameters.motion_min_speed_frame_diagonals_per_s,
+      windows: d.pipeline.windows
+    };
+    renderStage2(d.stage2);
+    setSafePreview(d.preview_jpeg_b64);
+    return r;
+  }
+
+  function setSafePreview(base64) {
+    if (typeof base64 !== 'string' || !base64) return;
+    clear(ui.preview);
+    const img = el('img'); img.alt = 'ภาพตัวอย่างหลังเบลอใบหน้า';
+    img.src = 'data:image/jpeg;base64,' + base64;
+    ui.preview.appendChild(img);
   }
 
   async function analyze() {
@@ -1082,9 +1240,13 @@
       ? 'กำลังส่งวิดีโอไปวิเคราะห์ (Stage 1 + Stage 2) …'
       : 'กำลังส่งภาพไปวิเคราะห์ (Stage 1) …');
 
-    const jobs = [runStage1(file, mode, notice, token)];
-    if (kind === 'video') jobs.push(runStage2(file, token));
-    else setState(ui.s2State, 'info', 'Stage 2 ต้องใช้ไฟล์วิดีโอ — ไม่ได้เรียก Stage 2 สำหรับภาพนิ่ง');
+    let jobs;
+    if (kind === 'video' && mode === 'dense') jobs = [runPipeline(file, token)];
+    else {
+      jobs = [runStage1(file, mode, notice, token)];
+      if (kind === 'video') jobs.push(runStage2(file, token));
+      else setState(ui.s2State, 'info', 'Stage 2 ต้องใช้ไฟล์วิดีโอ — ไม่ได้เรียก Stage 2 สำหรับภาพนิ่ง');
+    }
     const results = await Promise.all(jobs);
     if (token !== runToken) return;
     ui.run.disabled = false;
@@ -1099,9 +1261,11 @@
   /* ---------------- wire up ---------------- */
   Array.prototype.forEach.call(ui.model.options, opt => { opt.dataset.label = opt.textContent; });
   ui.file.addEventListener('change', () => { ui.run.disabled = false; onFileChange(); });
+  [ui.faceConfidence, ui.facePadding, ui.faceBlur].forEach(input => input.addEventListener('input', updatePrivacySettingLabels));
   ui.run.addEventListener('click', analyze);
   ui.healthRefresh.addEventListener('click', loadHealth);
   window.addEventListener('beforeunload', () => { if (st.url) URL.revokeObjectURL(st.url); });
   onFileChange();
+  updatePrivacySettingLabels();
   loadHealth();
 })();

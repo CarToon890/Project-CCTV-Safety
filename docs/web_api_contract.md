@@ -1,6 +1,6 @@
 # Web API contract — Upload & Analyze (v1, `schema_version` "1.0")
 
-`schema_version` stays `"1.0"`: round 2 only **adds** fields/options (Stage 1 `mode`, `sample_fps`, dense mode) and existing clients keep working with the defaults.
+`schema_version` stays `"1.0"`: round 2 only **adds** fields/options (Stage 1 `mode`, `sample_fps`, dense mode) and existing clients keep working with the defaults. Pixels displayed by the current web UI are anonymized with local YuNet face detection; dense pipeline video includes face boxes for every decoded frame, while image/frame JPEGs contain blurred pixels.
 
 Demo prototype only: no production, no live CCTV.
 Example responses: `tests/fixtures/api/*.json` (they conform exactly to this document).
@@ -10,7 +10,7 @@ Example responses: `tests/fixtures/api/*.json` (they conform exactly to this doc
 - All bodies are JSON (`application/json; charset=utf-8`). Numbers are JSON numbers; `float` values are rounded to 4 decimals.
 - **Coordinates:** `xyxy` = `[x1, y1, x2, y2]`, `float`, **pixels in the coordinate system of the original source frame** (`source.width` × `source.height`, origin top-left, x right, y down), `0 <= x1 < x2 <= width`, `0 <= y1 < y2 <= height`. Never letterboxed/model-input coordinates, never normalised.
 - **Time:** every `*_s` field is seconds (`float`), measured from the start of the video.
-- **Images in responses:** `image_jpeg_b64` = standard base64 (RFC 4648, with `=` padding) of a **raw, un-annotated** JPEG of the frame at full source resolution. **No** `data:image/jpeg;base64,` prefix — the client adds it. Boxes are drawn by the browser.
+- **Images in responses:** `image_jpeg_b64` = standard base64 (RFC 4648, with `=` padding) of a full-resolution JPEG with detected faces blurred and no detection annotations. **No** `data:image/jpeg;base64,` prefix — the client adds it. Detection boxes are drawn by the browser.
 - "Nullable: no" means the key is always present and never `null`. Keys are never omitted.
 - Unknown extra request fields are ignored.
 
@@ -40,6 +40,7 @@ Error responses do **not** use the envelope (see section 4).
   - Any other extension → `415 unsupported_media_type`.
 - Size limit **100 MB** (104 857 600 bytes) per file → above it `413 file_too_large`.
 - A file with an allowed extension that OpenCV/Pillow cannot decode (or a video with 0 decodable frames or fps <= 0) → `422 decode_failed`. Codec support depends on the local OpenCV build; mp4/avi/mov are expected to work.
+- Optional privacy fields: `face_confidence` (0.20..0.90, default 0.35), `face_padding` (0..0.50, default 0.25), and `face_blur_strength` (0.40..1.50, default 0.80). Lower confidence accepts weaker face detections; greater padding/strength obscures more area. The detector still processes every frame and cannot be disabled from this endpoint.
 
 ### 0.3 `source` object (Stage 1 and Stage 2)
 
@@ -179,6 +180,97 @@ Summary:
 
 Fixture: `stage2_video.json` (5.4 s clip → windows 0–2, 2–4, 4–5.4).
 
+## 3.1 `POST /api/pipeline/analyze` — combined shadow-mode video evaluation
+
+Form fields: `file` (video), `model` (`yolov8n` or `yolov8s`), and optional
+`sample_fps` (1..30; default 10). The endpoint runs dense Stage 1 detections,
+greedily associates person boxes across sampled frames using IoU and centre
+distance, then calculates per-window proximity and centre-motion signals. A
+candidate triggers when at least two detected people are within 0.16 frame
+diagonals, or at least two people are present and one moves at 0.25 frame
+diagonals/s or faster. Track association expires after 0.75 s. These are
+exploratory defaults, not calibrated Fight thresholds.
+
+This endpoint is intentionally **shadow mode**: it runs X3D on every window,
+including windows without a candidate trigger. That keeps missed-trigger cases
+visible while the trigger is evaluated. Its output must not be interpreted as
+an optimized or production event pipeline.
+
+Response shape:
+
+```json
+{
+  "pipeline_mode": "tracking_trigger_shadow",
+  "trigger": "candidate if person proximity or multi-person motion is observed",
+  "trigger_parameters": {
+    "proximity_max_distance_frame_diagonals": 0.16,
+    "motion_min_speed_frame_diagonals_per_s": 0.25,
+    "track_max_gap_s": 0.75
+  },
+  "x3d_policy": "evaluate_every_window_shadow_mode",
+  "face_blur": {
+    "complete": true,
+    "model": "OpenCV YuNet (local)",
+    "frame_count": 44,
+    "faces_detected": 37,
+    "detection_ms": 812.4,
+    "scan_wall_ms": 1044.2,
+    "faces_by_frame": [[[10, 20, 75, 95]], [], "... one list per source frame ..."]
+  },
+  "preview_jpeg_b64": "<JPEG with faces blurred>",
+  "stage1": { "...": "same response fields as Stage 1 dense mode" },
+  "stage2": { "...": "same response fields as Stage 2" },
+  "pipeline": {
+    "source": { "...": "same source object" },
+    "windows": [{
+      "index": 0,
+      "start_s": 0.0,
+      "end_s": 2.0,
+      "person_triggered": true,
+      "person_frames": 5,
+      "candidate_triggered": true,
+      "trigger_reasons": ["people_in_close_proximity", "multi_person_motion"],
+      "tracked_people": 2,
+      "max_concurrent_tracks": 2,
+      "proximity_frames": 4,
+      "motion_frames": 2,
+      "x3d_evaluated": true,
+      "fight_probability": 0.82,
+      "x3d_label": "fight"
+    }],
+    "summary": {
+      "total_windows": 1,
+      "person_triggered_windows": 1,
+      "candidate_triggered_windows": 1,
+      "fight_windows": 1,
+      "fight_windows_without_candidate_trigger": 0
+    }
+  }
+}
+```
+
+All frame selection, windowing, thresholds, and common error behavior match
+sections 0–4. Person detections in `stage1.frames` also carry `track_id` and
+`motion_diagonals_per_s`. There is no added temporal confidence threshold.
+
+### Privacy display behavior
+
+- YOLO/X3D use original decoded frames in local process memory. Stage 1 image/frame JPEGs are encoded only after YuNet face detection and blurring on a copy; model input arrays are not modified.
+- `/api/pipeline/analyze` scans every decoded source frame and returns padded face boxes per frame and a blurred preview JPEG. The browser draws the hidden original video only into an opaque canvas and blurs each displayed frame. If metadata is incomplete or canvas drawing fails, the canvas is blacked out.
+- A missing/unloadable local YuNet model returns 503 `privacy_model_unavailable`. Processing errors do not trigger a raw-media display fallback. Uploaded temporary files are removed in the endpoint's `finally` block.
+- YuNet may miss small, blurred, profile or occluded faces. This is a pilot privacy aid, not a guarantee of anonymization or PDPA compliance. Review representative footage manually before use.
+
+Place `face_detection_yunet_2023mar.onnx` in the ignored `weights/` folder. It comes from [OpenCV Zoo face_detection_yunet](https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet), under MIT terms; see the upstream README for model-specific attribution. For a fresh checkout, download it from the upstream model asset:
+
+```powershell
+New-Item -ItemType Directory -Force weights | Out-Null
+Invoke-WebRequest `
+  -Uri https://media.githubusercontent.com/media/opencv/opencv_zoo/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx `
+  -OutFile weights/face_detection_yunet_2023mar.onnx
+```
+
+`settings` echoes the applied privacy values. `detection_ms` sums YuNet call time across frames; `scan_wall_ms` measures the full decode/anonymization scan excluding interleaved YOLO batch calls. Both are separate from Stage 1/2 inference.
+
 ## 4. Errors
 
 Every non-2xx response has exactly this body (no envelope):
@@ -200,6 +292,8 @@ Every non-2xx response has exactly this body (no envelope):
 | 422 | `video_too_long` | Stage 2 video, or Stage 1 `mode=dense` video, would need > 30 windows of 2 s |
 | 503 | `weights_missing` | Weights file for the requested model is absent |
 | 503 | `model_load_failed` | Weights present but loading or the runtime contract (class names, threshold keys, strict state_dict) failed |
+| 503 | `privacy_model_unavailable` | Local YuNet model is absent or cannot be loaded; no unblurred preview is returned |
+| 422 | `anonymization_incomplete` | Full-frame scan did not cover every advertised video frame; the video is not shown |
 | 404 | `not_found` | Any path under `/api/` that is not an endpoint above |
 | 405 | `method_not_allowed` | Known `/api/` path with the wrong HTTP method (`Allow` header lists the allowed ones) |
 | 500 | `internal_error` | Unexpected server error. The body never contains a stack trace; the traceback is logged server-side |
