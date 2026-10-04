@@ -4,7 +4,7 @@
   const $ = id => document.getElementById(id);
   const sourceType = $('liveSourceType'), source = $('liveSource'), device = $('liveDevice');
   const start = $('liveStart'), stop = $('liveStop'), status = $('liveRealStatus');
-  const preview = $('liveRealPreview'), events = $('liveRealEvents');
+  const preview = $('liveRealPreview'), events = $('liveRealEvents'), sourceHelp = $('liveSourceHelp');
   if (!start) return;
   let socket = null;
   function report(text) { status.textContent = text; }
@@ -18,10 +18,21 @@
     if (!r.ok) throw new Error(body.error?.message || 'Live API error');
     return body;
   }
-  sourceType.addEventListener('change', () => {
-    source.placeholder = sourceType.value === 'file' ? 'data/raw/clip.mp4' : 'rtsp://user:password@host/stream';
-  });
+  function updateSourceHelp() {
+    const isFile = sourceType.value === 'file';
+    source.placeholder = isFile ? 'data/raw/clip.mp4' : 'rtsp://กล้องในเครือข่ายของคุณ/stream';
+    if (sourceHelp) sourceHelp.textContent = isFile
+      ? 'ระบุ path ของคลิปภายในโฟลเดอร์ data/ เช่น data/raw/clip.mp4 · คลิปจะถูก replay เพื่อทดสอบ ไม่ใช่กล้องสด'
+      : 'ใส่ RTSP URL ของกล้องที่เครื่องนี้เข้าถึงได้ · อย่าแชร์ URL เพราะอาจมีข้อมูลเข้าสู่ระบบ';
+  }
+  sourceType.addEventListener('change', updateSourceHelp);
+  updateSourceHelp();
   start.addEventListener('click', async () => {
+    if (!source.value.trim()) {
+      report(sourceType.value === 'file' ? 'กรุณาระบุ path ของคลิปในโฟลเดอร์ data/' : 'กรุณาระบุ RTSP URL');
+      source.focus();
+      return;
+    }
     start.disabled = true; events.replaceChildren(); preview.hidden = true;
     try {
       const result = await fetch('/api/live/start', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({

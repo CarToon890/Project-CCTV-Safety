@@ -311,6 +311,9 @@
     clear(ui.preview);
     ui.preview.classList.remove('thumb');
     st.file = f || null; st.kind = f ? mediaKind(f) : null; st.probe = null;
+    $('v-analyze').classList.toggle('has-file', Boolean(f));
+    ui.preview.hidden = !f || !st.kind;
+    ui.run.disabled = !f || !st.kind;
     ui.probe.hidden = true;
     ui.maxFramesWrap.hidden = true; ui.sampleFpsWrap.hidden = true;
     if (!f) { ui.fileInfo.textContent = 'ยังไม่ได้เลือกไฟล์'; return; }
@@ -1398,7 +1401,17 @@
 
   /* ---------------- wire up ---------------- */
   Array.prototype.forEach.call(ui.model.options, opt => { opt.dataset.label = opt.textContent; });
-  ui.file.addEventListener('change', () => { ui.run.disabled = false; onFileChange(); });
+  ui.file.addEventListener('change', onFileChange);
+  $('azResetSettings').addEventListener('click', () => {
+    const defaults = {
+      azThPerson:'0.25', azThHelmet:'0.20', azThVest:'0.20', azThFall:'0.20', azThFire:'0.20', azThSmoke:'0.20',
+      azYoloIou:'0.70', azYoloImg:'640', azYoloMaxDet:'300', azX3dThreshold:'0.50',
+      azTrackProximity:'0.16', azTrackMotion:'0.25', azTrackGap:'0.75',
+      azFaceConfidence:'0.35', azFacePadding:'0.25', azFaceBlur:'0.80', azSampleFps:'10', azMaxFrames:'16'
+    };
+    Object.entries(defaults).forEach(([id, value]) => { const input = $(id); if (input) input.value = value; });
+    updatePrivacySettingLabels();
+  });
   [ui.faceConfidence, ui.facePadding, ui.faceBlur].forEach(input => input.addEventListener('input', updatePrivacySettingLabels));
   ui.run.addEventListener('click', analyze);
   ui.healthRefresh.addEventListener('click', loadHealth);
