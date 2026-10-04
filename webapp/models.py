@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import threading
+import re
 from pathlib import Path
 
 import numpy as np
@@ -38,10 +39,55 @@ def _display_path(path: Path) -> str:
         return Path(path).as_posix()
 
 
-def _default_device() -> str:
+def runtime_status() -> dict:
+    """Report runtime capabilities without loading model weights."""
     import torch
+    cuda = bool(torch.cuda.is_available())
+    gpu = None
+    if cuda:
+        try:
+            props = torch.cuda.get_device_properties(0)
+            gpu = {"name": props.name, "total_vram_bytes": int(props.total_memory)}
+        except Exception:  # noqa: BLE001 - health should remain available
+            gpu = {"name": "NVIDIA CUDA device", "total_vram_bytes": None}
+    try:
+        import onnxruntime as ort
+        providers = list(ort.get_available_providers())
+    except Exception:  # noqa: BLE001
+        providers = []
+    try:
+        import cv2
+        build = cv2.getBuildInformation()
+        opencv_cuda = bool(re.search(r"NVIDIA CUDA:\s+YES", build))
+        if opencv_cuda:
+            opencv_cuda = cv2.cuda.getCudaEnabledDeviceCount() > 0
+    except Exception:  # noqa: BLE001
+        opencv_cuda = False
+    face_backend = "opencv-yunet-cuda" if opencv_cuda else "opencv-yunet-cpu"
+    full_ready = cuda and opencv_cuda
+    return {"cuda_available": cuda, "gpu": gpu, "onnx_providers": providers,
+            "face_backend": face_backend, "full_pipeline_cuda_ready": full_ready,
+            "opencv_cuda_available": opencv_cuda}
 
-    return "cuda:0" if torch.cuda.is_available() else "cpu"
+
+def resolve_device(requested: str | None) -> str:
+    """Resolve auto/cpu/cuda explicitly; never silently fall back from cuda."""
+    if requested is not None and not isinstance(requested, str):
+        raise ValueError("device must be one of auto, cpu, cuda")
+    requested = (requested or "auto").strip().lower()
+    if requested == "cuda:0":
+        requested = "cuda"
+    if requested not in {"auto", "cpu", "cuda"}:
+        raise ValueError("device must be one of auto, cpu, cuda")
+    status = runtime_status()
+    if requested == "cuda":
+        if not status["cuda_available"] or not status["full_pipeline_cuda_ready"]:
+            raise RuntimeError("Full CUDA runtime unavailable: PyTorch CUDA and CUDA-enabled OpenCV YuNet are both required")
+        return "cuda:0"
+    if requested == "auto":
+        # Auto only promises an all-CUDA pipeline when every inference backend supports it.
+        return "cuda:0" if status["full_pipeline_cuda_ready"] else "cpu"
+    return "cpu"
 
 
 class ModelRegistry:
@@ -50,8 +96,8 @@ class ModelRegistry:
     def __init__(self, weights_dir: Path, thresholds: dict):
         self.weights_dir = Path(weights_dir)
         self.thresholds = dict(thresholds)
-        self.device = _default_device()
-        self._models: dict[str, object] = {}
+        self.device = resolve_device("auto")
+        self._models: dict[tuple[str, str], object] = {}
         self._load_lock = threading.Lock()
         self._infer_locks = {name: threading.Lock() for name in config.WEIGHT_FILES}
 
@@ -61,66 +107,69 @@ class ModelRegistry:
     def status(self) -> dict:
         result: dict = {}
         for name in config.WEIGHT_FILES:
-            if name in self._models:
+            if any(model_name == name for model_name, _ in self._models):
                 result[name] = "loaded"
             elif self.path(name).is_file():
                 result[name] = "available"
             else:
                 result[name] = "missing"
         result["device"] = self.device
+        result["runtime"] = runtime_status()
         return result
 
-    def load(self, name: str):
+    def load(self, name: str, device: str | None = None):
         """Return the cached model, loading it on first use."""
         if name not in config.WEIGHT_FILES:
             raise ValueError(f"Unknown model: {name}")
-        model = self._models.get(name)
+        device = resolve_device(device or self.device)
+        key = (name, device)
+        model = self._models.get(key)
         if model is not None:
             return model
         with self._load_lock:
-            model = self._models.get(name)
+            model = self._models.get(key)
             if model is not None:
                 return model
             path = self.path(name)
             if not path.is_file():
                 raise WeightsMissing(name, path)
             try:
-                model = self._load(name, path)
+                model = self._load(name, path, device)
             except Exception as exc:  # noqa: BLE001 - surfaced as 503 model_load_failed
                 raise ModelLoadFailed(f"Could not load model '{name}' from {_display_path(path)}: {exc}") from exc
-            self._models[name] = model
+            self._models[key] = model
             return model
 
-    def _load(self, name: str, path: Path):
+    def _load(self, name: str, path: Path, device: str):
         if name == config.STAGE2_MODEL:
             from cctv_safety.stage2 import load_x3d_s
 
-            return load_x3d_s(path, device=self.device)
+            return load_x3d_s(path, device=device)
         from cctv_safety.detector import load_yolo, validate_runtime_contract
 
         model = load_yolo(path)
         validate_runtime_contract(model.names, self.thresholds)
-        model.to(self.device)
+        model.to(device)
         return model
 
     def stage1(self, name: str, frames_bgr: list[np.ndarray], thresholds: dict | None = None,
-               yolo_options: dict | None = None) -> list[list[Detection]]:
+               yolo_options: dict | None = None, device: str | None = None) -> list[list[Detection]]:
         if name not in config.STAGE1_MODELS:
             raise ValueError(f"Unknown Stage 1 model: {name}")
         from cctv_safety.detector import detect
 
-        model = self.load(name)
+        model = self.load(name, device)
         active_thresholds = thresholds or self.thresholds
         options = yolo_options or {}
         with self._infer_locks[name]:
             return [detect(model, frame, active_thresholds, **options) for frame in frames_bgr]
 
-    def stage2(self, clips: list[list[np.ndarray]]) -> list[tuple[float, float]]:
+    def stage2(self, clips: list[list[np.ndarray]], device: str | None = None) -> list[tuple[float, float]]:
         import torch
 
         from cctv_safety.stage2 import predict_probs, preprocess_frames
 
-        model = self.load(config.STAGE2_MODEL)
+        model = self.load(config.STAGE2_MODEL, device)
         probs: list[tuple[float, float]] = []
         with self._infer_locks[config.STAGE2_MODEL]:
             for start in range(0, len(clips), config.STAGE2_BATCH):

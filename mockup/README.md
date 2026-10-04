@@ -1,13 +1,13 @@
 # CCTV Safety — Draft Mockup (Handoff Package)
 
 
-> **สถานะ:** Draft Mockup — หน้า **Dashboard / Live Monitoring / Alerts-Logs** ยังเป็น
+> **สถานะ:** Educational pilot — หน้า **Dashboard / Alerts-Logs** ยังเป็น
 > mock data ที่สุ่มขึ้นในเบราว์เซอร์ **ไม่ได้เชื่อมต่อโมเดล, API หรือฐานข้อมูลจริง**
 > และทุกหน้ามีแถบเตือน **"ข้อมูลจำลอง — ไม่ใช่ผลจากโมเดล"** แสดงตลอด
 >
-> หน้าใหม่ **Upload & Analyze** เป็นหน้าเดียวที่แสดง **ผลจากโมเดลจริง** (ต้นแบบ pilot)
+> หน้า **Upload & Analyze** และแผง **Live pilot** แสดงผลจากโมเดลจริง (ต้นแบบ pilot)
 > โดยเรียก API ของ backend (`webapp/`) ตามสัญญา `../docs/web_api_contract.md`
-> หน้านี้ไม่ใช้ mock data เลย
+> สตรีมกล้องจำลองเดิมใน Live ยังเป็น mock data และติดป้ายกำกับแยกจาก Live pilot
 >
 > **หมายเหตุ Schema:** หน้า mock ใช้ประเภทเหตุการณ์จำลอง 4 กลุ่มเพื่อสาธิต UI
 > เท่านั้น ไม่ใช่ class list ของโมเดล ปัจจุบัน Stage 1 ใช้ detector schema v2
@@ -58,7 +58,7 @@ mockup/
 | # | หน้า | สิ่งที่แสดง | สถานะ |
 |:--|:---|:---|:---|
 | 1 | **Dashboard** | KPI 4 ตัว, กราฟเหตุการณ์รายชั่วโมง, สัดส่วน 4 classes, สถานะกล้อง 14 ตัว, แจ้งเตือนล่าสุด | UI เสร็จ · **ข้อมูลจำลอง** |
-| 2 | **Live CCTV Monitoring** | กล้องจำลอง 7 ตัว พร้อม bounding box ครบ 4 เหตุการณ์, สลับ layout, กรองเฉพาะกล้องที่มีเหตุการณ์, live event stream | UI เสร็จ · **ข้อมูลจำลอง** · ยังไม่มี video stream จริง |
+| 2 | **Live CCTV Monitoring** | กล้องจำลองเป็น mockup; มีแผง Live pilot แยกสำหรับ file replay ใน `data/` หรือ RTSP หนึ่ง stream พร้อม preview เบลอหน้า, candidate และ X3D | **Pilot inference จริง** · ยังไม่ผ่าน benchmark SLA และไม่ใช่ production |
 | 3 | **Alert / Logs** | ตาราง 90 รายการ + ตัวกรอง 5 แบบ + แบ่งหน้า + modal รายละเอียด | UI เสร็จ · **ข้อมูลจำลอง** (ตัวกรองทำงานจริงบน mock data) |
 | 4 | **Upload & Analyze** | อัปโหลดภาพ/วิดีโอ → Stage 1 (YOLOv8n/s) และ Stage 2 (X3D-S, เฉพาะวิดีโอ) | **ผลจากโมเดลจริงผ่าน API** (ต้นแบบ pilot) |
 

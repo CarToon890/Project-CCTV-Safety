@@ -10,12 +10,15 @@ import logging
 import json
 import math
 import sys
+import asyncio
+import queue
+import threading
 from threading import BoundedSemaphore
 from time import perf_counter
 from pathlib import Path
 from typing import Iterator
 
-from fastapi import Depends, FastAPI, File, Form, Request, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Request, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -44,7 +47,8 @@ from cctv_safety.tracking import (  # noqa: E402
 )
 from webapp import config, media  # noqa: E402
 from webapp.media import ApiError  # noqa: E402
-from webapp.models import ModelLoadFailed, ModelRegistry, WeightsMissing  # noqa: E402
+from webapp.models import ModelLoadFailed, ModelRegistry, WeightsMissing, resolve_device, runtime_status  # noqa: E402
+from webapp.live import LiveSession, validate_source  # noqa: E402
 
 logger = logging.getLogger("webapp.api")
 
@@ -186,9 +190,14 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
     app.state.registry = registry
     analysis_semaphore = BoundedSemaphore(1)
     app.state.analysis_semaphore = analysis_semaphore
+    live_lock = threading.Lock()
+    app.state.live_session = None
 
     def analysis_slot() -> Iterator[None]:
         """Keep only one CPU/GPU-heavy analysis active per local pilot process."""
+        live = app.state.live_session
+        if live and live.state in {"starting", "running", "stopping"}:
+            raise ApiError(429, "analysis_busy", "A live session is using the inference runtime. Retry after it stops.")
         if not analysis_semaphore.acquire(blocking=False):
             raise ApiError(429, "analysis_busy", "Another analysis is running. Retry after it finishes.")
         try:
@@ -238,19 +247,113 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         detail = "; ".join(f"{'.'.join(str(p) for p in err.get('loc', ()))}: {err.get('msg')}" for err in errors)
         return _error(400, "invalid_parameter", f"Invalid request parameters: {detail}")
 
-    def ensure_model(name: str) -> None:
+    def choose_device(raw: str | None) -> str:
+        try:
+            return resolve_device(raw)
+        except ValueError as exc:
+            raise ApiError(400, "invalid_parameter", str(exc)) from exc
+        except RuntimeError as exc:
+            raise ApiError(503, "device_unavailable", str(exc)) from exc
+
+    def ensure_model(name: str, device: str = "cpu") -> None:
         """weights_missing / model_load_failed come before decode_failed (contract section 4)."""
         models, _ = _status_models(registry.status())
         if models.get(name) == "missing":
             raise WeightsMissing(name, weights_dir / config.WEIGHT_FILES[name])
         load = getattr(registry, "load", None)
         if callable(load):
-            load(name)
+            import inspect
+            if "device" in inspect.signature(load).parameters:
+                load(name, device=device)
+            else:
+                load(name)
+
+    def stage1_on_device(name, frames, active_thresholds, options, device):
+        import inspect
+        method = registry.stage1
+        if "device" in inspect.signature(method).parameters:
+            return method(name, frames, active_thresholds, options, device=device)
+        return method(name, frames, active_thresholds, options)
+
+    def stage2_on_device(clips, device):
+        import inspect
+        method = registry.stage2
+        if "device" in inspect.signature(method).parameters:
+            return method(clips, device=device)
+        return method(clips)
 
     @app.get("/api/health")
     def health():
         models, device = _status_models(registry.status())
-        return {**_envelope(None, is_model_output=False), "status": "ok", "device": device, "models": models}
+        return {**_envelope(None, is_model_output=False), "status": "ok", "device": device,
+                "runtime": runtime_status(), "models": models}
+
+    @app.post("/api/live/start")
+    def live_start(payload: dict):
+        """Start one local file replay or RTSP stream. Source/credentials are never echoed."""
+        source_type = str(payload.get("source_type", ""))
+        source = str(payload.get("source", ""))
+        model = payload.get("model", "yolov8n")
+        requested_device = payload.get("device", "auto")
+        if model not in config.STAGE1_MODELS:
+            raise ApiError(400, "invalid_parameter", "model must be yolov8n or yolov8s")
+        try:
+            safe_source = validate_source(source_type, source, config.REPO_ROOT)
+        except (ValueError, OSError) as exc:
+            raise ApiError(400, "invalid_source", str(exc)) from exc
+        active_device = choose_device(requested_device)
+        active_settings = _analysis_settings(json.dumps(payload.get("analysis_settings", {})), thresholds)
+        with live_lock:
+            current = app.state.live_session
+            if current and current.state in {"starting", "running", "stopping"}:
+                raise ApiError(409, "live_session_busy", "A live session is already active or draining.")
+            if not analysis_semaphore.acquire(blocking=False):
+                raise ApiError(409, "analysis_busy", "Another inference task is running; retry after it finishes.")
+            try:
+                ensure_model(model, active_device)
+                ensure_model(config.STAGE2_MODEL, active_device)
+                session = LiveSession(source_type, safe_source, model, active_device, registry,
+                                      active_settings, weights_dir)
+                session.on_finish = analysis_semaphore.release
+                app.state.live_session = session
+                session.start()
+            except Exception:
+                analysis_semaphore.release()
+                raise
+        return {"status": "starting", "device_requested": requested_device,
+                "device_used": active_device, "source_type": source_type,
+                "session_id": str(session.started_at)}
+
+    @app.post("/api/live/stop")
+    def live_stop():
+        session = app.state.live_session
+        if not session:
+            raise ApiError(404, "live_session_missing", "No live session exists.")
+        session.stop()
+        return {"status": "stopping", **session.status()}
+
+    @app.get("/api/live/status")
+    def live_status():
+        session = app.state.live_session
+        return {"status": "idle", "device_used": None} if not session else session.status()
+
+    @app.websocket("/api/live/events")
+    async def live_events(websocket: WebSocket):
+        await websocket.accept()
+        session = app.state.live_session
+        if session is None:
+            await websocket.send_json({"type": "health", "state": "idle"})
+            await websocket.close()
+            return
+        try:
+            while True:
+                try:
+                    event = await asyncio.to_thread(session._events.get, True, 20)
+                    await websocket.send_json(event)
+                except queue.Empty:
+                    await websocket.send_json({"type": "health", **session.status()})
+        except (WebSocketDisconnect, RuntimeError):
+            return
 
     @app.post("/api/stage1/analyze")
     def stage1_analyze(
@@ -264,7 +367,9 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         face_padding: str | None = Form(None),
         face_blur_strength: str | None = Form(None),
         analysis_settings: str | None = Form(None),
+        device: str | None = Form("auto"),
     ):
+        actual_device = choose_device(device)
         kind, size = _check_upload(file)
         if model not in config.STAGE1_MODELS:
             raise ApiError(400, "invalid_parameter",
@@ -302,8 +407,8 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         active_settings = _analysis_settings(analysis_settings, thresholds)
         active_thresholds = active_settings["yolo"]["thresholds"]
         ppe_confidence = min(active_thresholds["person"], active_thresholds["helmet"], active_thresholds["vest"])
-        ensure_model(model)
-        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings)
+        ensure_model(model, actual_device)
+        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings, device=actual_device)
 
         frames: list[dict] = []
         info = None
@@ -312,7 +417,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             if kind == "image":
                 frame = media.decode_image(path)
                 height, width = frame.shape[:2]
-                (detections,) = registry.stage1(model, [frame], active_thresholds, {k: active_settings["yolo"][k] for k in ("iou", "imgsz", "max_det")})
+                (detections,) = stage1_on_device(model, [frame], active_thresholds, {k: active_settings["yolo"][k] for k in ("iou", "imgsz", "max_det")}, actual_device)
                 safe_frame, _ = anonymize(face_anonymizer, frame)
                 frames.append(_frame_entry(0, None, media.encode_jpeg_b64(safe_frame), detections, ppe_confidence))
             elif not dense:
@@ -320,7 +425,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                 width, height = info.width, info.height
                 indices = media.stage1_indices(info.frame_count, limit)
                 decoded = media.read_frames(path, indices)
-                per_frame = registry.stage1(model, [decoded[index] for index in indices], active_thresholds, {k: active_settings["yolo"][k] for k in ("iou", "imgsz", "max_det")})
+                per_frame = stage1_on_device(model, [decoded[index] for index in indices], active_thresholds, {k: active_settings["yolo"][k] for k in ("iou", "imgsz", "max_det")}, actual_device)
                 for index, detections in zip(indices, per_frame):
                     safe_frame, _ = anonymize(face_anonymizer, decoded[index])
                     frames.append(_frame_entry(index, _r(index / info.fps),
@@ -335,10 +440,10 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                 for item in media.iter_frames(path, media.dense_indices(info, fps_used)):
                     batch.append(item)
                     if len(batch) >= config.DENSE_BATCH:
-                        frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence))
+                        frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence, actual_device))
                         batch = []
                 if batch:
-                    frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence))
+                    frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence, actual_device))
         finally:
             media.remove_quietly(path)
 
@@ -351,16 +456,17 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             "thresholds": {name: _r(value) for name, value in active_thresholds.items()},
             "ppe_min_confidence": _r(ppe_confidence),
             "analysis_settings": active_settings,
+            "device_requested": device or "auto", "device_used": actual_device,
             "mode": mode_used,
             "sample_fps": _r(fps_used) if dense else None,
             "frames": frames,
         }
 
-    def _detect_batch(model: str, batch: list, info: media.VideoInfo, yolo_settings=None, ppe_confidence=None) -> list[dict]:
+    def _detect_batch(model: str, batch: list, info: media.VideoInfo, yolo_settings=None, ppe_confidence=None, device="cpu") -> list[dict]:
         yolo_settings = yolo_settings or {"thresholds": thresholds, "iou": 0.7, "imgsz": 640, "max_det": 300}
         ppe_confidence = ppe_confidence if ppe_confidence is not None else ppe_min_confidence
         options = {key: yolo_settings[key] for key in ("iou", "imgsz", "max_det")}
-        per_frame = registry.stage1(model, [frame for _, frame in batch], yolo_settings["thresholds"], options)
+        per_frame = stage1_on_device(model, [frame for _, frame in batch], yolo_settings["thresholds"], options, device)
         return [_frame_entry(index, _r(index / info.fps), None, detections, ppe_confidence)
                 for (index, _), detections in zip(batch, per_frame)]
 
@@ -389,7 +495,9 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
     def stage2_analyze(
         _analysis_slot: None = Depends(analysis_slot),
         file: UploadFile | None = File(None), analysis_settings: str | None = Form(None),
+        device: str | None = Form("auto"),
     ):
+        actual_device = choose_device(device)
         active_settings = _analysis_settings(analysis_settings, thresholds)
         kind, size = _check_upload(file)
         _check_kind_and_size(file, kind, size)
@@ -397,7 +505,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             raise ApiError(422, "video_required",
                            "Stage 2 (X3D-S fight classifier) needs a video file (mp4, avi, mov, mkv); "
                            "an image was uploaded.")
-        ensure_model(config.STAGE2_MODEL)
+        ensure_model(config.STAGE2_MODEL, actual_device)
 
         path = media.save_to_temp(file.file, Path(file.filename).suffix.lower(), config.MAX_UPLOAD_BYTES)
         try:
@@ -411,7 +519,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             media.remove_quietly(path)
 
         clips = [[decoded[i] for i in clip] for clip in clip_indices]
-        probs = registry.stage2(clips)
+        probs = stage2_on_device(clips, actual_device)
         windows = []
         for index, ((start, end), (p_non, p_fight)) in enumerate(zip(spans, probs)):
             windows.append({
@@ -423,6 +531,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             })
         return {
             **_envelope(config.STAGE2_MODEL),
+            "device_requested": device or "auto", "device_used": actual_device,
             "source": _source(info.width, info.height, info),
             "class_names": list(STAGE2_CLASS_NAMES),
             "frames_per_window": FRAMES,
@@ -447,6 +556,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         face_padding: str | None = Form(None),
         face_blur_strength: str | None = Form(None),
         analysis_settings: str | None = Form(None),
+        device: str | None = Form("auto"),
     ):
         """Run YOLO and X3D as one auditable shadow-mode pipeline.
 
@@ -454,6 +564,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         so a missed person cannot silently suppress a possible fight result.
         """
         pipeline_started = perf_counter()
+        actual_device = choose_device(device)
         decode_timings: dict[str, float] = {}
         metadata_ms = 0.0
         stage2_decode_ms = 0.0
@@ -476,9 +587,9 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         active_settings = _analysis_settings(analysis_settings, thresholds)
         active_thresholds = active_settings["yolo"]["thresholds"]
         ppe_confidence = min(active_thresholds["person"], active_thresholds["helmet"], active_thresholds["vest"])
-        ensure_model(model)
-        ensure_model(config.STAGE2_MODEL)
-        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings)
+        ensure_model(model, actual_device)
+        ensure_model(config.STAGE2_MODEL, actual_device)
+        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings, device=actual_device)
 
         path = media.save_to_temp(file.file, Path(file.filename).suffix.lower(), config.MAX_UPLOAD_BYTES)
         try:
@@ -515,12 +626,12 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                     batch.append((index, frame))
                     if len(batch) >= config.DENSE_BATCH:
                         yolo_start = perf_counter()
-                        stage1_frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence))
+                        stage1_frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence, actual_device))
                         yolo_batch_ms += (perf_counter() - yolo_start) * 1000
                         batch = []
             if batch:
                 yolo_start = perf_counter()
-                stage1_frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence))
+                stage1_frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence, actual_device))
                 yolo_batch_ms += (perf_counter() - yolo_start) * 1000
             face_scan_wall_ms = round(max(0.0, (perf_counter() - face_scan_start) * 1000 - yolo_batch_ms), 2)
             if len(faces_by_frame) != info.frame_count or first_safe_jpeg is None:
@@ -540,7 +651,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
 
         clips = [[decoded[i] for i in clip] for clip in clip_indices]
         x3d_start = perf_counter()
-        probs = registry.stage2(clips)
+        probs = stage2_on_device(clips, actual_device)
         x3d_ms = (perf_counter() - x3d_start) * 1000
         add_track_ids(stage1_frames, info.width, info.height, active_settings["tracking"]["max_track_gap_s"])
         s2_windows = []
@@ -608,6 +719,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         }
         response_started = perf_counter()
         response = {
+            "device_requested": device or "auto", "device_used": actual_device,
             "pipeline_mode": "tracking_trigger_shadow",
             "trigger": "candidate if person proximity or multi-person motion is observed",
             "trigger_parameters": {

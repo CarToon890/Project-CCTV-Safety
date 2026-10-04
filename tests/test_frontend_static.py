@@ -13,9 +13,11 @@ from conftest import REPO_ROOT
 MOCKUP = REPO_ROOT / "mockup"
 INDEX = MOCKUP / "index.html"
 ANALYZE_JS = MOCKUP / "analyze.js"
+LIVE_JS = MOCKUP / "live.js"
 MOCK_TEXT = "ข้อมูลจำลอง"
 REAL_BADGE_TEXT = "ผลจากโมเดลจริง — pilot"
-ALLOWED_API = {"/api/health", "/api/stage1/analyze", "/api/stage2/analyze", "/api/pipeline/analyze"}
+ALLOWED_API = {"/api/health", "/api/stage1/analyze", "/api/stage2/analyze", "/api/pipeline/analyze",
+               "/api/live/start", "/api/live/stop", "/api/live/status", "/api/live/events"}
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr",
         "path", "circle", "rect", "line", "polyline", "polygon", "ellipse", "use", "stop"}
 
@@ -166,6 +168,14 @@ def test_analyze_js_calls_only_contract_endpoints(js_text):
     assert {"/api/stage1/analyze", "/api/stage2/analyze"} <= used
     assert "XMLHttpRequest" not in code and "WebSocket" not in code
     assert not re.search(r"fetch\(\s*['\"`]https?://", code), "fetch to an absolute external URL"
+
+
+def test_live_js_uses_local_live_api_and_safe_text_rendering():
+    code = _strip_js_comments(LIVE_JS.read_text(encoding="utf-8"))
+    used = set(re.findall(r"['\"`](/api/[^'\"`?\s]*)", code))
+    assert used == {"/api/live/start", "/api/live/stop", "/api/live/events"}
+    assert "innerHTML" not in code and "textContent" in code
+    assert "ws://" in code and "location.host" in code
 
 
 def test_summary_does_not_claim_unique_people_or_confirmed_falls(js_text):

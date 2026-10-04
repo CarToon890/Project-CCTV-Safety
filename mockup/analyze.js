@@ -54,6 +54,7 @@
     video_too_long: 'วิดีโอยาวเกินไป (เกิน 30 ช่วง × 2 วินาที หรือประมาณ 60 วินาที)',
     weights_missing: 'ไม่พบไฟล์น้ำหนักโมเดล (.pt) — คัดลอกไฟล์ไปไว้ในโฟลเดอร์ weights ก่อน',
     model_load_failed: 'โหลดโมเดลไม่สำเร็จ (ไฟล์น้ำหนักหรือ runtime contract ไม่ถูกต้อง)',
+    device_unavailable: 'อุปกรณ์ที่เลือกใช้งานไม่ได้ใน runtime นี้ — เลือก Auto/CPU หรือเตรียม CUDA runtime ให้ครบ',
     privacy_model_unavailable: 'ไม่พบหรือโหลด YuNet ไม่ได้ — ซ่อนไฟล์ต้นฉบับไว้เพื่อความเป็นส่วนตัว',
     anonymization_incomplete: 'ตรวจใบหน้าไม่ครบทุกเฟรม — ซ่อนไฟล์ต้นฉบับไว้เพื่อความเป็นส่วนตัว',
     internal_error: 'เกิดข้อผิดพลาดภายใน backend ระหว่างประมวลผล — ลองใหม่ หรือตรวจ log ของ server',
@@ -126,7 +127,7 @@
 
   /* ---------------- elements ---------------- */
   const ui = {
-    file: $('azFile'), model: $('azModel'), run: $('azRun'), status: $('azStatus'),
+    file: $('azFile'), model: $('azModel'), device: $('azDevice'), run: $('azRun'), status: $('azStatus'),
     fileInfo: $('azFileInfo'), preview: $('azPreview'), probe: $('azProbe'),
     maxFrames: $('azMaxFrames'), maxFramesWrap: $('azMaxFramesWrap'),
     sampleFps: $('azSampleFps'), sampleFpsWrap: $('azSampleFpsWrap'),
@@ -223,6 +224,7 @@
     const h = r.data;
     const device = typeof h.device === 'string' ? h.device : '—';
     ui.healthDevice.textContent = device;
+    const runtime = h.runtime || {};
     const models = (h.models && typeof h.models === 'object') ? h.models : {};
     const missing = [];
     HEALTH_MODELS.forEach(name => {
@@ -234,7 +236,11 @@
       ui.healthModels.appendChild(row);
     });
     ui.apiDot.className = 'dot ' + (missing.length ? 'warn' : 'ok');
-    ui.apiText.textContent = 'API พร้อม · ' + device + (missing.length ? ' · ไม่พบไฟล์น้ำหนัก: ' + missing.join(', ') : '');
+    const gpuText = runtime.gpu && runtime.gpu.name ? ' · GPU ' + runtime.gpu.name :
+      (runtime.cuda_available ? ' · CUDA พร้อม' : ' · CPU only');
+    const faceText = runtime.face_backend === 'opencv-yunet-cpu' ? ' · YuNet ใช้ CPU' : '';
+    ui.apiText.textContent = 'API พร้อม · Auto=' + device + gpuText + faceText +
+      (missing.length ? ' · ไม่พบไฟล์น้ำหนัก: ' + missing.join(', ') : '');
     Array.prototype.forEach.call(ui.model.options, opt => {
       const s = models[opt.value];
       opt.textContent = opt.dataset.label + (s === 'missing' ? ' — ไม่พบไฟล์น้ำหนัก' : '');
@@ -924,6 +930,7 @@
     clear(ui.s1Meta);
     const src = data.source;
     metaItem(ui.s1Meta, 'model', data.model);
+    if (data.device_used) metaItem(ui.s1Meta, 'อุปกรณ์ที่ใช้จริง', data.device_used);
     metaItem(ui.s1Meta, 'media', data.media_type);
     metaItem(ui.s1Meta, 'mode', data.mode);
     if (data.mode === 'dense') metaItem(ui.s1Meta, 'sample_fps', num(data.sample_fps, 2));
@@ -1081,6 +1088,7 @@
     // Technical details: summary numbers, window times and raw probabilities.
     clear(ui.s2Meta);
     metaItem(ui.s2Meta, 'model', data.model);
+    if (data.device_used) metaItem(ui.s2Meta, 'อุปกรณ์ที่ใช้จริง', data.device_used);
     metaItem(ui.s2Meta, 'class_names', data.class_names.join(', '));
     metaItem(ui.s2Meta, data.pipeline ? 'X3D ดิบ: Fight windows / total' : 'X3D Fight windows / total', sm.fight_windows + ' / ' + sm.total_windows);
     metaItem(ui.s2Meta, 'max_fight_prob', num(sm.max_fight_prob, 4));
@@ -1140,6 +1148,7 @@
     const fd = new FormData();
     fd.append('file', file, file.name);
     fd.append('model', ui.model.value);
+    fd.append('device', ui.device ? ui.device.value : 'auto');
     appendPrivacySettings(fd, privacy);
     fd.append('analysis_settings', JSON.stringify(analysis || analysisSettings()));
     if (mode === 'dense') {
@@ -1226,6 +1235,7 @@
     setState(ui.s2State, 'loading', 'กำลังจัดประเภท ทะเลาะ / ปกติ ด้วย X3D-S …');
     const fd = new FormData();
     fd.append('file', file, file.name);
+    fd.append('device', ui.device ? ui.device.value : 'auto');
     fd.append('analysis_settings', JSON.stringify(analysisSettings()));
     const r = await callApi(API.stage2, { method: 'POST', body: fd });
     if (token !== runToken) return null;
@@ -1247,6 +1257,7 @@
     const fd = new FormData();
     fd.append('file', file, file.name);
     fd.append('model', ui.model.value);
+    fd.append('device', ui.device ? ui.device.value : 'auto');
     fd.append('sample_fps', String(clampFloat(ui.sampleFps.value, SAMPLE_FPS)));
     appendPrivacySettings(fd, usedPrivacy);
     fd.append('analysis_settings', JSON.stringify(usedAnalysis));
@@ -1269,6 +1280,8 @@
       return { ok: false };
     }
     applyFallFightReview(d);
+    d.stage1.device_used = d.device_used;
+    d.stage2.device_used = d.device_used;
     d.stage1.timings_ms = d.timings_ms;
     st.faceBlur = d.face_blur;
     d.stage1.privacy = {

@@ -28,18 +28,24 @@ class YuNetFaceAnonymizer:
         face_confidence: float = DEFAULT_FACE_CONFIDENCE,
         padding_fraction: float = DEFAULT_FACE_PADDING,
         blur_strength: float = DEFAULT_FACE_BLUR_STRENGTH,
+        device: str = "cpu",
     ):
         self.padding_fraction = padding_fraction
         self.blur_strength = blur_strength
+        self.device = device
         self.path = Path(weights_dir) / MODEL_FILENAME
         if not self.path.is_file():
             raise FaceModelUnavailable(
                 f"Local face model not found: {self.path}. Obtain the OpenCV Zoo YuNet model."
             )
         try:
-            self.detector = cv2.FaceDetectorYN.create(
-                str(self.path), "", (320, 320), face_confidence, 0.3, 5000
-            )
+            args = (str(self.path), "", (320, 320), face_confidence, 0.3, 5000)
+            if str(device).startswith("cuda"):
+                self.detector = cv2.FaceDetectorYN.create(
+                    *args, cv2.dnn.DNN_BACKEND_CUDA, cv2.dnn.DNN_TARGET_CUDA
+                )
+            else:
+                self.detector = cv2.FaceDetectorYN.create(*args)
             self._input_size = None
         except Exception as exc:  # noqa: BLE001
             raise FaceModelUnavailable(f"Could not load local YuNet face model: {exc}") from exc

@@ -680,7 +680,21 @@ body[data-page="analyze"] .chip-real{display:inline-block}
 
     <!-- ---------- LIVE ---------- -->
     <section class="view live" id="v-live">
-      <div class="mock-banner" role="note"><svg viewBox="0 0 24 24"><path d="M12 9v4.5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>ข้อมูลจำลอง — ไม่ใช่ผลจากโมเดล <span>(ผลจากโมเดลจริงดูได้ที่เมนู Upload &amp; Analyze)</span></div>
+      <div class="mock-banner" role="note"><svg viewBox="0 0 24 24"><path d="M12 9v4.5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>Live pilot อยู่ในแผงด้านล่าง · ส่วนกล้องและ event feed เดิมเป็นข้อมูลจำลอง ไม่ใช่ผลจากโมเดล</div>
+      <div class="card" style="margin-bottom:12px;flex:none">
+        <div class="card-h"><h3>Live pilot · file replay / RTSP (หนึ่ง stream)</h3><span id="liveRealStatus" class="hint">ยังไม่เริ่ม session</span></div>
+        <div class="az-controls" style="padding:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <select id="liveSourceType" aria-label="ประเภทแหล่งภาพ"><option value="file">Replay จาก data/</option><option value="rtsp">RTSP</option></select>
+          <input id="liveSource" type="text" placeholder="data/raw/clip.mp4 หรือ rtsp://…" style="min-width:320px;flex:1">
+          <select id="liveModel" aria-label="โมเดล YOLO"><option value="yolov8n">YOLOv8n</option><option value="yolov8s">YOLOv8s</option></select>
+          <select id="liveDevice" aria-label="อุปกรณ์"><option value="auto">Auto</option><option value="cpu">CPU</option><option value="cuda">GPU CUDA</option></select>
+          <button class="btn primary" id="liveStart">เริ่ม Live</button><button class="btn" id="liveStop" disabled>หยุด</button>
+        </div>
+        <div style="padding:0 12px 12px;display:grid;grid-template-columns:minmax(0,2fr) minmax(240px,1fr);gap:12px">
+          <img id="liveRealPreview" alt="Live preview ที่ผ่านการเบลอใบหน้า" hidden style="width:100%;max-height:42vh;object-fit:contain;background:#05080d">
+          <div id="liveRealEvents" class="feed" aria-live="polite" style="max-height:42vh;overflow:auto"></div>
+        </div>
+      </div>
       <div class="live-bar">
         <div class="seg">
           <button class="on" data-lay="3">3 × N</button>
@@ -810,6 +824,10 @@ body[data-page="analyze"] .chip-real{display:inline-block}
                   <option value="yolov8s">YOLOv8s</option>
                 </select>
               </div>
+              <div class="field">
+                <label for="azDevice">อุปกรณ์ประมวลผล</label>
+                <select id="azDevice"><option value="auto">Auto (แนะนำ)</option><option value="cpu">CPU</option><option value="cuda">GPU NVIDIA CUDA</option></select>
+              </div>
               <div class="field" id="azSampleFpsWrap" hidden>
                 <label for="azSampleFps">ตรวจกี่ครั้ง/วินาที (1–30)</label>
                 <input type="number" id="azSampleFps" min="1" max="30" step="1" value="10">
@@ -843,7 +861,7 @@ body[data-page="analyze"] .chip-real{display:inline-block}
                 <div class="az-model-control"><label>ความเร็วขั้นต่ำ (แนวทแยง/วินาที)</label><input id="azTrackMotion" type="number" min="0.01" max="2" step="0.05" value="0.25"><small>ลดลงแล้ว trigger จากการเคลื่อนไหวได้ง่ายขึ้น</small></div>
                 <div class="az-model-control"><label>ช่วงขาดหายสูงสุดของ track (วินาที)</label><input id="azTrackGap" type="number" min="0.1" max="3" step="0.05" value="0.75"><small>เพิ่มแล้วเชื่อม track ข้ามเฟรมที่ตรวจไม่พบได้นานขึ้น</small></div>
               </div>
-              <p class="az-privacy-note">ค่า FPS สำหรับวิดีโอและจำนวนเฟรมสำหรับโหมดสำรองอยู่ด้านบน · การเพิ่มความไวอาจเพิ่มผลบวกลวง · ค่าเหล่านี้มีผลกับคำขอวิเคราะห์ที่เริ่มหลังปรับเท่านั้น; อุปกรณ์ CPU/GPU เลือกอัตโนมัติตาม backend</p>
+              <p class="az-privacy-note">ค่า FPS สำหรับวิดีโอและจำนวนเฟรมสำหรับโหมดสำรองอยู่ด้านบน · การเพิ่มความไวอาจเพิ่มผลบวกลวง · อุปกรณ์ประมวลผลเลือกได้ต่อการรันด้านบน; Auto ใช้ CPU จนกว่า YuNet จะรองรับ CUDA ครบ pipeline</p>
             </details>
             <details class="az-privacy-settings">
               <summary>ตั้งค่าการตรวจและเบลอใบหน้า (YuNet)</summary>
@@ -1433,5 +1451,6 @@ navLive.textContent = SCENES.filter(s=>s.boxes.length).length;
 </script>
 <!-- Upload & Analyze: real API calls (no mock data) -->
 <script src="analyze.js"></script>
+<script src="live.js"></script>
 </body>
 </html>

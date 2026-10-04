@@ -226,7 +226,14 @@ def test_health_matches_fixture(client, stub):
     resp = client.get("/api/health")
     assert resp.status_code == 200
     body = resp.json()
-    assert_structure(body, load_fixture("health.json"))
+    runtime = body.pop("runtime")
+    fixture = load_fixture("health.json")
+    fixture["device"] = body["device"]
+    fixture["models"] = body["models"]
+    assert_structure(body, fixture)
+    assert isinstance(runtime.get("cuda_available"), bool)
+    assert isinstance(runtime.get("onnx_providers"), list)
+    assert runtime.get("face_backend") == "opencv-yunet-cpu"
     check_envelope(body, None, is_model_output=False)
     assert body["status"] == "ok"
     assert body["device"] == "cpu"
@@ -237,6 +244,19 @@ def test_health_matches_fixture(client, stub):
 def test_health_reports_missing(missing_client):
     body = missing_client.get("/api/health").json()
     assert body["models"] == {"yolov8n": "missing", "yolov8s": "missing", "x3d_s": "missing"}
+
+
+def test_device_selection_is_validated_without_silent_cuda_fallback(client, monkeypatch):
+    invalid = client.post(STAGE2, data={"device": "metal"})
+    assert_error(invalid, 400, "invalid_parameter")
+    monkeypatch.setattr("webapp.models.runtime_status", lambda: {
+        "cuda_available": False, "gpu": None, "onnx_providers": ["CPUExecutionProvider"],
+        "face_backend": "opencv-yunet-cpu", "full_pipeline_cuda_ready": False,
+        "opencv_cuda_available": False,
+    })
+    unavailable = client.post(STAGE2, data={"device": "cuda"})
+    assert unavailable.status_code == 503
+    assert unavailable.json()["error"]["code"] == "device_unavailable"
 
 
 def test_root_serves_mockup_html(client):
