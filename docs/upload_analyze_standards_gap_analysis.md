@@ -41,6 +41,42 @@ low raw Fight score without trading off false positives. Review more held-out
 clips and compare visual miss/false-alarm rates before selecting any further
 speed or threshold change.
 
+## Verification completed 2026-10-04
+
+- Full suite: **234 passed**, with two upstream deprecation/future warnings, in
+  `.venv-test` (Python 3.11.9). `pip check` reported no broken requirements.
+- Regression coverage includes invalid/oversized uploads, decoded-pixel limits,
+  decode failures, temporary-file cleanup, busy-analysis 429, YuNet fail-closed
+  behavior, and API settings validation. The fail-closed regression confirms a
+  detector exception returns an error without any frame/preview field and
+  removes the temporary upload.
+- Held-out X3D rerun used all 45 clips in `test_manifest.csv` and the repository's
+  training preprocessing. It reproduced the stored results exactly:
+  accuracy 0.8000, macro-F1 0.7984, balanced accuracy 0.8024, confusion matrix
+  `[[20, 2], [7, 16]]`. Fight recall is 16/23 (69.6%); non-Fight false alarms
+  are 2/22 (9.1%). CPU runtime for this evaluation was 20.6 seconds. These are
+  public pilot clips, not target-camera performance.
+- A temporary loopback HTTP server exercised the combined endpoint on the
+  3.54-second fall clip: HTTP 200, complete face scan, 18 YOLO sample frames,
+  10 sampled frames with a Fall box, up to 3 person boxes/frame, and 0 Fight
+  windows. Timings were decode 1,509 ms, YuNet 32,488 ms, YOLO 2,028 ms, X3D
+  419 ms, preview encoding 11 ms, total 39,055 ms. The server was stopped after
+  the checks. Repeated timings varied substantially, so the faster earlier
+  run is not a dependable latency guarantee.
+- Visual spot check of six anonymized snapshots from that clip found one
+  covered face in each sampled frame, including standing and falling motion.
+  This is a narrow manual check of visible output; it does not measure missed
+  faces across all frames, viewpoints, or lighting conditions.
+- Direct Stage 2 HTTP checks reproduced `fi008.mp4` at Fight probability 0.2155
+  and `nofi003.mp4` at 0.2497; both were classified non-Fight. This agrees with
+  the known miss on the Fight example.
+- `pip-audit` 2.10.1 reported no known vulnerabilities in the installed
+  `.venv-test` environment or in a resolution of `requirements.txt` on this
+  date; `pip check` also found no broken requirements. This is a point-in-time
+  result, not a guarantee about future package releases or another deployment
+  environment. The broad lower-bound declarations remain a reproducibility gap;
+  production builds still need platform-specific lockfiles.
+
 ## Operational boundaries
 
 - Start the demo with an explicit loopback bind: `python -m uvicorn webapp.api:app --host 127.0.0.1 --port 8000`.

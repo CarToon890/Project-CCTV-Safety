@@ -93,6 +93,19 @@ class NoFaceFixture:
         return frame.copy()
 
 
+class FailingFaceFixture:
+    """Privacy detector failure must produce an error, never a raw preview."""
+    def __init__(self, _weights_dir, **_settings):
+        pass
+
+    def detect(self, _frame):
+        raise RuntimeError("simulated face detector failure")
+
+    @staticmethod
+    def blur(frame, _boxes, _blur_strength=0.8):
+        return frame.copy()
+
+
 @pytest.fixture
 def stub():
     return StubRegistry()
@@ -842,6 +855,22 @@ def test_temp_files_removed_after_success(client, isolated_tmp, tmp_path):
     video = write_video(tmp_path / "v.mp4", n_frames=30, fps=10.0)
     assert post_file(client, STAGE1, "v.mp4", video.read_bytes(), {"model": "yolov8n"}).status_code == 200
     assert post_file(client, STAGE2, "v.mp4", video.read_bytes()).status_code == 200
+    assert _leftovers(isolated_tmp) == []
+
+
+def test_privacy_failure_fails_closed_without_returning_original_preview(stub, isolated_tmp):
+    failing_client = TestClient(
+        create_app(registry=stub, face_anonymizer_factory=FailingFaceFixture),
+        raise_server_exceptions=False,
+    )
+    response = post_file(
+        failing_client, STAGE1, "private.jpg", image_bytes(), {"model": "yolov8n"}
+    )
+    assert_error(response, 500, "internal_error")
+    body = response.json()
+    assert "frames" not in body
+    assert "image_jpeg_b64" not in body
+    assert "preview_jpeg_b64" not in body
     assert _leftovers(isolated_tmp) == []
 
 
