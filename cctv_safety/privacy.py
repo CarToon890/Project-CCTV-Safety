@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from inspect import signature
 from time import perf_counter
 
 import cv2
@@ -13,6 +14,7 @@ MODEL_FILENAME = "face_detection_yunet_2023mar.onnx"
 DEFAULT_FACE_CONFIDENCE = 0.35
 DEFAULT_FACE_PADDING = 0.25
 DEFAULT_FACE_BLUR_STRENGTH = 0.8
+MAX_FACE_GAP_FRAMES = 5
 
 
 class FaceModelUnavailable(RuntimeError):
@@ -38,12 +40,16 @@ class YuNetFaceAnonymizer:
             self.detector = cv2.FaceDetectorYN.create(
                 str(self.path), "", (320, 320), face_confidence, 0.3, 5000
             )
+            self._input_size = None
         except Exception as exc:  # noqa: BLE001
             raise FaceModelUnavailable(f"Could not load local YuNet face model: {exc}") from exc
 
     def detect(self, frame: np.ndarray) -> list[list[int]]:
         height, width = frame.shape[:2]
-        self.detector.setInputSize((width, height))
+        input_size = (width, height)
+        if input_size != self._input_size:
+            self.detector.setInputSize(input_size)
+            self._input_size = input_size
         _, faces = self.detector.detect(frame)
         boxes: list[list[int]] = []
         if faces is None:
@@ -75,16 +81,88 @@ class YuNetFaceAnonymizer:
             roi = output[y1:y2, x1:x2]
             if roi.size == 0:
                 continue
-            # Strong Gaussian blur; keep kernel odd and proportional to face region.
-            k = min(99, max(21, int(round(min(roi.shape[:2]) * blur_strength) | 1)))
-            output[y1:y2, x1:x2] = cv2.GaussianBlur(roi, (k, k), 0)
+            # Coarse pixelation removes facial detail more reliably than blur alone.
+            block = max(8, int(round(min(roi.shape[:2]) * 0.16 * blur_strength)))
+            small_w = max(1, int(np.ceil(roi.shape[1] / block)))
+            small_h = max(1, int(np.ceil(roi.shape[0] / block)))
+            tiny = cv2.resize(roi, (small_w, small_h), interpolation=cv2.INTER_AREA)
+            output[y1:y2, x1:x2] = cv2.resize(
+                tiny, (roi.shape[1], roi.shape[0]), interpolation=cv2.INTER_NEAREST
+            )
         return output
 
 
 def anonymize(anonymizer: YuNetFaceAnonymizer, frame: np.ndarray) -> tuple[np.ndarray, list[list[int]]]:
     boxes = anonymizer.detect(frame)
     strength = getattr(anonymizer, "blur_strength", DEFAULT_FACE_BLUR_STRENGTH)
-    return anonymizer.blur(frame, boxes, strength), boxes
+    blur = anonymizer.blur
+    # Keep simple test/custom anonymizers compatible with the original two-argument API.
+    if len(signature(blur).parameters) < 3:
+        safe = blur(frame, boxes)
+    else:
+        safe = blur(frame, boxes, strength)
+    return safe, boxes
+
+
+def bridge_short_face_gaps(
+    frames: list[list[list[int]]], width: int, height_px: int,
+    max_gap: int = MAX_FACE_GAP_FRAMES,
+) -> list[list[list[int]]]:
+    """Interpolate face boxes across brief all-face detection gaps in offline video.
+
+    This stabilizes the privacy mask during motion blur. It deliberately does not
+    invent boxes over long gaps or when endpoint faces cannot be matched safely.
+    """
+    result = [[box[:] for box in frame] for frame in frames]
+    height = len(result)
+    index = 0
+    while index < height:
+        if result[index]:
+            index += 1
+            continue
+        gap_start = index
+        while index < height and not result[index]:
+            index += 1
+        gap_end = index
+        gap = gap_end - gap_start
+        if gap == 0 or gap > max_gap or gap_start == 0 or gap_end >= height:
+            continue
+        left, right = result[gap_start - 1], result[gap_end]
+        if not left or not right:
+            continue
+
+        # Greedy one-to-one matching by center displacement, normalized by face size.
+        candidates = []
+        for li, a in enumerate(left):
+            acx, acy = (a[0] + a[2]) / 2, (a[1] + a[3]) / 2
+            asize = max(1.0, ((a[2] - a[0]) + (a[3] - a[1])) / 2)
+            for ri, b in enumerate(right):
+                bcx, bcy = (b[0] + b[2]) / 2, (b[1] + b[3]) / 2
+                bsize = max(1.0, ((b[2] - b[0]) + (b[3] - b[1])) / 2)
+                scale = max(asize, bsize)
+                distance = (((acx - bcx) ** 2 + (acy - bcy) ** 2) ** 0.5) / scale
+                size_ratio = max(asize, bsize) / min(asize, bsize)
+                if distance <= 3.5 and size_ratio <= 2.5:
+                    candidates.append((distance, li, ri))
+        used_left, used_right = set(), set()
+        matches = []
+        for _, li, ri in sorted(candidates):
+            if li not in used_left and ri not in used_right:
+                used_left.add(li)
+                used_right.add(ri)
+                matches.append((left[li], right[ri]))
+
+        for a, b in matches:
+            for offset in range(1, gap + 1):
+                ratio = offset / (gap + 1)
+                box = [int(round(av + (bv - av) * ratio)) for av, bv in zip(a, b)]
+                # Add a small motion margin to interpolated regions.
+                pad_x = max(2, int((box[2] - box[0]) * 0.12))
+                pad_y = max(2, int((box[3] - box[1]) * 0.12))
+                frames_box = [max(0, box[0] - pad_x), max(0, box[1] - pad_y),
+                              min(width, box[2] + pad_x), min(height_px, box[3] + pad_y)]
+                result[gap_start + offset - 1].append(frames_box)
+    return result
 
 
 def elapsed_ms(start: float) -> float:

@@ -46,6 +46,8 @@
     missing_file: 'ไม่พบไฟล์ หรือไฟล์ว่าง (0 ไบต์)',
     invalid_parameter: 'พารามิเตอร์ไม่ถูกต้อง (model ต้องเป็น yolov8n / yolov8s, จำนวนเฟรม 1–60, ความถี่ตรวจ 1–30 ครั้ง/วินาที)',
     file_too_large: 'ไฟล์ใหญ่เกิน 100 MB',
+    media_dimensions_too_large: 'ความละเอียดของภาพหรือเฟรมวิดีโอเกินขีดจำกัดที่ระบบรองรับ',
+    analysis_busy: 'มีงานวิเคราะห์อื่นกำลังทำงานอยู่ กรุณารอให้เสร็จก่อนแล้วลองอีกครั้ง',
     unsupported_media_type: 'ชนิดไฟล์ไม่รองรับ — ใช้ได้เฉพาะ .jpg .jpeg .png .bmp .webp .mp4 .avi .mov .mkv',
     decode_failed: 'อ่านไฟล์ไม่ได้ — ถอดรหัสภาพ/วิดีโอไม่สำเร็จ (ไฟล์เสีย หรือ codec ไม่รองรับ)',
     video_required: 'ต้องใช้ไฟล์วิดีโอ (mp4, avi, mov, mkv)',
@@ -65,7 +67,7 @@
   // Plain-Thai names for the schema v2 classes (English name is shown too).
   const CLASS_TH = { person: 'คน', helmet: 'หมวกนิรภัย', vest: 'เสื้อสะท้อนแสง', fall: 'คนล้ม', fire: 'ไฟ', smoke: 'ควัน' };
   const HAZARD = ['fall', 'fire', 'smoke'];
-  const HAZARD_SENTENCE = { fire: 'พบไฟ', smoke: 'พบควัน', fall: 'พบคนล้ม' };
+  const HAZARD_SENTENCE = { fire: 'พบสัญญาณไฟ', smoke: 'พบสัญญาณควัน', fall: 'พบสัญญาณ Fall · ตรวจสอบ' };
   const S2_TH = { fight: 'ทะเลาะ', non_fight: 'ปกติ' };
 
   const CLASS_COLOR = {
@@ -131,6 +133,11 @@
     faceConfidence: $('azFaceConfidence'), faceConfidenceValue: $('azFaceConfidenceValue'),
     facePadding: $('azFacePadding'), facePaddingValue: $('azFacePaddingValue'),
     faceBlur: $('azFaceBlur'), faceBlurValue: $('azFaceBlurValue'),
+    modelSettings: {
+      person: $('azThPerson'), helmet: $('azThHelmet'), vest: $('azThVest'), fall: $('azThFall'), fire: $('azThFire'), smoke: $('azThSmoke'),
+      iou: $('azYoloIou'), imgsz: $('azYoloImg'), maxDet: $('azYoloMaxDet'),
+      fight: $('azX3dThreshold'), proximity: $('azTrackProximity'), motion: $('azTrackMotion'), gap: $('azTrackGap')
+    },
     apiDot: $('azApiDot'), apiText: $('azApiText'),
     healthDevice: $('azHealthDevice'), healthModels: $('azHealthModels'), healthMsg: $('azHealthMsg'),
     healthRefresh: $('azHealthRefresh'),
@@ -164,6 +171,7 @@
     hidden: {}, ppeCheck: true, viewMode: 'cls', minConf: 0, hl: null   // viewMode: 'ppe' | 'cls'
   };
   let runToken = 0, drawToken = 0, rafId = 0;
+  const faceMosaicCanvas = document.createElement('canvas');
 
   /* ---------------- API ---------------- */
   // Resolves to {ok:true, data} or {ok:false, message, code?, detail?}.
@@ -618,7 +626,9 @@
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, r.cw, r.ch);
     try {
       const src = st.s1.source;
-      const frameIndex = Math.min(src.frame_count - 1, Math.max(0, Math.floor(t * src.fps + 1e-6)));
+      // Browser currentTime often sits between decoded-frame timestamps; choose
+      // the nearest analysis frame to reduce mask lag during fast movement.
+      const frameIndex = Math.min(src.frame_count - 1, Math.max(0, Math.round(t * src.fps)));
       const faceBoxes = st.faceBlur && st.faceBlur.faces_by_frame[frameIndex];
       if (!Array.isArray(faceBoxes)) throw new Error('missing face frame');
       if (r.w > 0 && r.h > 0 && ui.video.readyState >= 2) {
@@ -628,15 +638,20 @@
           const y = r.y + box[1] * r.h / src.height;
           const w = (box[2] - box[0]) * r.w / src.width;
           const h = (box[3] - box[1]) * r.h / src.height;
-          ctx.save(); ctx.beginPath(); ctx.rect(x - 2, y - 2, w + 4, h + 4); ctx.clip();
-          if ('filter' in ctx) {
-            const strength = st.faceBlur.settings && isNum(st.faceBlur.settings.blur_strength)
-              ? st.faceBlur.settings.blur_strength : 0.8;
-            ctx.filter = 'blur(' + Math.max(4, Math.min(w, h) * 0.32 * strength / 0.8) + 'px)';
-            ctx.drawImage(v, box[0], box[1], box[2] - box[0], box[3] - box[1], x, y, w, h);
-          } else {
-            ctx.fillStyle = '#000'; ctx.fillRect(x - 2, y - 2, w + 4, h + 4);
-          }
+          // Strong pixelation is more resistant to motion than a mild Gaussian blur.
+          // Build a tiny source patch, then enlarge it with smoothing disabled.
+          const strength = st.faceBlur.settings && isNum(st.faceBlur.settings.blur_strength)
+            ? st.faceBlur.settings.blur_strength : 0.8;
+          const pixel = Math.max(6, Math.min(20, 10 * strength / 0.8));
+          const mw = Math.max(2, Math.ceil(w / pixel));
+          const mh = Math.max(2, Math.ceil(h / pixel));
+          faceMosaicCanvas.width = mw; faceMosaicCanvas.height = mh;
+          const mosaicCtx = faceMosaicCanvas.getContext('2d');
+          if (!mosaicCtx) throw new Error('face mosaic unavailable');
+          mosaicCtx.clearRect(0, 0, mw, mh);
+          mosaicCtx.drawImage(v, box[0], box[1], box[2] - box[0], box[3] - box[1], 0, 0, mw, mh);
+          ctx.save(); ctx.imageSmoothingEnabled = false; ctx.filter = 'none';
+          ctx.drawImage(faceMosaicCanvas, 0, 0, mw, mh, x, y, w, h);
           ctx.restore();
         });
       }
@@ -710,7 +725,8 @@
     st.s2.windows.forEach(w => {
       if (w.label !== 'fight') return;
       const a = trackFrac(w.start_s), b = trackFrac(w.end_s);
-      const m = el('i', 'az-mark');
+      const pw = dataWindowDecision(w.index);
+      const m = el('i', 'az-mark' + (pw && pw.decision === 'review_fall_fight_conflict' ? ' review' : ''));
       m.style.left = (a * 100).toFixed(3) + '%';
       m.style.width = (Math.max(b - a, 0.004) * 100).toFixed(3) + '%';
       ui.seekMarks.appendChild(m);
@@ -858,8 +874,9 @@
     node.hidden = !node.textContent;
   }
 
-  // Summary numbers from the response. Image: counts in the single frame.
-  // Video (no tracking): persons = max persons in any sampled frame; each
+  // Summary numbers from the response. These are detector boxes, not unique
+  // tracked people. Image: counts in the single frame. Video: max boxes/frame.
+  // Video (no tracking): persons = max person boxes in any sampled frame; each
   // alert = max count of that alert in any sampled frame; hazards = present
   // in any sampled frame.
   function stage1Summary(data) {
@@ -886,7 +903,7 @@
 
   function renderStage1Summary(data) {
     const s = stage1Summary(data);
-    const parts = [s.persons ? 'พบ ' + s.persons + ' คน' : 'ไม่พบคน'];
+    const parts = [s.persons ? 'พบกล่อง person สูงสุด ' + s.persons + ' กล่อง/เฟรม' : 'ไม่พบกล่อง person'];
     let warn = s.hazards.length > 0;
     if (st.ppeCheck && s.ppeRows) {
       if (s.noHelmet || s.noVest) {
@@ -897,7 +914,8 @@
         parts.push('สวม PPE ครบ');
       }
     }
-    s.hazards.forEach(c => parts.push(HAZARD_SENTENCE[c]));
+    s.hazards.forEach(c => parts.push(c === 'fall' ? 'พบสัญญาณ Fall · ตรวจสอบ' : HAZARD_SENTENCE[c]));
+    if (s.persons > 1) parts.push('จำนวนกล่องอาจซ้ำ ไม่ใช่จำนวนคนที่ยืนยันแล้ว');
     ui.s1Sentence.textContent = parts.join(' · ');
     ui.s1Sentence.className = 'az-sentence' + (warn ? ' warn' : ' ok');
   }
@@ -917,6 +935,10 @@
       metaItem(ui.s1Meta, 'เฟรมที่ตรวจ', data.frames.length);
     }
     metaItem(ui.s1Meta, 'detector schema', 'v' + data.detector_schema_version);
+    if (data.analysis_settings && data.analysis_settings.yolo) {
+      const ys = data.analysis_settings.yolo;
+      metaItem(ui.s1Meta, 'YOLO imgsz / NMS IoU / max_det', ys.imgsz + ' / ' + num(ys.iou, 2) + ' / ' + ys.max_det);
+    }
     if (data.privacy) {
       const faceCount = isNum(data.privacy.faces_detected) ? ' · พบ ' + data.privacy.faces_detected + ' ใบหน้า' : '';
       metaItem(ui.s1Meta, 'face anonymization', data.privacy.model + faceCount);
@@ -927,6 +949,12 @@
         metaItem(ui.s1Meta, 'YuNet confidence / padding / blur',
           num(p.face_confidence, 2) + ' / ' + Math.round(p.padding_fraction * 100) + '% / ' + num(p.blur_strength, 2));
       }
+    }
+    if (data.timings_ms) {
+      const t = data.timings_ms;
+      metaItem(ui.s1Meta, 'เวลา pipeline · decode / YuNet / YOLO / X3D',
+        [t.video_decode_ms, t.face_detection_ms, t.yolo_ms, t.x3d_ms].map(v => num(v, 0) + ' ms').join(' / '));
+      metaItem(ui.s1Meta, 'เวลา preview / รวม', num(t.preview_encode_ms, 0) + ' / ' + num(t.total_ms, 0) + ' ms');
     }
     metaItem(ui.s1Meta, 'ppe_min_confidence', num(data.ppe_min_confidence, 2));
     metaItem(ui.s1Meta, 'schema_version', data.schema_version);
@@ -1010,8 +1038,16 @@
     ui.corner.hidden = !show;
     if (!show) return;
     const w = windowAt(t);
-    ui.corner.textContent = 'Stage 2: ' + (w ? (S2_TH[w.label] || w.label) : 'ไม่มีผลช่วงนี้');
-    ui.corner.className = 'az-corner' + (w && w.label === 'fight' ? ' fight' : '');
+    const pw = w && dataWindowDecision(w.index);
+    const label = pw ? pw.decision_label : (w ? (S2_TH[w.label] || w.label) : 'ไม่มีผลช่วงนี้');
+    ui.corner.textContent = 'Stage 2: ' + label;
+    ui.corner.className = 'az-corner' + (pw && pw.decision === 'review_fall_fight_conflict'
+      ? ' review' : (w && w.label === 'fight' ? ' fight' : ''));
+  }
+
+  function dataWindowDecision(index) {
+    const windows = st.s2 && st.s2.pipeline && st.s2.pipeline.windows;
+    return Array.isArray(windows) ? windows[index] || null : null;
   }
 
   function renderStage2(data) {
@@ -1019,26 +1055,48 @@
     setBadge(ui.s2Badge, data);
     setDisclaimer(ui.s2Disclaimer, data);
     const sm = data.summary;
-    const found = sm.fight_windows > 0;
-    ui.s2Sentence.textContent = found ? '⚠ พบการทะเลาะ' : '✓ ไม่พบการทะเลาะ';
-    ui.s2Sentence.className = 'az-sentence' + (found ? ' warn' : ' ok');
+    const reviewCount = data.pipeline ? data.pipeline.review_fall_fight_conflict_windows : 0;
+    const candidateCount = data.pipeline ? data.pipeline.fight_candidate_windows : 0;
+    const fallCount = data.pipeline ? data.pipeline.fall_detected_windows : 0;
+    if (reviewCount > 0) {
+      ui.s2Sentence.textContent = '⚠ X3D ทาย Fight แต่พบสัญญาณคนล้ม ' + reviewCount +
+        ' ช่วง — ผลกำกวม ต้องตรวจสอบ (ผลดิบ X3D: ' + sm.fight_windows + ' ช่วง)';
+      ui.s2Sentence.className = 'az-sentence warn';
+    } else if (candidateCount > 0) {
+      ui.s2Sentence.textContent = '⚠ X3D สงสัย Fight ' + candidateCount +
+        ' ช่วง — เป็นผลคัดกรอง pilot ยังไม่ใช่การยืนยัน';
+      ui.s2Sentence.className = 'az-sentence warn';
+    } else if (data.pipeline && fallCount > 0) {
+      ui.s2Sentence.textContent = '⚠ พบสัญญาณ Fall ' + fallCount +
+        ' ช่วง · X3D ไม่ได้ทาย Fight ในช่วงที่พบการล้ม';
+      ui.s2Sentence.className = 'az-sentence ok';
+    } else {
+      const found = sm.fight_windows > 0;
+      ui.s2Sentence.textContent = data.pipeline
+        ? '✓ X3D ไม่ได้ทาย Fight (ผลคัดกรอง pilot; ไม่ใช่การยืนยันว่าไม่มีเหตุการณ์)'
+        : (found ? '⚠ X3D ทาย Fight' : '✓ X3D ทาย non-fight');
+      ui.s2Sentence.className = 'az-sentence' + (found && !data.pipeline ? ' warn' : ' ok');
+    }
 
     // Technical details: summary numbers, window times and raw probabilities.
     clear(ui.s2Meta);
     metaItem(ui.s2Meta, 'model', data.model);
     metaItem(ui.s2Meta, 'class_names', data.class_names.join(', '));
-    metaItem(ui.s2Meta, 'fight_windows / total_windows', sm.fight_windows + ' / ' + sm.total_windows);
+    metaItem(ui.s2Meta, data.pipeline ? 'X3D ดิบ: Fight windows / total' : 'X3D Fight windows / total', sm.fight_windows + ' / ' + sm.total_windows);
     metaItem(ui.s2Meta, 'max_fight_prob', num(sm.max_fight_prob, 4));
+    if (isNum(data.fight_threshold)) metaItem(ui.s2Meta, 'เกณฑ์ Fight', num(data.fight_threshold, 2));
     metaItem(ui.s2Meta, 'duration_s', num(data.source.duration_s, 2));
     metaItem(ui.s2Meta, 'fps', num(data.source.fps, 2));
     metaItem(ui.s2Meta, 'window_s', num(data.window_s, 1));
     metaItem(ui.s2Meta, 'frames_per_window', data.frames_per_window);
     if (data.pipeline) {
       metaItem(ui.s2Meta, 'pipeline_mode', data.pipeline.mode);
-      metaItem(ui.s2Meta, 'YOLO person-triggered windows', data.pipeline.person_triggered_windows + ' / ' + data.pipeline.total_windows);
+      metaItem(ui.s2Meta, 'ช่วงที่พบกล่อง person จาก YOLO', data.pipeline.person_triggered_windows + ' / ' + data.pipeline.total_windows);
       metaItem(ui.s2Meta, 'tracking trigger windows', data.pipeline.candidate_triggered_windows + ' / ' + data.pipeline.total_windows);
       metaItem(ui.s2Meta, 'Fight ที่ไม่มี tracking trigger', data.pipeline.fight_without_candidate_trigger);
-      metaItem(ui.s2Meta, 'Tracking', 'IoU + ระยะศูนย์กลางกล่อง');
+      metaItem(ui.s2Meta, 'ล้ม/Fight กำกวม · ตรวจสอบ', reviewCount);
+      metaItem(ui.s2Meta, 'Fight candidate · pilot', candidateCount);
+      metaItem(ui.s2Meta, 'Tracking', 'สร้าง track จากกล่อง person; กล่องซ้ำอาจนับเป็นหลาย track');
       metaItem(ui.s2Meta, 'Proximity trigger', 'ระยะ ≤ ' + num(data.pipeline.proximity_diagonals, 2) + ' เท่าของเส้นทแยงมุมภาพ');
       metaItem(ui.s2Meta, 'Motion trigger', 'ความเร็ว ≥ ' + num(data.pipeline.motion_diagonals_per_s, 2) + ' เส้นทแยงมุมภาพ/วินาที');
       metaItem(ui.s2Meta, 'X3D policy', 'ประเมินทุกช่วง (shadow mode)');
@@ -1046,11 +1104,14 @@
     metaItem(ui.s2Meta, 'schema_version', data.schema_version);
     clear(ui.s2Raw);
     const head = el('div', 'az-rrow az-chead' + (data.pipeline ? ' pipeline' : ''));
-    ['#', 'เวลา', 'X3D', 'non_fight', 'fight'].concat(data.pipeline ? ['YOLO คน', 'tracks', 'trigger/evidence'] : []).forEach(t => head.appendChild(el('span', null, t)));
+    ['#', 'เวลา', 'X3D', 'non_fight', 'fight'].concat(data.pipeline ? ['YOLO พบกล่อง', 'tracks*', 'trigger/evidence'] : []).forEach(t => head.appendChild(el('span', null, t)));
     ui.s2Raw.appendChild(head);
     data.windows.forEach(w => {
       const pw = data.pipeline && data.pipeline.windows[w.index];
-      const r = el('div', 'az-rrow' + (data.pipeline ? ' pipeline' : '') + (w.label === 'fight' ? ' fight' : ''));
+      const decision = pw && pw.decision;
+      const rowClass = decision === 'review_fall_fight_conflict' ? ' review'
+        : (decision === 'fight_candidate' || (!pw && w.label === 'fight') ? ' fight' : '');
+      const r = el('div', 'az-rrow' + (data.pipeline ? ' pipeline' : '') + rowClass);
       r.appendChild(el('span', 'mono', w.index));
       r.appendChild(el('span', 'mono', num(w.start_s, 2) + ' – ' + num(w.end_s, 2)));
       r.appendChild(el('span', 'mono', w.label));
@@ -1061,8 +1122,9 @@
         const reasonText = pw.trigger_reasons.map(x => ({
           people_in_close_proximity: 'ใกล้กัน', multi_person_motion: 'เคลื่อนไหว'
         }[x] || x)).join(' + ');
-        r.appendChild(el('span', 'mono', (pw.candidate_triggered ? 'TRIGGER: ' : '— ') +
-          (reasonText || 'ไม่มี') + ' (P' + pw.proximity_frames + '/M' + pw.motion_frames + ')'));
+        r.appendChild(el('span', 'mono', pw.decision_label + ' · ' +
+          (pw.candidate_triggered ? 'TRIGGER: ' : '— ') + (reasonText || 'ไม่มี') +
+          ' (P' + pw.proximity_frames + '/M' + pw.motion_frames + ')'));
       }
       ui.s2Raw.appendChild(r);
     });
@@ -1074,11 +1136,12 @@
   }
 
   /* ---------------- analyze flow ---------------- */
-  function stage1Form(file, mode, privacy) {
+  function stage1Form(file, mode, privacy, analysis) {
     const fd = new FormData();
     fd.append('file', file, file.name);
     fd.append('model', ui.model.value);
     appendPrivacySettings(fd, privacy);
+    fd.append('analysis_settings', JSON.stringify(analysis || analysisSettings()));
     if (mode === 'dense') {
       fd.append('mode', 'dense');
       fd.append('sample_fps', String(clampFloat(ui.sampleFps.value, SAMPLE_FPS)));
@@ -1097,6 +1160,26 @@
     };
   }
 
+  function analysisSettings() {
+    const c = ui.modelSettings;
+    const value = (input, range, fallback) => clampFloat(input.value, { min: range[0], max: range[1], def: fallback });
+    return {
+      yolo: {
+        thresholds: Object.fromEntries(['person','helmet','vest','fall','fire','smoke'].map(name =>
+          [name, value(c[name], [0.01, 0.99], name === 'person' ? 0.25 : 0.20)])),
+        iou: value(c.iou, [0.1, 0.95], 0.70),
+        imgsz: [320,480,640,800,960,1280].includes(Number(c.imgsz.value)) ? Number(c.imgsz.value) : 640,
+        max_det: clampInt(c.maxDet.value, { min: 1, max: 1000, def: 300 })
+      },
+      x3d: { fight_threshold: value(c.fight, [0.05, 0.95], 0.50) },
+      tracking: {
+        proximity_diagonals: value(c.proximity, [0.01, 0.50], 0.16),
+        motion_diagonals_per_s: value(c.motion, [0.01, 2], 0.25),
+        max_track_gap_s: value(c.gap, [0.1, 3], 0.75)
+      }
+    };
+  }
+
   function appendPrivacySettings(form, settings) {
     const p = settings || privacySettings();
     Object.keys(p).forEach(key => form.append(key, String(p[key])));
@@ -1111,15 +1194,16 @@
 
   async function runStage1(file, mode, notice, token) {
     const usedPrivacy = privacySettings();
+    const usedAnalysis = analysisSettings();
     setState(ui.s1State, 'loading', mode === 'dense'
       ? 'กำลังตรวจจับด้วย YOLOv8 ตลอดทั้งวิดีโอ …'
       : 'กำลังวิเคราะห์ด้วย YOLOv8 …');
-    let r = await callApi(API.stage1, { method: 'POST', body: stage1Form(file, mode, usedPrivacy) });
+    let r = await callApi(API.stage1, { method: 'POST', body: stage1Form(file, mode, usedPrivacy, usedAnalysis) });
     if (token !== runToken) return null;
     if (!r.ok && mode === 'dense' && r.code === 'video_too_long') {
       notice = 'วิดีโอยาวเกินกว่าจะตรวจต่อเนื่องได้ → แสดงผลเป็นภาพทีละเฟรมแทน';
       setState(ui.s1State, 'loading', 'วิดีโอยาวเกินสำหรับโหมดต่อเนื่อง — กำลังลองแบบเลือกเฟรม …');
-      r = await callApi(API.stage1, { method: 'POST', body: stage1Form(file, 'frames', usedPrivacy) });
+      r = await callApi(API.stage1, { method: 'POST', body: stage1Form(file, 'frames', usedPrivacy, usedAnalysis) });
       if (token !== runToken) return null;
     }
     if (!r.ok) { setState(ui.s1State, 'error', errorText(r), r.detail); return r; }
@@ -1142,6 +1226,7 @@
     setState(ui.s2State, 'loading', 'กำลังจัดประเภท ทะเลาะ / ปกติ ด้วย X3D-S …');
     const fd = new FormData();
     fd.append('file', file, file.name);
+    fd.append('analysis_settings', JSON.stringify(analysisSettings()));
     const r = await callApi(API.stage2, { method: 'POST', body: fd });
     if (token !== runToken) return null;
     if (!r.ok) { setState(ui.s2State, 'error', errorText(r), r.detail); return r; }
@@ -1156,6 +1241,7 @@
 
   async function runPipeline(file, token) {
     const usedPrivacy = privacySettings();
+    const usedAnalysis = analysisSettings();
     setState(ui.s1State, 'loading', 'กำลังตรวจใบหน้าทุกเฟรมและรัน YOLO; X3D ประเมินทุกช่วง …');
     setState(ui.s2State, 'loading', 'กำลังรัน X3D พร้อมบันทึก person-trigger แบบ shadow …');
     const fd = new FormData();
@@ -1163,6 +1249,7 @@
     fd.append('model', ui.model.value);
     fd.append('sample_fps', String(clampFloat(ui.sampleFps.value, SAMPLE_FPS)));
     appendPrivacySettings(fd, usedPrivacy);
+    fd.append('analysis_settings', JSON.stringify(usedAnalysis));
     const r = await callApi(API.pipeline, { method: 'POST', body: fd });
     if (token !== runToken) return null;
     if (!r.ok) {
@@ -1181,6 +1268,8 @@
       setState(ui.s2State, 'error', 'API ตอบกลับในรูปแบบ pipeline ที่ไม่รู้จัก');
       return { ok: false };
     }
+    applyFallFightReview(d);
+    d.stage1.timings_ms = d.timings_ms;
     st.faceBlur = d.face_blur;
     d.stage1.privacy = {
       model: d.face_blur.model,
@@ -1197,6 +1286,9 @@
       person_triggered_windows: p.person_triggered_windows,
       candidate_triggered_windows: p.candidate_triggered_windows,
       fight_without_candidate_trigger: p.fight_windows_without_candidate_trigger,
+      review_fall_fight_conflict_windows: p.review_fall_fight_conflict_windows,
+      fight_candidate_windows: p.fight_candidate_windows,
+      fall_detected_windows: p.fall_detected_windows,
       proximity_diagonals: d.trigger_parameters.proximity_max_distance_frame_diagonals,
       motion_diagonals_per_s: d.trigger_parameters.motion_min_speed_frame_diagonals_per_s,
       windows: d.pipeline.windows
@@ -1204,6 +1296,39 @@
     renderStage2(d.stage2);
     setSafePreview(d.preview_jpeg_b64);
     return r;
+  }
+
+  // Derive the same review state client-side when an already-running API worker
+  // has not reloaded yet; the raw X3D class and probabilities remain untouched.
+  function applyFallFightReview(data) {
+    const frames = data.stage1.frames || [];
+    data.pipeline.windows.forEach(pw => {
+      const x3d = data.stage2.windows[pw.index];
+      if (!x3d) return;
+      const fallFrames = frames.filter(frame => frame.time_s >= pw.start_s && frame.time_s < pw.end_s &&
+        frame.detections.some(detection => detection.class_name === 'fall'));
+      pw.fall_detected = fallFrames.length > 0;
+      pw.fall_frames = fallFrames.length;
+      if (x3d.label === 'fight' && pw.fall_detected) {
+        pw.decision = 'review_fall_fight_conflict';
+        pw.decision_label = 'ล้ม/Fight กำกวม · ตรวจสอบ';
+      } else if (x3d.label === 'fight') {
+        pw.decision = 'fight_candidate';
+        pw.decision_label = 'สงสัย Fight · pilot';
+      } else if (pw.fall_detected) {
+        pw.decision = 'fall_detected';
+        pw.decision_label = 'พบสัญญาณ Fall · ตรวจสอบ';
+      } else {
+        pw.decision = 'no_fight_candidate';
+        pw.decision_label = 'ไม่พบ Fight candidate';
+      }
+    });
+    const summary = data.pipeline.summary;
+    summary.review_fall_fight_conflict_windows = data.pipeline.windows.filter(
+      window => window.decision === 'review_fall_fight_conflict').length;
+    summary.fight_candidate_windows = data.pipeline.windows.filter(
+      window => window.decision === 'fight_candidate').length;
+    summary.fall_detected_windows = data.pipeline.windows.filter(window => window.fall_detected).length;
   }
 
   function setSafePreview(base64) {

@@ -15,7 +15,7 @@ INDEX = MOCKUP / "index.html"
 ANALYZE_JS = MOCKUP / "analyze.js"
 MOCK_TEXT = "ข้อมูลจำลอง"
 REAL_BADGE_TEXT = "ผลจากโมเดลจริง — pilot"
-ALLOWED_API = {"/api/health", "/api/stage1/analyze", "/api/stage2/analyze"}
+ALLOWED_API = {"/api/health", "/api/stage1/analyze", "/api/stage2/analyze", "/api/pipeline/analyze"}
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr",
         "path", "circle", "rect", "line", "polyline", "polygon", "ellipse", "use", "stop"}
 
@@ -162,9 +162,16 @@ def test_analyze_js_calls_only_contract_endpoints(js_text):
     used = set(re.findall(r"['\"`](/api/[^'\"`?\s]*)", code))
     assert used, "analyze.js references no /api/ endpoint"
     assert used <= ALLOWED_API, f"unexpected endpoints: {sorted(used - ALLOWED_API)}"
+    assert "/api/pipeline/analyze" in used
     assert {"/api/stage1/analyze", "/api/stage2/analyze"} <= used
     assert "XMLHttpRequest" not in code and "WebSocket" not in code
     assert not re.search(r"fetch\(\s*['\"`]https?://", code), "fetch to an absolute external URL"
+
+
+def test_summary_does_not_claim_unique_people_or_confirmed_falls(js_text):
+    assert "กล่อง person สูงสุด" in js_text
+    assert "ไม่ใช่จำนวนคนที่ยืนยันแล้ว" in js_text
+    assert "พบสัญญาณ Fall · ตรวจสอบ" in js_text
 
 
 def test_analyze_js_gates_badge_on_is_model_output(js_text):
@@ -237,7 +244,8 @@ def test_analyze_js_manages_object_urls(js_text):
     assert "URL.createObjectURL" in code and "URL.revokeObjectURL" in code
 
 
-CONTRACT_FORM_FIELDS = {"file", "model", "max_frames", "mode", "sample_fps"}
+CONTRACT_FORM_FIELDS = {"file", "model", "max_frames", "mode", "sample_fps", "analysis_settings",
+                        "face_confidence", "face_padding", "face_blur_strength"}
 
 
 def test_analyze_js_sends_only_contract_form_fields(js_text):

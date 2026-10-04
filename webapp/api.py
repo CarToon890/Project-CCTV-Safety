@@ -7,12 +7,15 @@ http://localhost:8000/. Models load lazily on the first analyze request.
 from __future__ import annotations
 
 import logging
+import json
 import math
 import sys
+from threading import BoundedSemaphore
 from time import perf_counter
 from pathlib import Path
+from typing import Iterator
 
-from fastapi import FastAPI, File, Form, Request, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Request, UploadFile
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -28,7 +31,7 @@ from cctv_safety.detector import load_thresholds  # noqa: E402
 from cctv_safety.ppe import assess_ppe  # noqa: E402
 from cctv_safety.privacy import (  # noqa: E402
     DEFAULT_FACE_BLUR_STRENGTH, DEFAULT_FACE_CONFIDENCE, DEFAULT_FACE_PADDING,
-    FaceModelUnavailable, YuNetFaceAnonymizer, anonymize, elapsed_ms,
+    FaceModelUnavailable, YuNetFaceAnonymizer, anonymize, bridge_short_face_gaps, elapsed_ms,
 )
 from cctv_safety.schema import CLASS_NAMES, CLASS_TO_ID, DETECTOR_SCHEMA_VERSION  # noqa: E402
 from cctv_safety.stage2 import CLASS_NAMES as STAGE2_CLASS_NAMES, FRAMES  # noqa: E402
@@ -125,6 +128,51 @@ def _privacy_settings(face_confidence: str | None, face_padding: str | None,
     return values
 
 
+def _analysis_settings(raw: str | None, base_thresholds: dict) -> dict:
+    """Parse and validate per-request model and trigger controls."""
+    defaults = {
+        "yolo": {"thresholds": dict(base_thresholds), "iou": 0.7, "imgsz": 640, "max_det": 300},
+        "x3d": {"fight_threshold": 0.5},
+        "tracking": {"proximity_diagonals": PROXIMITY_DIAGONALS,
+                     "motion_diagonals_per_s": MOTION_DIAGONALS_PER_S,
+                     "max_track_gap_s": MAX_TRACK_GAP_S},
+    }
+    if not raw or not raw.strip():
+        return defaults
+    try:
+        payload = json.loads(raw)
+    except (TypeError, json.JSONDecodeError):
+        raise ApiError(400, "invalid_parameter", "'analysis_settings' must be valid JSON.")
+    if not isinstance(payload, dict):
+        raise ApiError(400, "invalid_parameter", "'analysis_settings' must be a JSON object.")
+    try:
+        yolo = payload.get("yolo", {})
+        x3d = payload.get("x3d", {})
+        tracking = payload.get("tracking", {})
+        thresholds = {name: float(yolo.get("thresholds", {}).get(name, base_thresholds[name]))
+                      for name in CLASS_NAMES}
+        if any(not math.isfinite(v) or not 0.01 <= v <= 0.99 for v in thresholds.values()):
+            raise ValueError("each YOLO threshold must be in 0.01..0.99")
+        iou = float(yolo.get("iou", 0.7)); imgsz = int(yolo.get("imgsz", 640)); max_det = int(yolo.get("max_det", 300))
+        fight = float(x3d.get("fight_threshold", 0.5))
+        proximity = float(tracking.get("proximity_diagonals", PROXIMITY_DIAGONALS))
+        motion = float(tracking.get("motion_diagonals_per_s", MOTION_DIAGONALS_PER_S))
+        gap = float(tracking.get("max_track_gap_s", MAX_TRACK_GAP_S))
+        if not 0.1 <= iou <= 0.95: raise ValueError("YOLO NMS IoU must be in 0.1..0.95")
+        if imgsz not in (320, 480, 640, 800, 960, 1280): raise ValueError("YOLO image size must be one of 320, 480, 640, 800, 960, 1280")
+        if not 1 <= max_det <= 1000: raise ValueError("YOLO max detections must be in 1..1000")
+        if not 0.05 <= fight <= 0.95: raise ValueError("X3D fight threshold must be in 0.05..0.95")
+        if not 0.01 <= proximity <= 0.5: raise ValueError("tracking proximity must be in 0.01..0.5")
+        if not 0.01 <= motion <= 2.0: raise ValueError("tracking motion must be in 0.01..2.0")
+        if not 0.1 <= gap <= 3.0: raise ValueError("tracking max gap must be in 0.1..3.0")
+    except (AttributeError, TypeError, ValueError, OverflowError) as exc:
+        raise ApiError(400, "invalid_parameter", f"Invalid analysis setting: {exc}") from exc
+    return {"yolo": {"thresholds": thresholds, "iou": iou, "imgsz": imgsz, "max_det": max_det},
+            "x3d": {"fight_threshold": fight},
+            "tracking": {"proximity_diagonals": proximity, "motion_diagonals_per_s": motion,
+                         "max_track_gap_s": gap}}
+
+
 def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_factory=None) -> FastAPI:
     weights_dir = Path(weights_dir) if weights_dir is not None else config.WEIGHTS_DIR
     face_anonymizer_factory = face_anonymizer_factory or YuNetFaceAnonymizer
@@ -136,6 +184,17 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
 
     app = FastAPI(title="CCTV Safety — Upload & Analyze (pilot)", version=config.SCHEMA_VERSION)
     app.state.registry = registry
+    analysis_semaphore = BoundedSemaphore(1)
+    app.state.analysis_semaphore = analysis_semaphore
+
+    def analysis_slot() -> Iterator[None]:
+        """Keep only one CPU/GPU-heavy analysis active per local pilot process."""
+        if not analysis_semaphore.acquire(blocking=False):
+            raise ApiError(429, "analysis_busy", "Another analysis is running. Retry after it finishes.")
+        try:
+            yield
+        finally:
+            analysis_semaphore.release()
 
     @app.exception_handler(ApiError)
     async def _api_error(_: Request, exc: ApiError):
@@ -195,6 +254,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
 
     @app.post("/api/stage1/analyze")
     def stage1_analyze(
+        _analysis_slot: None = Depends(analysis_slot),
         file: UploadFile | None = File(None),
         model: str | None = Form(None),
         max_frames: str | None = Form(None),
@@ -203,6 +263,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         face_confidence: str | None = Form(None),
         face_padding: str | None = Form(None),
         face_blur_strength: str | None = Form(None),
+        analysis_settings: str | None = Form(None),
     ):
         kind, size = _check_upload(file)
         if model not in config.STAGE1_MODELS:
@@ -238,6 +299,9 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                            "Stage 1 dense mode needs a video file (mp4, avi, mov, mkv); an image was uploaded. "
                            "Use mode=frames for images.")
         privacy_settings = _privacy_settings(face_confidence, face_padding, face_blur_strength)
+        active_settings = _analysis_settings(analysis_settings, thresholds)
+        active_thresholds = active_settings["yolo"]["thresholds"]
+        ppe_confidence = min(active_thresholds["person"], active_thresholds["helmet"], active_thresholds["vest"])
         ensure_model(model)
         face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings)
 
@@ -248,19 +312,19 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             if kind == "image":
                 frame = media.decode_image(path)
                 height, width = frame.shape[:2]
-                (detections,) = registry.stage1(model, [frame])
+                (detections,) = registry.stage1(model, [frame], active_thresholds, {k: active_settings["yolo"][k] for k in ("iou", "imgsz", "max_det")})
                 safe_frame, _ = anonymize(face_anonymizer, frame)
-                frames.append(_frame_entry(0, None, media.encode_jpeg_b64(safe_frame), detections))
+                frames.append(_frame_entry(0, None, media.encode_jpeg_b64(safe_frame), detections, ppe_confidence))
             elif not dense:
                 info = media.probe_video(path)
                 width, height = info.width, info.height
                 indices = media.stage1_indices(info.frame_count, limit)
                 decoded = media.read_frames(path, indices)
-                per_frame = registry.stage1(model, [decoded[index] for index in indices])
+                per_frame = registry.stage1(model, [decoded[index] for index in indices], active_thresholds, {k: active_settings["yolo"][k] for k in ("iou", "imgsz", "max_det")})
                 for index, detections in zip(indices, per_frame):
                     safe_frame, _ = anonymize(face_anonymizer, decoded[index])
                     frames.append(_frame_entry(index, _r(index / info.fps),
-                                               media.encode_jpeg_b64(safe_frame), detections))
+                                               media.encode_jpeg_b64(safe_frame), detections, ppe_confidence))
             else:
                 info = media.probe_video(path)
                 width, height = info.width, info.height
@@ -271,10 +335,10 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                 for item in media.iter_frames(path, media.dense_indices(info, fps_used)):
                     batch.append(item)
                     if len(batch) >= config.DENSE_BATCH:
-                        frames.extend(_detect_batch(model, batch, info))
+                        frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence))
                         batch = []
                 if batch:
-                    frames.extend(_detect_batch(model, batch, info))
+                    frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence))
         finally:
             media.remove_quietly(path)
 
@@ -284,21 +348,25 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             "class_names": list(CLASS_NAMES),
             "media_type": kind,
             "source": _source(width, height, info),
-            "thresholds": {name: _r(value) for name, value in thresholds.items()},
-            "ppe_min_confidence": _r(ppe_min_confidence),
+            "thresholds": {name: _r(value) for name, value in active_thresholds.items()},
+            "ppe_min_confidence": _r(ppe_confidence),
+            "analysis_settings": active_settings,
             "mode": mode_used,
             "sample_fps": _r(fps_used) if dense else None,
             "frames": frames,
         }
 
-    def _detect_batch(model: str, batch: list, info: media.VideoInfo) -> list[dict]:
-        per_frame = registry.stage1(model, [frame for _, frame in batch])
-        return [_frame_entry(index, _r(index / info.fps), None, detections)
+    def _detect_batch(model: str, batch: list, info: media.VideoInfo, yolo_settings=None, ppe_confidence=None) -> list[dict]:
+        yolo_settings = yolo_settings or {"thresholds": thresholds, "iou": 0.7, "imgsz": 640, "max_det": 300}
+        ppe_confidence = ppe_confidence if ppe_confidence is not None else ppe_min_confidence
+        options = {key: yolo_settings[key] for key in ("iou", "imgsz", "max_det")}
+        per_frame = registry.stage1(model, [frame for _, frame in batch], yolo_settings["thresholds"], options)
+        return [_frame_entry(index, _r(index / info.fps), None, detections, ppe_confidence)
                 for (index, _), detections in zip(batch, per_frame)]
 
-    def _frame_entry(index: int, time_s, jpeg_b64, detections) -> dict:
+    def _frame_entry(index: int, time_s, jpeg_b64, detections, ppe_confidence=None) -> dict:
         ordered = sorted(detections, key=lambda item: item.confidence, reverse=True)
-        ppe_rows = assess_ppe(ordered, ppe_min_confidence)
+        ppe_rows = assess_ppe(ordered, ppe_confidence if ppe_confidence is not None else ppe_min_confidence)
         for row in ppe_rows:
             row["person_confidence"] = _r(row["person_confidence"])
         return {
@@ -318,7 +386,11 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         }
 
     @app.post("/api/stage2/analyze")
-    def stage2_analyze(file: UploadFile | None = File(None)):
+    def stage2_analyze(
+        _analysis_slot: None = Depends(analysis_slot),
+        file: UploadFile | None = File(None), analysis_settings: str | None = Form(None),
+    ):
+        active_settings = _analysis_settings(analysis_settings, thresholds)
         kind, size = _check_upload(file)
         _check_kind_and_size(file, kind, size)
         if kind != "video":
@@ -347,7 +419,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                 "start_s": _r(start),
                 "end_s": _r(end),
                 "probs": {"non_fight": _r(p_non), "fight": _r(p_fight)},
-                "label": STAGE2_CLASS_NAMES[1] if p_fight > p_non else STAGE2_CLASS_NAMES[0],
+                "label": STAGE2_CLASS_NAMES[1] if p_fight > active_settings["x3d"]["fight_threshold"] else STAGE2_CLASS_NAMES[0],
             })
         return {
             **_envelope(config.STAGE2_MODEL),
@@ -355,6 +427,8 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             "class_names": list(STAGE2_CLASS_NAMES),
             "frames_per_window": FRAMES,
             "window_s": config.WINDOW_S,
+            "fight_threshold": active_settings["x3d"]["fight_threshold"],
+            "analysis_settings": active_settings,
             "windows": windows,
             "summary": {
                 "max_fight_prob": max(window["probs"]["fight"] for window in windows),
@@ -365,18 +439,25 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
 
     @app.post("/api/pipeline/analyze")
     def pipeline_analyze(
+        _analysis_slot: None = Depends(analysis_slot),
         file: UploadFile | None = File(None),
         model: str | None = Form(None),
         sample_fps: str | None = Form(None),
         face_confidence: str | None = Form(None),
         face_padding: str | None = Form(None),
         face_blur_strength: str | None = Form(None),
+        analysis_settings: str | None = Form(None),
     ):
         """Run YOLO and X3D as one auditable shadow-mode pipeline.
 
         X3D is evaluated on every window while the person-trigger is measured,
         so a missed person cannot silently suppress a possible fight result.
         """
+        pipeline_started = perf_counter()
+        decode_timings: dict[str, float] = {}
+        metadata_ms = 0.0
+        stage2_decode_ms = 0.0
+        preview_encode_ms = 0.0
         kind, size = _check_upload(file)
         if model not in config.STAGE1_MODELS:
             raise ApiError(400, "invalid_parameter",
@@ -392,13 +473,18 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         if kind != "video":
             raise ApiError(422, "video_required", "The combined pipeline requires a video file.")
         privacy_settings = _privacy_settings(face_confidence, face_padding, face_blur_strength)
+        active_settings = _analysis_settings(analysis_settings, thresholds)
+        active_thresholds = active_settings["yolo"]["thresholds"]
+        ppe_confidence = min(active_thresholds["person"], active_thresholds["helmet"], active_thresholds["vest"])
         ensure_model(model)
         ensure_model(config.STAGE2_MODEL)
         face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings)
 
         path = media.save_to_temp(file.file, Path(file.filename).suffix.lower(), config.MAX_UPLOAD_BYTES)
         try:
+            metadata_start = perf_counter()
             info = media.probe_video(path)
+            metadata_ms += (perf_counter() - metadata_start) * 1000
             spans = media.stage2_windows(info.duration_s)
             if len(spans) > config.MAX_WINDOWS:
                 raise _too_long(info)
@@ -414,48 +500,73 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             face_scan_start = perf_counter()
             face_detection_ms = 0.0
             yolo_batch_ms = 0.0
-            for index, frame in media.iter_video_frames(path):
+            for index, frame in media.iter_video_frames(path, decode_timings):
                 detect_start = perf_counter()
                 boxes = face_anonymizer.detect(frame)
                 face_detection_ms += (perf_counter() - detect_start) * 1000
                 faces_by_frame.append(boxes)
                 if index == 0:
+                    encode_start = perf_counter()
                     first_safe_jpeg = media.encode_jpeg_b64(
                         face_anonymizer.blur(frame, boxes, privacy_settings["blur_strength"])
                     )
+                    preview_encode_ms += (perf_counter() - encode_start) * 1000
                 if index in selected:
                     batch.append((index, frame))
                     if len(batch) >= config.DENSE_BATCH:
                         yolo_start = perf_counter()
-                        stage1_frames.extend(_detect_batch(model, batch, info))
+                        stage1_frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence))
                         yolo_batch_ms += (perf_counter() - yolo_start) * 1000
                         batch = []
             if batch:
                 yolo_start = perf_counter()
-                stage1_frames.extend(_detect_batch(model, batch, info))
+                stage1_frames.extend(_detect_batch(model, batch, info, active_settings["yolo"], ppe_confidence))
                 yolo_batch_ms += (perf_counter() - yolo_start) * 1000
             face_scan_wall_ms = round(max(0.0, (perf_counter() - face_scan_start) * 1000 - yolo_batch_ms), 2)
             if len(faces_by_frame) != info.frame_count or first_safe_jpeg is None:
                 raise ApiError(422, "anonymization_incomplete",
                                "Face anonymization did not process every video frame; no original video was shown.")
+            faces_by_frame = bridge_short_face_gaps(
+                faces_by_frame, info.width, info.height
+            )
 
             # Stage 2: classify every 2 s window, independent of the trigger.
             clip_indices = [media.window_frame_indices(start, end, info) for start, end in spans]
+            decode_start = perf_counter()
             decoded = media.read_frames(path, [i for clip in clip_indices for i in clip], media.letterbox_bgr)
+            stage2_decode_ms += (perf_counter() - decode_start) * 1000
         finally:
             media.remove_quietly(path)
 
         clips = [[decoded[i] for i in clip] for clip in clip_indices]
+        x3d_start = perf_counter()
         probs = registry.stage2(clips)
-        add_track_ids(stage1_frames, info.width, info.height)
+        x3d_ms = (perf_counter() - x3d_start) * 1000
+        add_track_ids(stage1_frames, info.width, info.height, active_settings["tracking"]["max_track_gap_s"])
         s2_windows = []
         combined_windows = []
         for index, ((start, end), (p_non, p_fight)) in enumerate(zip(spans, probs)):
-            label = STAGE2_CLASS_NAMES[1] if p_fight > p_non else STAGE2_CLASS_NAMES[0]
+            label = STAGE2_CLASS_NAMES[1] if p_fight > active_settings["x3d"]["fight_threshold"] else STAGE2_CLASS_NAMES[0]
+            fall_frames = [
+                frame for frame in stage1_frames
+                if start <= (frame["time_s"] or 0.0) < end
+                and any(det["class_name"] == "fall" for det in frame["detections"])
+            ]
             person_frames = [frame for frame in stage1_frames
                              if start <= (frame["time_s"] or 0.0) < end
                              and any(det["class_name"] == "person" for det in frame["detections"])]
-            trigger_summary = summarize_window(stage1_frames, start, end, info.width, info.height)
+            trigger_summary = summarize_window(stage1_frames, start, end, info.width, info.height,
+                active_settings["tracking"]["proximity_diagonals"], active_settings["tracking"]["motion_diagonals_per_s"])
+            # X3D only distinguishes fight/non-fight. A fall signal makes a raw
+            # fight prediction ambiguous, so keep the model output but request review.
+            if label == "fight" and fall_frames:
+                decision, decision_label = "review_fall_fight_conflict", "ล้ม/Fight กำกวม · ตรวจสอบ"
+            elif label == "fight":
+                decision, decision_label = "fight_candidate", "สงสัย Fight · pilot"
+            elif fall_frames:
+                decision, decision_label = "fall_detected", "พบสัญญาณ Fall · ตรวจสอบ"
+            else:
+                decision, decision_label = "no_fight_candidate", "ไม่พบ Fight candidate"
             s2_windows.append({
                 "index": index, "start_s": _r(start), "end_s": _r(end),
                 "probs": {"non_fight": _r(p_non), "fight": _r(p_fight)}, "label": label,
@@ -464,6 +575,10 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                 "index": index, "start_s": _r(start), "end_s": _r(end),
                 "person_triggered": bool(person_frames),
                 "person_frames": len(person_frames),
+                "fall_detected": bool(fall_frames),
+                "fall_frames": len(fall_frames),
+                "decision": decision,
+                "decision_label": decision_label,
                 **trigger_summary,
                 "x3d_evaluated": True,
                 "fight_probability": _r(p_fight),
@@ -474,8 +589,9 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         stage1 = {
             **_envelope(model), "detector_schema_version": DETECTOR_SCHEMA_VERSION,
             "class_names": list(CLASS_NAMES), "media_type": "video", "source": source,
-            "thresholds": {name: _r(value) for name, value in thresholds.items()},
-            "ppe_min_confidence": _r(ppe_min_confidence), "mode": "dense",
+            "thresholds": {name: _r(value) for name, value in active_thresholds.items()},
+            "ppe_min_confidence": _r(ppe_confidence), "mode": "dense",
+            "analysis_settings": active_settings,
             "sample_fps": _r(fps_used), "frames": stage1_frames,
         }
         fight_windows = sum(window["label"] == "fight" for window in s2_windows)
@@ -483,18 +599,21 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
             **_envelope(config.STAGE2_MODEL), "source": source,
             "class_names": list(STAGE2_CLASS_NAMES), "frames_per_window": FRAMES,
             "window_s": config.WINDOW_S, "windows": s2_windows,
+            "fight_threshold": active_settings["x3d"]["fight_threshold"],
+            "analysis_settings": active_settings,
             "summary": {
                 "max_fight_prob": max(window["probs"]["fight"] for window in s2_windows),
                 "fight_windows": fight_windows, "total_windows": len(s2_windows),
             },
         }
-        return {
+        response_started = perf_counter()
+        response = {
             "pipeline_mode": "tracking_trigger_shadow",
             "trigger": "candidate if person proximity or multi-person motion is observed",
             "trigger_parameters": {
-                "proximity_max_distance_frame_diagonals": PROXIMITY_DIAGONALS,
-                "motion_min_speed_frame_diagonals_per_s": MOTION_DIAGONALS_PER_S,
-                "track_max_gap_s": MAX_TRACK_GAP_S,
+                "proximity_max_distance_frame_diagonals": active_settings["tracking"]["proximity_diagonals"],
+                "motion_min_speed_frame_diagonals_per_s": active_settings["tracking"]["motion_diagonals_per_s"],
+                "track_max_gap_s": active_settings["tracking"]["max_track_gap_s"],
             },
             "x3d_policy": "evaluate_every_window_shadow_mode",
             "face_blur": {
@@ -521,9 +640,27 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                     "fight_windows_without_candidate_trigger": sum(
                         w["x3d_label"] == "fight" and not w["candidate_triggered"] for w in combined_windows
                     ),
+                    "review_fall_fight_conflict_windows": sum(
+                        w["decision"] == "review_fall_fight_conflict" for w in combined_windows
+                    ),
+                    "fight_candidate_windows": sum(
+                        w["decision"] == "fight_candidate" for w in combined_windows
+                    ),
+                    "fall_detected_windows": sum(w["fall_detected"] for w in combined_windows),
                 },
             },
         }
+        response["timings_ms"] = {
+            "video_decode_ms": round(decode_timings.get("decode_ms", 0.0) + metadata_ms + stage2_decode_ms, 2),
+            "face_detection_ms": round(face_detection_ms, 2),
+            "face_scan_wall_ms": face_scan_wall_ms,
+            "yolo_ms": round(yolo_batch_ms, 2),
+            "x3d_ms": round(x3d_ms, 2),
+            "preview_encode_ms": round(preview_encode_ms, 2),
+            "response_assembly_ms": round((perf_counter() - response_started) * 1000, 2),
+            "total_ms": round((perf_counter() - pipeline_started) * 1000, 2),
+        }
+        return response
 
     api_methods: dict[str, set[str]] = {}
     for route in app.routes:

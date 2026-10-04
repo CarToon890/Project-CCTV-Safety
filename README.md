@@ -4,8 +4,9 @@
 > dataset has completed YOLOv8n (81/100 epochs) and YOLOv8s (86/100 epochs)
 > pilot runs and held-out evaluation. Stage 2 SCFD/X3D-S completed a small
 > trained/evaluated pilot. Both are educational pilots, not production-ready.
-> Stage 2 integration, person tracking/event logic, and target-CCTV evaluation
-> remain future work. Dated readiness reports below are historical snapshots.
+> A local Upload & Analyze prototype now runs Stage 1 and Stage 2 together in
+> shadow mode. Production tracking/event logic and target-CCTV evaluation remain
+> future work. Dated readiness reports below are historical snapshots.
 
 Public-dataset AI baseline สำหรับตรวจจับเหตุความปลอดภัยจากภาพ CCTV ด้วย YOLOv8
 
@@ -34,8 +35,9 @@ Stage 1 ใช้โมเดลตรวจจับ 6 คลาสเชิง
 `person`, `helmet` และ `vest` ดูกติกาฉบับเต็มใน `docs/data_schema_6classes.md`
 
 `fight` ถูกย้ายไป Stage 2 Temporal Event Classification; มี SCFD/X3D-S pilot
-ที่ฝึกและประเมินแล้ว แต่ยังไม่เชื่อมกับ Stage 1 และไม่ใช่ YOLO bounding-box
-class ใน Stage 1
+ที่ฝึกและประเมินแล้ว และหน้า Upload & Analyze เรียก Stage 1 + Stage 2 ร่วมกัน
+ใน shadow mode สำหรับไฟล์วิดีโอ แต่ยังไม่ใช่ระบบ event alert ที่ผ่านการรับรอง
+และไม่ใช่ YOLO bounding-box class ใน Stage 1
 
 ---
 
@@ -45,7 +47,8 @@ class ใน Stage 1
 - Frameworks & Libraries: PyTorch, Ultralytics YOLO, OpenCV, Roboflow
 - Experiment: YOLOv8n เป็น baseline และ YOLOv8s เป็นตัวเปรียบเทียบภายใต้ config เดียวกัน
 - Recorded pilot runtime: Kaggle GPU. Colab remains an optional reproducibility workflow.
-- Web mockup อยู่นอกขอบเขต AI baseline และยังไม่เชื่อมต่อโมเดล/API
+- หน้า Upload & Analyze เป็นเว็บต้นแบบ FastAPI สำหรับเรียกโมเดลจริงในเครื่อง;
+  หน้า Dashboard, Live Monitoring และ Alert Logs ยังเป็นข้อมูลจำลอง
 
 ---
 
@@ -132,8 +135,9 @@ Project-CCTV-Safety/
 - [x] จัดทำ reproducible data/training/evaluation pipeline
 - [x] จัดทำ provisional Unified Stage 1 dataset และฝึก/ประเมิน YOLOv8n กับ YOLOv8s
 - [x] ฝึก/ประเมิน SCFD Stage 2 X3D-S pilot
-- [ ] เชื่อม Stage 1 กับ Stage 2 และทดสอบ end-to-end
+- [x] เชื่อม Stage 1 กับ Stage 2 ใน Upload & Analyze แบบ shadow mode
+- [ ] ประเมิน end-to-end และยืนยันผลกับวิดีโอจากกล้องเป้าหมาย
 - [ ] ทดสอบกับข้อมูลกล้อง CCTV เป้าหมายเมื่อมีข้อมูล
 > ข้อจำกัด: ผลจาก public datasets ยังไม่ใช่หลักฐานว่าโมเดลพร้อมใช้งานกับกล้องจริง
-> Fall ต้องมี temporal confirmation ในระบบจริง; Stage 2 pilot ยังต้องเชื่อมกับ
-> Stage 1 และประเมินกับข้อมูลกล้องเป้าหมายก่อนกล่าวอ้างความพร้อมใช้งานจริง
+> Fall ยังเป็นผลตรวจจับรายเฟรมที่อาจผิดพลาด; ต้องมีการยืนยันเชิงเวลาและ
+> ประเมินกับข้อมูลกล้องเป้าหมายก่อนกล่าวอ้างความพร้อมใช้งานจริง

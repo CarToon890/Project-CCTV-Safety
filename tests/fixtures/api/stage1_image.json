@@ -29,6 +29,11 @@
     "smoke": 0.2
   },
   "ppe_min_confidence": 0.2,
+  "analysis_settings": {
+    "yolo": {"thresholds": {"person": 0.25, "helmet": 0.2, "vest": 0.2, "fall": 0.2, "fire": 0.2, "smoke": 0.2}, "iou": 0.7, "imgsz": 640, "max_det": 300},
+    "x3d": {"fight_threshold": 0.5},
+    "tracking": {"proximity_diagonals": 0.16, "motion_diagonals_per_s": 0.25, "max_track_gap_s": 0.75}
+  },
   "mode": "frames",
   "sample_fps": null,
   "frames": [

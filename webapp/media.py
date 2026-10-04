@@ -7,6 +7,7 @@ import os
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
+from time import perf_counter
 
 import cv2
 import numpy as np
@@ -79,8 +80,26 @@ def decode_failed(detail: str) -> ApiError:
     return ApiError(422, "decode_failed", f"The file could not be decoded: {detail}.")
 
 
+def _check_video_pixels(frame: np.ndarray) -> None:
+    height, width = frame.shape[:2]
+    if width * height > config.MAX_VIDEO_PIXELS:
+        raise ApiError(413, "media_dimensions_too_large",
+                       f"Video frame dimensions exceed the {config.MAX_VIDEO_PIXELS:,}-pixel limit.")
+
+
 def decode_image(path: Path) -> np.ndarray:
     """Decode an image to a BGR uint8 array (OpenCV first, Pillow fallback)."""
+    try:
+        from PIL import Image
+
+        with Image.open(path) as image:
+            if image.width * image.height > config.MAX_IMAGE_PIXELS:
+                raise ApiError(413, "media_dimensions_too_large",
+                               f"Image dimensions exceed the {config.MAX_IMAGE_PIXELS:,}-pixel limit.")
+    except ApiError:
+        raise
+    except Exception:  # noqa: BLE001
+        pass  # Let the decoder below return the standard decode_failed response.
     data = np.fromfile(str(path), dtype=np.uint8)
     frame = cv2.imdecode(data, cv2.IMREAD_COLOR) if data.size else None
     if frame is None:
@@ -124,6 +143,9 @@ def probe_video(path: Path) -> VideoInfo:
         if not ok or frame is None:
             raise decode_failed("no decodable frames")
         height, width = frame.shape[:2]
+        if width * height > config.MAX_VIDEO_PIXELS:
+            raise ApiError(413, "media_dimensions_too_large",
+                           f"Video frame dimensions exceed the {config.MAX_VIDEO_PIXELS:,}-pixel limit.")
         return VideoInfo(width=int(width), height=int(height), fps=fps, frame_count=count)
     finally:
         cap.release()
@@ -152,6 +174,7 @@ def iter_frames(path: Path, indices: list[int], transform=None):
             ok, frame = cap.read()
             if not ok or frame is None:
                 break
+            _check_video_pixels(frame)
             last = frame
             if position == wanted[pointer]:
                 pointer += 1
@@ -167,17 +190,21 @@ def iter_frames(path: Path, indices: list[int], transform=None):
             yield index, filler
 
 
-def iter_video_frames(path: Path):
-    """Yield every actually decoded source frame in order without trusting metadata count."""
+def iter_video_frames(path: Path, timings: dict | None = None):
+    """Yield every decoded frame; optionally accumulate time spent inside decoder reads."""
     cap = cv2.VideoCapture(str(path))
     try:
         if not cap.isOpened():
             raise decode_failed("OpenCV cannot open this video")
         index = 0
         while True:
+            started = perf_counter()
             ok, frame = cap.read()
+            if timings is not None:
+                timings["decode_ms"] = timings.get("decode_ms", 0.0) + (perf_counter() - started) * 1000
             if not ok or frame is None:
                 break
+            _check_video_pixels(frame)
             yield index, frame
             index += 1
         if index == 0:

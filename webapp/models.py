@@ -103,14 +103,17 @@ class ModelRegistry:
         model.to(self.device)
         return model
 
-    def stage1(self, name: str, frames_bgr: list[np.ndarray]) -> list[list[Detection]]:
+    def stage1(self, name: str, frames_bgr: list[np.ndarray], thresholds: dict | None = None,
+               yolo_options: dict | None = None) -> list[list[Detection]]:
         if name not in config.STAGE1_MODELS:
             raise ValueError(f"Unknown Stage 1 model: {name}")
         from cctv_safety.detector import detect
 
         model = self.load(name)
+        active_thresholds = thresholds or self.thresholds
+        options = yolo_options or {}
         with self._infer_locks[name]:
-            return [detect(model, frame, self.thresholds) for frame in frames_bgr]
+            return [detect(model, frame, active_thresholds, **options) for frame in frames_bgr]
 
     def stage2(self, clips: list[list[np.ndarray]]) -> list[tuple[float, float]]:
         import torch

@@ -13,8 +13,8 @@
 > เท่านั้น ไม่ใช่ class list ของโมเดล ปัจจุบัน Stage 1 ใช้ detector schema v2
 > จำนวน 6 spatial classes ใน `../docs/data_schema_6classes.md` และคำนวณ
 > `no_helmet`/`no_vest` ด้วย post-processing ส่วน `fight` เป็น Stage 2 temporal
-> event (X3D-S pilot) ซึ่งเรียกแยกได้ในหน้า Upload & Analyze แต่ยังไม่ได้ผสานกับ
-> Stage 1 เป็นระบบเดียว ดู `../docs/project_status.md`.
+> event (X3D-S pilot) ซึ่งหน้า Upload & Analyze รันร่วมกับ Stage 1 ใน shadow
+> mode สำหรับวิดีโอ แต่ยังไม่ใช่ระบบแจ้งเตือนที่ผ่านการประเมิน ดู `../docs/project_status.md`.
 
 ---
 
@@ -34,15 +34,15 @@ mockup/
 ### หน้า Upload & Analyze (ต้องรันผ่าน backend)
 
 หน้า `index.html` ถูก serve โดย FastAPI ที่ `/` และเรียก API แบบ same-origin
-(`/api/health`, `/api/stage1/analyze`, `/api/stage2/analyze`) — ดู section 5 ของ
+(`/api/health`, `/api/stage1/analyze`, `/api/stage2/analyze`, `/api/pipeline/analyze`) — ดู section 5 ของ
 `../docs/web_api_contract.md`
 
 ```bash
 # จาก root ของ repo; ไฟล์ .pt อยู่ใน ./weights (หรือกำหนด CCTV_WEIGHTS_DIR)
-.venv-cuda/Scripts/python -m uvicorn webapp.api:app --port 8000
+.venv-cuda/Scripts/python -m uvicorn webapp.api:app --host 127.0.0.1 --port 8000
 ```
 
-แล้วเปิด `http://localhost:8000/` → เมนู **Upload & Analyze**
+แล้วเปิด `http://127.0.0.1:8000/` → เมนู **Upload & Analyze** (ไม่มีระบบ login; ใช้เฉพาะในเครื่อง)
 
 ถ้าเปิด `index.html` ตรงๆ จากไฟล์ (`file://`) หน้า mock ยังใช้ได้ แต่หน้า Upload & Analyze
 จะแสดง "เชื่อมต่อ API ไม่ได้ — รัน backend ก่อน"
@@ -72,7 +72,9 @@ mockup/
   (สรุป, chip, ตาราง PPE, canvas, ไทม์ไลน์, รายละเอียดทางเทคนิค) และ response ของรอบเก่าที่มาช้าจะถูกทิ้ง;
   ถ้า Stage ใด error จะไม่มีผลเก่าค้าง ตัวกรองการแสดงผลกลับเป็นค่าเริ่มต้นทุกครั้ง
 - **วิดีโอ — ตรวจว่าเบราว์เซอร์เล่นได้ไหม (probe):** `<video>` preview ต้องเกิด `loadeddata` และมี `videoWidth > 0` ภายใน 6 วินาที
-  - เล่นได้ → Stage 1 `mode=dense` (`sample_fps` 1–30, ค่าเริ่มต้น 10) แล้วเล่น **ไฟล์ต้นฉบับ** พร้อม canvas overlay
+  - เล่นได้ → pipeline เรียก Stage 1 `mode=dense` (`sample_fps` 1–30, ค่าเริ่มต้น 10) และ Stage 2 ในคำขอเดียว
+    องค์ประกอบวิดีโอต้นฉบับถูกซ่อนและวาดลง canvas แบบ opaque; ทุกเฟรมที่แสดงต้องผ่าน face mask จาก YuNet แล้วจึงวาดกล่อง
+    ถ้าขั้นตอน anonymization หรือการวาดล้มเหลว canvas จะไม่แสดงภาพต้นฉบับ
     วาดกล่องของตัวอย่าง dense ที่ใกล้ `currentTime` ที่สุด (เฉพาะถ้าห่างไม่เกิน `1/sample_fps`), คำนวณกรอบภาพจริงตาม
     `object-fit: contain` และวาดใหม่เมื่อ resize / seek / ระหว่างเล่น; มุมขวาบนแสดง "Stage 2: ทะเลาะ / ปกติ" (ไม่มีเวลา)
   - เล่นไม่ได้ (เช่น mp4 `mp4v` จาก OpenCV) → Stage 1 `mode=frames` (`max_frames` 1–60, ค่าเริ่มต้น 16) แสดงภาพทีละเฟรม
@@ -82,9 +84,7 @@ mockup/
   ช่วงที่ Stage 2 ให้ label `fight` แสดงเป็น **แถบแดง** บนเส้น (`<input type="range">` จึงใช้คีย์บอร์ดได้)
 - **Stage 2:** แสดงเพียง "⚠ พบการทะเลาะ" หรือ "✓ ไม่พบการทะเลาะ" (จาก `summary.fight_windows`);
   เวลาแต่ละช่วง, label, ความน่าจะเป็นดิบ, `max_fight_prob` และ `fight_windows / total_windows` อยู่ใน "รายละเอียดทางเทคนิค"
-- **Stage 1 สรุปสั้น (9.4.2):** เช่น "พบ 2 คน · ไม่สวมหมวก 2 · ไม่สวมเสื้อ 2" (หรือ "· สวม PPE ครบ") ตามด้วย "พบไฟ / พบควัน / พบคนล้ม"
-  เมื่อมี — วิดีโอ (ไม่มี tracking): จำนวนคน = สูงสุดในเฟรมใดเฟรมหนึ่ง, จำนวนแต่ละ alert = สูงสุดในเฟรมใดเฟรมหนึ่ง,
-  ไฟ/ควัน/คนล้ม = พบในเฟรมใดก็ได้ (กฎนี้เขียนไว้ในรายละเอียดทางเทคนิค)
+- **Stage 1 สรุปสั้น:** แสดงจำนวนเป็น "กล่อง person สูงสุด N กล่อง/เฟรม" ไม่อ้างเป็นจำนวนบุคคลจริง เพราะไม่มี tracking ที่ยืนยันอัตลักษณ์และกล่องซ้ำอาจทำให้จำนวนเกินจริง; PPE เป็นผลที่คำนวณจากกล่องเหล่านี้ ส่วน Fall/Fire/Smoke เป็นสัญญาณจากโมเดลที่ต้องตรวจทาน
 - **มุมมอง (9.4.8):** ตัวเลือก "แสดงผล: มุมมอง PPE | เลือก class" — ถ้า response มีคน เปิดที่ **มุมมอง PPE** เป็นค่าเริ่มต้น
   (กล่องคนสีเขียว = ไม่มี alert / แดง = มี alert, หมายเลข #i ตรงกับตาราง PPE, สีมาจาก `ppe` rows ของ API เท่านั้น);
   **เลือก class** = เลือก class ที่จะวาดด้วย chip (ชื่ออย่างเดียว เช่น "คน (person)") — chip ใช้เฉพาะในมุมมองนี้;
@@ -98,6 +98,8 @@ mockup/
   hover/focus แถวจะไฮไลต์กล่องของคนนั้น)
 - **รายละเอียดทางเทคนิค** (`<details>` ปิดไว้ก่อน): model, mode, sample_fps, fps, schema_version, threshold ต่อ class,
   ppe_min_confidence, กฎสรุปวิดีโอ, สถานะ API (device / โมเดล / ปุ่มรีเฟรช) และผลรายช่วงของ Stage 2
+  รวมถึงเวลาวัด decoder, YuNet, YOLO, X3D และเวลารวมจาก API (ตัวเลขขึ้นกับฮาร์ดแวร์/codec)
+  Track IDs ถูกสร้างจากกล่อง person ที่ตรวจพบ จึงอาจซ้ำตามกล่องซ้ำและไม่ใช่การยืนยันอัตลักษณ์บุคคล
 - **ป้าย "ผลจากโมเดลจริง — pilot"** แสดงเฉพาะเมื่อ response มี `is_model_output === true` พร้อม `disclaimer` จาก API
   (chip บน topbar "หน้าเรียก API จริง · pilot" เป็นแค่ป้ายบอกหน้า)
 - **Error:** `{error:{code,message}}` → ข้อความภาษาไทยตาม `code` (+ ข้อความต้นฉบับ); เชื่อมต่อไม่ได้ →

@@ -372,6 +372,14 @@ body[data-page="analyze"] .chip-real{display:inline-block}
 .az-privacy-control input[type=range]{width:100%;accent-color:var(--accent)}
 .az-privacy-control output{font:600 12px var(--mono);color:var(--text)}
 .az-privacy-note{margin:10px 0 0;font-size:11px;line-height:1.55;color:var(--muted2)}
+.az-model-settings{border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:#0d141d}
+.az-model-settings summary{cursor:pointer;font-size:12px;font-weight:650;color:var(--text)}
+.az-model-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:10px;margin-top:12px}
+.az-model-control{display:flex;flex-direction:column;gap:5px;padding:9px;border:1px solid var(--line);border-radius:8px;background:#101923}
+.az-model-control label{font-size:11px;color:var(--muted)}
+.az-model-control small{font-size:10px;line-height:1.4;color:var(--muted2)}
+.az-model-control input,.az-model-control select{width:100%;background:#0b1118;color:var(--text);border:1px solid var(--line);border-radius:5px;padding:5px}
+.az-model-heading{grid-column:1/-1;font-size:11px;font-weight:700;color:var(--accent);padding-top:5px}
 .az-fileinfo{font-size:11.5px;color:var(--muted2)}
 .az-preview{background:#05080c;border:1px solid var(--line);border-radius:10px;min-height:120px;
   display:grid;place-items:center;overflow:hidden}
@@ -471,6 +479,7 @@ body[data-page="analyze"] .chip-real{display:inline-block}
 .az-corner{position:absolute;z-index:2;font-size:12px;font-weight:700;padding:4px 9px;border-radius:6px;pointer-events:none;
   background:#0f172acc;color:#e2e8f0;border:1px solid #475569}
 .az-corner.fight{background:#7e22cecc;color:#fff;border-color:#d8b4fe}
+.az-corner.review{background:#92400ecc;color:#ffedd5;border-color:#f59e0b}
 .az-now{min-width:0}
 .az-dets{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .az-det{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:5px 9px;border-radius:7px;background:var(--panel2)}
@@ -484,6 +493,7 @@ body[data-page="analyze"] .chip-real{display:inline-block}
 .az-raw:has(.az-rrow.pipeline){overflow-x:auto}
 .az-rrow:last-child{border:none}
 .az-rrow.fight{background:#7f1d1d33}
+.az-rrow.review{background:#78350f44}
 .az-rule{font-size:11px;color:var(--muted);line-height:1.6;margin-top:10px}
 .az-seg{display:inline-flex;align-items:center;gap:2px;padding:2px;border-radius:20px;border:1px solid var(--line2);background:var(--panel2)}
 .az-seg-lbl{font-size:11px;color:var(--muted2);padding:0 6px 0 8px}
@@ -497,6 +507,7 @@ body[data-page="analyze"] .chip-real{display:inline-block}
 .az-seekbar::before{content:"";position:absolute;left:7px;right:7px;top:9px;height:4px;border-radius:3px;background:var(--panel3)}
 .az-seekmarks{position:absolute;left:7px;right:7px;top:7px;height:8px;pointer-events:none}
 .az-mark{position:absolute;top:0;bottom:0;background:var(--crit);border-radius:2px;box-shadow:0 0 6px #ef444488}
+.az-mark.review{background:#f59e0b;box-shadow:0 0 6px #f59e0b88}
 .az-seekbar input[type=range]{position:absolute;inset:0;width:100%;margin:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
 .az-seekbar input[type=range]::-webkit-slider-runnable-track{height:22px;background:transparent}
 .az-seekbar input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:4px;border-radius:50%;background:var(--accent);border:2px solid #e0f2fe;box-shadow:0 0 0 2px #0a0e13}
@@ -812,6 +823,28 @@ body[data-page="analyze"] .chip-real{display:inline-block}
                 Analyze
               </button>
             </div>
+            <details class="az-model-settings">
+              <summary>การตั้งค่าโมเดลและการตรวจ (YOLO · X3D · Tracking)</summary>
+              <div class="az-model-grid">
+                <div class="az-model-heading">YOLO · ใช้ร่วมกันทั้ง YOLOv8n และ YOLOv8s</div>
+                <div class="az-model-control"><label>ความมั่นใจ person</label><input id="azThPerson" type="number" min="0.01" max="0.99" step="0.01" value="0.25"><small>ลดลงพบคนง่ายขึ้น แต่อาจเพิ่มกล่องผิดพลาด</small></div>
+                <div class="az-model-control"><label>ความมั่นใจ helmet</label><input id="azThHelmet" type="number" min="0.01" max="0.99" step="0.01" value="0.20"></div>
+                <div class="az-model-control"><label>ความมั่นใจ vest</label><input id="azThVest" type="number" min="0.01" max="0.99" step="0.01" value="0.20"></div>
+                <div class="az-model-control"><label>ความมั่นใจ fall</label><input id="azThFall" type="number" min="0.01" max="0.99" step="0.01" value="0.20"></div>
+                <div class="az-model-control"><label>ความมั่นใจ fire</label><input id="azThFire" type="number" min="0.01" max="0.99" step="0.01" value="0.20"></div>
+                <div class="az-model-control"><label>ความมั่นใจ smoke</label><input id="azThSmoke" type="number" min="0.01" max="0.99" step="0.01" value="0.20"></div>
+                <div class="az-model-control"><label>NMS IoU</label><input id="azYoloIou" type="number" min="0.1" max="0.95" step="0.05" value="0.70"><small>ต่ำลงจะตัดกล่องซ้อนทับซ้ำมากขึ้น</small></div>
+                <div class="az-model-control"><label>ขนาดภาพเข้าโมเดล</label><select id="azYoloImg"><option>320</option><option>480</option><option selected>640</option><option>800</option><option>960</option><option>1280</option></select><small>ใหญ่ขึ้นอาจช่วยวัตถุเล็ก แต่ช้าลงและใช้หน่วยความจำเพิ่ม</small></div>
+                <div class="az-model-control"><label>กล่องสูงสุดต่อเฟรม</label><input id="azYoloMaxDet" type="number" min="1" max="1000" step="10" value="300"></div>
+                <div class="az-model-heading">X3D-S · Fight / Non-Fight</div>
+                <div class="az-model-control"><label>เกณฑ์ความน่าจะเป็น Fight</label><input id="azX3dThreshold" type="number" min="0.05" max="0.95" step="0.05" value="0.50"><small>เพิ่มแล้วแจ้ง Fight ยากขึ้น แต่อาจพลาดเหตุจริง · หน้าต่าง 2 วินาที / 13 เฟรมเป็นข้อกำหนดโมเดล</small></div>
+                <div class="az-model-heading">Tracking และ Trigger · ค่าทดลองใน shadow mode</div>
+                <div class="az-model-control"><label>ระยะใกล้ (สัดส่วนแนวทแยงภาพ)</label><input id="azTrackProximity" type="number" min="0.01" max="0.50" step="0.01" value="0.16"><small>เพิ่มแล้วคนที่อยู่ห่างกันมากขึ้นก็เข้าเกณฑ์ใกล้กัน</small></div>
+                <div class="az-model-control"><label>ความเร็วขั้นต่ำ (แนวทแยง/วินาที)</label><input id="azTrackMotion" type="number" min="0.01" max="2" step="0.05" value="0.25"><small>ลดลงแล้ว trigger จากการเคลื่อนไหวได้ง่ายขึ้น</small></div>
+                <div class="az-model-control"><label>ช่วงขาดหายสูงสุดของ track (วินาที)</label><input id="azTrackGap" type="number" min="0.1" max="3" step="0.05" value="0.75"><small>เพิ่มแล้วเชื่อม track ข้ามเฟรมที่ตรวจไม่พบได้นานขึ้น</small></div>
+              </div>
+              <p class="az-privacy-note">ค่า FPS สำหรับวิดีโอและจำนวนเฟรมสำหรับโหมดสำรองอยู่ด้านบน · การเพิ่มความไวอาจเพิ่มผลบวกลวง · ค่าเหล่านี้มีผลกับคำขอวิเคราะห์ที่เริ่มหลังปรับเท่านั้น; อุปกรณ์ CPU/GPU เลือกอัตโนมัติตาม backend</p>
+            </details>
             <details class="az-privacy-settings">
               <summary>ตั้งค่าการตรวจและเบลอใบหน้า (YuNet)</summary>
               <div class="az-privacy-grid">
@@ -826,12 +859,12 @@ body[data-page="analyze"] .chip-real{display:inline-block}
                   <output id="azFacePaddingValue" for="azFacePadding">25%</output>
                 </div>
                 <div class="az-privacy-control">
-                  <label for="azFaceBlur">ความแรงของ Gaussian blur</label>
+                  <label for="azFaceBlur">ความหยาบของโมเสกปิดหน้า</label>
                   <input type="range" id="azFaceBlur" min="0.40" max="1.50" step="0.10" value="0.80">
                   <output id="azFaceBlurValue" for="azFaceBlur">0.80</output>
                 </div>
               </div>
-              <p class="az-privacy-note">confidence ต่ำลงจะรับใบหน้าที่คะแนนต่ำได้มากขึ้น แต่อาจเบลอบริเวณอื่นเพิ่ม; ค่าสูงขึ้นอาจทำให้ใบหน้าหลุดตรวจ · padding และ blur สูงขึ้นจะปกปิดกว้าง/แรงขึ้น · ระบบตรวจทุกเฟรมเสมอและไม่มีตัวเลือกปิดเบลอ หากตรวจหรือวาดไม่สำเร็จ ภาพจะแสดงเป็นพื้นที่ปิดทับ</p>
+              <p class="az-privacy-note">confidence ต่ำลงจะรับใบหน้าที่คะแนนต่ำได้มากขึ้น แต่อาจปิดบังบริเวณอื่นเพิ่ม; ค่าสูงขึ้นอาจทำให้ใบหน้าหลุดตรวจ · padding และความหยาบของโมเสกที่สูงขึ้นจะปกปิดกว้าง/แรงขึ้น · ระบบตรวจทุกเฟรมเสมอและไม่มีตัวเลือกปิดเบลอ หากตรวจหรือวาดไม่สำเร็จ ภาพจะแสดงเป็นพื้นที่ปิดทับ</p>
             </details>
             <div class="az-fileinfo" id="azFileInfo">ยังไม่ได้เลือกไฟล์</div>
             <div class="az-state" id="azStatus" hidden></div>
@@ -910,8 +943,7 @@ body[data-page="analyze"] .chip-real{display:inline-block}
             <details class="az-tech">
               <summary>รายละเอียดทางเทคนิค</summary>
               <div class="az-meta" id="azS1Meta"></div>
-              <p class="az-rule" id="azS1Rule" hidden>วิธีสรุปวิดีโอ (ไม่มีการติดตามตัวบุคคล): จำนวนคน = จำนวนคนสูงสุดในเฟรมใดเฟรมหนึ่งที่ตรวจ ·
-                ไม่สวมหมวก / ไม่สวมเสื้อ = จำนวนสูงสุดของการแจ้งเตือนนั้นในเฟรมใดเฟรมหนึ่ง · พบไฟ / ควัน / คนล้ม = พบในเฟรมใดก็ได้ที่ตรวจ</p>
+              <p class="az-rule" id="azS1Rule" hidden>วิธีสรุปวิดีโอ (ไม่มีการติดตามตัวบุคคล): จำนวนกล่อง person = จำนวนกล่องสูงสุดในเฟรมที่ตรวจ ไม่ใช่จำนวนคนที่ยืนยันแล้ว กล่องซ้ำอาจทำให้ค่าสูงเกินจริง · PPE เป็นผลคำนวณจากกล่องตรวจจับ · สัญญาณ Fall/ไฟ/ควันเป็นผลจากโมเดลและควรตรวจทาน</p>
               <div class="az-sub" style="margin-top:12px">จำนวน detection ต่อ class (ทุกเฟรมที่ตรวจ) และ threshold ที่ API ใช้</div>
               <div class="az-counts" id="azS1Counts"></div>
             </details>

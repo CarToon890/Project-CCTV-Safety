@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import base64
 import io
+import json
 import sys
 from functools import reduce
 from pathlib import Path
@@ -53,15 +54,19 @@ class StubRegistry:
         self.missing = missing
         self.stage1_calls: list[tuple[str, list[np.ndarray]]] = []
         self.stage2_calls: list[list[list[np.ndarray]]] = []
+        self.last_thresholds = None
+        self.last_options = None
 
     def status(self) -> dict:
         state = "missing" if self.missing else "available"
         return {"yolov8n": state, "yolov8s": state, "x3d_s": state, "device": "cpu"}
 
-    def stage1(self, name, frames_bgr):
+    def stage1(self, name, frames_bgr, thresholds=None, options=None):
         if self.missing:
             raise WeightsMissing(name, WEIGHTS_DIR / f"{name}.pt")
         self.stage1_calls.append((name, list(frames_bgr)))
+        self.last_thresholds = thresholds
+        self.last_options = options
         return [stub_detections(f) for f in frames_bgr]
 
     def stage2(self, clips):
@@ -225,7 +230,8 @@ def test_root_serves_mockup_html(client):
     resp = client.get("/")
     assert resp.status_code == 200
     assert resp.headers["content-type"].startswith("text/html")
-    assert resp.text == (REPO_ROOT / "mockup" / "index.html").read_text(encoding="utf-8")
+    expected = (REPO_ROOT / "mockup" / "index.html").read_text(encoding="utf-8")
+    assert resp.text.replace("\r\n", "\n") == expected.replace("\r\n", "\n")
 
 
 def test_analyze_js_is_served(client):
@@ -254,6 +260,25 @@ def test_stage1_image_matches_fixture(client, stub):
     assert frame["index"] == 0 and frame["time_s"] is None
     assert decode_b64_jpeg(frame["image_jpeg_b64"]).size == (160, 120)
     assert len(stub.stage1_calls) == 1 and stub.stage1_calls[0][0] == "yolov8n"
+
+
+def test_analysis_settings_are_validated_echoed_and_applied(client, stub):
+    settings = {
+        "yolo": {"thresholds": {"person": 0.41}, "iou": 0.5, "imgsz": 480, "max_det": 42},
+        "x3d": {"fight_threshold": 0.61},
+        "tracking": {"proximity_diagonals": 0.2, "motion_diagonals_per_s": 0.4, "max_track_gap_s": 1.0},
+    }
+    response = post_file(client, STAGE1, "settings.jpg", image_bytes(),
+                         {"model": "yolov8n", "analysis_settings": json.dumps(settings)})
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["analysis_settings"]["yolo"]["thresholds"]["person"] == pytest.approx(0.41)
+    assert body["analysis_settings"]["yolo"]["iou"] == pytest.approx(0.5)
+    assert body["analysis_settings"]["yolo"]["imgsz"] == 480
+    assert body["analysis_settings"]["yolo"]["max_det"] == 42
+    assert body["analysis_settings"]["x3d"]["fight_threshold"] == pytest.approx(0.61)
+    assert stub.last_thresholds["person"] == pytest.approx(0.41)
+    assert stub.last_options == {"iou": 0.5, "imgsz": 480, "max_det": 42}
 
 
 def test_stage1_image_frame_is_bgr_full_resolution(client, stub):
@@ -393,6 +418,18 @@ def test_stage2_matches_fixture_and_windows(client, stub, tmp_path):
         assert all(f.ndim == 3 and f.shape[2] == 3 and f.dtype == np.uint8 for f in clip)
         first, last = round(start * 10), min(round(end * 10), 54) - 1
         assert [gray_index(f) for f in clip] == [int(i) for i in sample_indices(first, last)]
+
+
+def test_stage2_settings_change_label_and_are_echoed(client, tmp_path):
+    path = write_video(tmp_path / "fight.avi", n_frames=54, fps=10.0)
+    settings = {"x3d": {"fight_threshold": 0.8}}
+    response = post_file(client, STAGE2, "fight.avi", path.read_bytes(),
+                         {"analysis_settings": json.dumps(settings)}, ctype="video/x-msvideo")
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["fight_threshold"] == pytest.approx(0.8)
+    assert body["analysis_settings"]["x3d"]["fight_threshold"] == pytest.approx(0.8)
+    assert [window["label"] for window in body["windows"]] == ["non_fight"] * 3
 
 
 def test_stage2_clips_preprocess_like_original_frames(client, stub, tmp_path):
@@ -1018,6 +1055,33 @@ def test_stage1_dense_invalid_parameters_are_400(client, stub, tmp_path, data):
 def test_stage1_dense_invalid_parameter_before_video_required(client):
     resp = post_file(client, STAGE1, "a.jpg", image_bytes(), {"model": "yolov8n", "mode": "dense", "sample_fps": "99"})
     assert_error(resp, 400, "invalid_parameter")
+
+
+def test_decoded_image_pixel_limit_returns_413(client, monkeypatch):
+    from webapp import config
+
+    monkeypatch.setattr(config, "MAX_IMAGE_PIXELS", 100)
+    response = post_file(client, STAGE1, "large.jpg", image_bytes(160, 120), {"model": "yolov8n"})
+    assert_error(response, 413, "media_dimensions_too_large")
+
+
+def test_decoded_video_frame_pixel_limit_returns_413(client, monkeypatch, tmp_path):
+    from webapp import config
+
+    monkeypatch.setattr(config, "MAX_VIDEO_PIXELS", 100)
+    path = write_video(tmp_path / "large.avi", n_frames=10, fps=10.0, width=32, height=24)
+    response = post_file(client, STAGE2, "large.avi", path.read_bytes())
+    assert_error(response, 413, "media_dimensions_too_large")
+
+
+def test_concurrent_analysis_is_rejected(client):
+    semaphore = client.app.state.analysis_semaphore
+    assert semaphore.acquire(blocking=False)
+    try:
+        response = post_file(client, STAGE1, "busy.jpg", image_bytes(), {"model": "yolov8n"})
+        assert_error(response, 429, "analysis_busy")
+    finally:
+        semaphore.release()
 
 
 def test_temp_files_removed_in_dense_mode(client, isolated_tmp, tmp_path):

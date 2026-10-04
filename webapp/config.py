@@ -29,6 +29,9 @@ DISCLAIMER = (
 
 # Uploads (contract section 0.2). Read at request time so tests may monkeypatch it.
 MAX_UPLOAD_BYTES = 100 * 1024 * 1024
+# Bound decoded memory independently of upload bytes (compressed media can expand greatly).
+MAX_IMAGE_PIXELS = 40_000_000
+MAX_VIDEO_PIXELS = 16_777_216  # includes standard 4K frames
 IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".bmp", ".webp")
 VIDEO_EXTENSIONS = (".mp4", ".avi", ".mov", ".mkv")
 

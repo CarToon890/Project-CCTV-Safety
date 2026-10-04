@@ -1,6 +1,6 @@
 # Web API contract — Upload & Analyze (v1, `schema_version` "1.0")
 
-`schema_version` stays `"1.0"`: round 2 only **adds** fields/options (Stage 1 `mode`, `sample_fps`, dense mode) and existing clients keep working with the defaults. Pixels displayed by the current web UI are anonymized with local YuNet face detection; dense pipeline video includes face boxes for every decoded frame, while image/frame JPEGs contain blurred pixels.
+`schema_version` stays `"1.0"`: additive request/response settings retain defaults for existing clients. Pixels displayed by the current web UI are anonymized with local YuNet face detection; dense pipeline video includes face boxes for every decoded frame, while image/frame JPEGs contain blurred pixels.
 
 Demo prototype only: no production, no live CCTV.
 Example responses: `tests/fixtures/api/*.json` (they conform exactly to this document).
@@ -39,8 +39,17 @@ Error responses do **not** use the envelope (see section 4).
   - Video: `.mp4 .avi .mov .mkv` (`video/mp4`, `video/x-msvideo`, `video/quicktime`, `video/x-matroska`)
   - Any other extension → `415 unsupported_media_type`.
 - Size limit **100 MB** (104 857 600 bytes) per file → above it `413 file_too_large`.
+- Decoded size limits: images ≤ 40,000,000 pixels and video frames ≤ 16,777,216 pixels (4K supported); exceeding a limit returns `413 media_dimensions_too_large`.
+- At most one analysis request runs per server process; another concurrent analysis returns `429 analysis_busy`. Multipart data may already be spooled by the server before this inference gate runs.
 - A file with an allowed extension that OpenCV/Pillow cannot decode (or a video with 0 decodable frames or fps <= 0) → `422 decode_failed`. Codec support depends on the local OpenCV build; mp4/avi/mov are expected to work.
 - Optional privacy fields: `face_confidence` (0.20..0.90, default 0.35), `face_padding` (0..0.50, default 0.25), and `face_blur_strength` (0.40..1.50, default 0.80). Lower confidence accepts weaker face detections; greater padding/strength obscures more area. The detector still processes every frame and cannot be disabled from this endpoint.
+- Optional `analysis_settings`: JSON string with YOLO thresholds/inference controls, X3D fight probability cutoff, and experimental tracking/trigger parameters. Omitted values use the defaults below; invalid values return `400 invalid_parameter`. Per-class YOLO confidence defaults to `configs/thresholds.yaml`; inference defaults are IoU `0.7`, image size `640`, max detections `300`. X3D fight cutoff defaults to `0.5`. Tracking defaults are proximity `0.16` frame diagonals, motion `0.25` diagonals/s, track gap `0.75` s. Bounds are checked server-side. These controls affect inference/decision rules, not trained model weights; changing them does not retrain or calibrate a model.
+
+Example `analysis_settings` value:
+
+```json
+{"yolo":{"thresholds":{"person":0.25,"helmet":0.2,"vest":0.2,"fall":0.2,"fire":0.2,"smoke":0.2},"iou":0.7,"imgsz":640,"max_det":300},"x3d":{"fight_threshold":0.5},"tracking":{"proximity_diagonals":0.16,"motion_diagonals_per_s":0.25,"max_track_gap_s":0.75}}
+```
 
 ### 0.3 `source` object (Stage 1 and Stage 2)
 
@@ -76,6 +85,7 @@ Form fields:
 | `max_frames` | int | no | `16` | `1..60` inclusive; else `400 invalid_parameter`. Validated in `frames` mode, including images, though images do not use it. Ignored (not validated) in `dense` mode |
 | `mode` | string | no | `"frames"` | `"frames"` (sampled frames with JPEGs, the v1 behaviour) \| `"dense"` (video only, boxes only, for playback overlay); anything else → `400 invalid_parameter` |
 | `sample_fps` | float | no | `10` | Dense mode only: finite number in `1..30` inclusive (e.g. `"10"`, `"12.5"`); else `400 invalid_parameter`. Ignored (not validated) in `frames` mode |
+| `analysis_settings` | JSON string | no | see 0.2 | Per-request settings for all model and trigger controls |
 
 Empty-string form values count as "not sent" and get the default. The `mode` value has surrounding whitespace trimmed before it is checked.
 
@@ -114,6 +124,14 @@ Frame:
 | `image_jpeg_b64` | string | — | `frames` mode: no; `dense` mode: always `null` | Raw frame JPEG, base64, no `data:` prefix (section 0) |
 | `detections` | Detection[] | — | no | Only boxes with `confidence >= thresholds[class_name]`; sorted by `confidence` descending; may be `[]` |
 | `ppe` | PpeRow[] | — | no | Output of `cctv_safety.ppe.assess_ppe(detections, ppe_min_confidence)` unchanged; may be `[]` |
+
+After confidence filtering, the pilot detector suppresses a `person` box only when
+it spans at least 90% of frame height, at least 45% of frame width, touches both
+top and bottom edges within 3%, and overlaps a `fall` box at IoU 0.20 or above.
+This narrow geometry guard targets the oversized full-frame false positives seen
+in the standing-to-fall clip; it is a heuristic and may suppress a real unusually
+close person during a detected fall. Ordinary person boxes and all `fall` boxes
+are preserved. It does not make the detector generally validated.
 
 Detection:
 
@@ -190,6 +208,10 @@ candidate triggers when at least two detected people are within 0.16 frame
 diagonals, or at least two people are present and one moves at 0.25 frame
 diagonals/s or faster. Track association expires after 0.75 s. These are
 exploratory defaults, not calibrated Fight thresholds.
+The tracking implementation associates raw person detection boxes; it does not
+confirm unique identities. Duplicate detections can create duplicate tracks and
+can therefore influence the experimental trigger. `tracked_people` and
+`max_concurrent_tracks` are track counts, not verified head counts.
 
 This endpoint is intentionally **shadow mode**: it runs X3D on every window,
 including windows without a candidate trigger. That keeps missed-trigger cases
@@ -217,6 +239,16 @@ Response shape:
     "scan_wall_ms": 1044.2,
     "faces_by_frame": [[[10, 20, 75, 95]], [], "... one list per source frame ..."]
   },
+  "timings_ms": {
+    "video_decode_ms": 1234.5,
+    "face_detection_ms": 812.4,
+    "face_scan_wall_ms": 1044.2,
+    "yolo_ms": 52.1,
+    "x3d_ms": 83.0,
+    "preview_encode_ms": 4.2,
+    "response_assembly_ms": 2.1,
+    "total_ms": 2380.0
+  },
   "preview_jpeg_b64": "<JPEG with faces blurred>",
   "stage1": { "...": "same response fields as Stage 1 dense mode" },
   "stage2": { "...": "same response fields as Stage 2" },
@@ -236,14 +268,21 @@ Response shape:
       "motion_frames": 2,
       "x3d_evaluated": true,
       "fight_probability": 0.82,
-      "x3d_label": "fight"
+      "x3d_label": "fight",
+      "fall_detected": true,
+      "fall_frames": 2,
+      "decision": "review_fall_fight_conflict",
+      "decision_label": "ล้ม/Fight กำกวม · ตรวจสอบ"
     }],
     "summary": {
       "total_windows": 1,
       "person_triggered_windows": 1,
       "candidate_triggered_windows": 1,
       "fight_windows": 1,
-      "fight_windows_without_candidate_trigger": 0
+      "fight_windows_without_candidate_trigger": 0,
+      "review_fall_fight_conflict_windows": 1,
+      "fight_candidate_windows": 0,
+      "fall_detected_windows": 1
     }
   }
 }
@@ -252,11 +291,18 @@ Response shape:
 All frame selection, windowing, thresholds, and common error behavior match
 sections 0–4. Person detections in `stage1.frames` also carry `track_id` and
 `motion_diagonals_per_s`. There is no added temporal confidence threshold.
+In the combined pipeline, an X3D `fight` label overlapping any sampled YOLO
+`fall` detection is preserved as the raw model output but its pipeline decision
+is `review_fall_fight_conflict`; the UI labels it ambiguous for human review.
+Fight predictions without that conflict are `fight_candidate` (pilot output),
+not a confirmed incident. `fight_windows` continues to count raw X3D predictions.
 
 ### Privacy display behavior
 
 - YOLO/X3D use original decoded frames in local process memory. Stage 1 image/frame JPEGs are encoded only after YuNet face detection and blurring on a copy; model input arrays are not modified.
 - `/api/pipeline/analyze` scans every decoded source frame and returns padded face boxes per frame and a blurred preview JPEG. The browser draws the hidden original video only into an opaque canvas and blurs each displayed frame. If metadata is incomplete or canvas drawing fails, the canvas is blacked out.
+- YuNet reuses the configured input size while frame dimensions remain unchanged; it still runs face detection on every frame. This avoids repeatedly resetting an identical detector input shape without lowering scan frequency or changing the model input pixels.
+- `timings_ms` separately records decoder reads (plus metadata/Stage 2 sampled decode), YuNet detector calls, total scan wall time, YOLO, X3D, first preview encoding, response assembly and total request time. It is diagnostic timing, not a latency guarantee; total can differ slightly from the sum because stages overlap or include orchestration.
 - A missing/unloadable local YuNet model returns 503 `privacy_model_unavailable`. Processing errors do not trigger a raw-media display fallback. Uploaded temporary files are removed in the endpoint's `finally` block.
 - YuNet may miss small, blurred, profile or occluded faces. This is a pilot privacy aid, not a guarantee of anonymization or PDPA compliance. Review representative footage manually before use.
 
@@ -286,6 +332,8 @@ Every non-2xx response has exactly this body (no envelope):
 | 400 | `missing_file` | No `file` part, or the file is empty (0 bytes) |
 | 400 | `invalid_parameter` | `model` missing/not `yolov8n`/`yolov8s`; `max_frames` not an int in 1..60 (frames mode); `mode` not `frames`/`dense`; `sample_fps` not a number in 1..30 (dense mode) |
 | 413 | `file_too_large` | Upload > 100 MB |
+| 413 | `media_dimensions_too_large` | Decoded image/video frame exceeds the pixel limit in section 0.2 |
+| 429 | `analysis_busy` | Another analysis is already running in this server process |
 | 415 | `unsupported_media_type` | Extension not in section 0.2 |
 | 422 | `decode_failed` | Allowed extension but cannot be decoded, 0 frames, or fps <= 0 |
 | 422 | `video_required` | Image sent to Stage 2, or to Stage 1 with `mode=dense` |
@@ -308,10 +356,10 @@ Paths outside `/api/` are the static UI (`mockup/`); their 404s use the server's
 
 ```bash
 # from the repo root; weights in ./weights (or set CCTV_WEIGHTS_DIR)
-.venv-cuda/Scripts/python -m uvicorn webapp.api:app --port 8000
+.venv-cuda/Scripts/python -m uvicorn webapp.api:app --host 127.0.0.1 --port 8000
 ```
 
-Open `http://localhost:8000/` — the UI (`mockup/`) and the API (`/api/...`) share one origin.
+Open `http://127.0.0.1:8000/` — the UI (`mockup/`) and API share one origin. The prototype has no authentication; keep it bound to loopback and do not expose it to a LAN or the internet.
 Numerical note: the server runs X3D-S (and YOLO) in **fp32**, while the Stage 2 notebook evaluated under fp16 autocast, so Stage 2 probabilities can differ slightly from the recorded test metrics in `artifacts/model_handoff/stage2/`. Preprocessing is identical to the notebook.
 
 Playback note: the browser overlay assumes the video's `currentTime` equals `index / fps` as read by OpenCV. Variable-frame-rate files, or MP4s whose start time is not zero, can drift by about one frame. Dense mode on CPU (up to 1,800 YOLO runs for a 60 s clip at 30 samples/s) can be slow, and no progress is shown.

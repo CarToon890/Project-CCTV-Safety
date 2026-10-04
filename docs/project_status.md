@@ -70,7 +70,8 @@ CCTV. Do not describe this model as a production-ready Fight detector.
 
 - `webapp/` (FastAPI) serves `mockup/` and exposes `POST /api/stage1/analyze`
   (YOLOv8n/s, image or video, optional dense sampling for video playback) and
-  `POST /api/stage2/analyze` (X3D-S, non-overlapping 2 s windows, video only).
+  `POST /api/stage2/analyze` (X3D-S, non-overlapping 2 s windows, video only)
+  plus `POST /api/pipeline/analyze` (combined local shadow-mode video path).
   Contract: [`web_api_contract.md`](web_api_contract.md).
 - X3D-S preprocessing reproduces the training notebook (13 uniformly sampled
   frames, aspect-preserving resize, centred 224×224 padding, Kinetics
@@ -85,6 +86,9 @@ CCTV. Do not describe this model as a production-ready Fight detector.
   output. They also showed known model errors: smoke predicted indoors, and a
   person and vest predicted on a bus advertisement. This prototype is not
   evidence of accuracy or production readiness.
+- A standards-oriented risk register and the currently available model/runtime
+  provenance are recorded in [`upload_analyze_standards_gap_analysis.md`](upload_analyze_standards_gap_analysis.md)
+  and [`model_evaluation_manifest.md`](model_evaluation_manifest.md).
 
 ## Remaining before the project can be called complete
 
@@ -94,8 +98,8 @@ CCTV. Do not describe this model as a production-ready Fight detector.
    explicitly approved).
 2. Verify same-split comparability for YOLOv8n/v8s and review per-class errors;
    decide whether the 81-epoch YOLOv8n run needs continuation to 100 epochs.
-3. Implement and test Stage 2 video preprocessing/inference and integration
-   with Stage 1/person tracking, then evaluate end-to-end latency and false
-   alerts on selected target-camera footage.
+3. Evaluate the combined pipeline's latency, event recall and false-alert rate
+   on representative footage. Current experimental tracks/triggers are shadow
+   signals only; they do not suppress X3D inference or constitute alert logic.
 4. Complete project-level documentation and reproducibility checks. No training
    or inference is started by this status update.

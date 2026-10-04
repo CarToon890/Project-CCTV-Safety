@@ -19,7 +19,7 @@ def _iou(a: list[float], b: list[float]) -> float:
     return intersection / union if union else 0.0
 
 
-def add_track_ids(frames: list[dict], width: int, height: int) -> None:
+def add_track_ids(frames: list[dict], width: int, height: int, max_track_gap_s: float = MAX_TRACK_GAP_S) -> None:
     """Attach greedy, frame-to-frame IDs and normalized centre speed to person detections."""
     diagonal = hypot(width, height) or 1.0
     tracks: dict[int, dict] = {}
@@ -29,7 +29,7 @@ def add_track_ids(frames: list[dict], width: int, height: int) -> None:
         detections = [d for d in frame["detections"] if d["class_name"] == "person"]
         available = {
             track_id: track for track_id, track in tracks.items()
-            if 0 <= time_s - track["time_s"] <= MAX_TRACK_GAP_S
+            if 0 <= time_s - track["time_s"] <= max_track_gap_s
         }
         candidates = []
         for det_index, detection in enumerate(detections):
@@ -75,7 +75,9 @@ def add_track_ids(frames: list[dict], width: int, height: int) -> None:
         frame["_tracking"] = current
 
 
-def summarize_window(frames: list[dict], start_s: float, end_s: float, width: int, height: int) -> dict:
+def summarize_window(frames: list[dict], start_s: float, end_s: float, width: int, height: int,
+                     proximity_diagonals: float = PROXIMITY_DIAGONALS,
+                     motion_diagonals_per_s: float = MOTION_DIAGONALS_PER_S) -> dict:
     """Summarize proximity/motion evidence and the experimental candidate trigger."""
     diagonal = hypot(width, height) or 1.0
     selected = [f for f in frames if start_s <= (f["time_s"] or 0.0) < end_s]
@@ -87,11 +89,11 @@ def summarize_window(frames: list[dict], start_s: float, end_s: float, width: in
         seen_tracks.update(p["track_id"] for p in people)
         max_tracks = max(max_tracks, len(people))
         close = any(
-            hypot(a["cx"] - b["cx"], a["cy"] - b["cy"]) / diagonal <= PROXIMITY_DIAGONALS
+            hypot(a["cx"] - b["cx"], a["cy"] - b["cy"]) / diagonal <= proximity_diagonals
             for i, a in enumerate(people) for b in people[i + 1:]
         )
         moving_with_multiple_people = len(people) >= 2 and any(
-            p["speed"] >= MOTION_DIAGONALS_PER_S for p in people
+            p["speed"] >= motion_diagonals_per_s for p in people
         )
         if close:
             proximity_frames += 1
