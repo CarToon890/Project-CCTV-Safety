@@ -1,0 +1,6 @@
+# NVIDIA runtime profile. PyTorch 2.12 pairs with torchvision 0.27.
+--index-url https://download.pytorch.org/whl/cu132
+--extra-index-url https://pypi.org/simple
+-r requirements.txt
+torch==2.12.0+cu132
+torchvision==0.27.0+cu132

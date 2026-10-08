@@ -105,6 +105,26 @@ Project-CCTV-Safety/
    pip install -r requirements.txt
    ```
 
+### Local web runtime (Windows)
+
+Install exactly one PyTorch runtime profile into `.venv-test`. On an NVIDIA machine:
+
+```powershell
+py -3.11 -m venv --upgrade .venv-test
+.\.venv-test\Scripts\python.exe -m pip install -r requirements-cuda.txt
+.\.venv-test\Scripts\python.exe -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+.\.venv-test\Scripts\python.exe -m uvicorn webapp.api:app --host 127.0.0.1 --port 8000
+```
+
+On a machine without NVIDIA CUDA, install the CPU profile instead:
+
+```powershell
+py -3.11 -m venv --upgrade .venv-test
+.\.venv-test\Scripts\python.exe -m pip install -r requirements-cpu.txt
+```
+
+`Auto` then selects CPU; an explicit GPU selection is disabled in the Live page or returns a clear unavailable error from the API. The Live mixed mode runs YOLO/X3D on the selected device and YuNet face anonymization on CPU.
+
 3. สร้าง source manifest จาก template และกรอกข้อมูลที่ตรวจสอบแล้ว:
    ```bash
    cp configs/datasets.example.yaml configs/datasets.local.yaml

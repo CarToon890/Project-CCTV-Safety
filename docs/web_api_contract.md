@@ -2,7 +2,7 @@
 
 `schema_version` stays `"1.0"`: additive request/response settings retain defaults for existing clients. Pixels displayed by the current web UI are anonymized with local YuNet face detection; dense pipeline video includes face boxes for every decoded frame, while image/frame JPEGs contain blurred pixels.
 
-Educational pilot only. A single-stream replay/RTSP Live pilot endpoint is available separately; neither it nor Upload & Analyze is production-ready.
+Educational pilot only. A single-stream replay/RTSP Live pilot endpoint is available separately; file replay is the current test path. RTSP has not been validated against a target camera because no camera is available, and neither Live nor Upload & Analyze is production-ready.
 Example responses: `tests/fixtures/api/*.json` (they conform exactly to this document).
 
 ## 0. Conventions
@@ -44,13 +44,14 @@ Error responses do **not** use the envelope (see section 4).
 - A file with an allowed extension that OpenCV/Pillow cannot decode (or a video with 0 decodable frames or fps <= 0) → `422 decode_failed`. Codec support depends on the local OpenCV build; mp4/avi/mov are expected to work.
 - Optional privacy fields: `face_confidence` (0.20..0.90, default 0.35), `face_padding` (0..0.50, default 0.25), and `face_blur_strength` (0.40..1.50, default 0.80). Lower confidence accepts weaker face detections; greater padding/strength obscures more area. The detector still processes every frame and cannot be disabled from this endpoint.
 - Optional `analysis_settings`: JSON string with YOLO thresholds/inference controls, X3D fight probability cutoff, and experimental tracking/trigger parameters. Omitted values use the defaults below; invalid values return `400 invalid_parameter`. Per-class YOLO confidence defaults to `configs/thresholds.yaml`; inference defaults are IoU `0.7`, image size `640`, max detections `300`. X3D fight cutoff defaults to `0.5`. Tracking defaults are proximity `0.16` frame diagonals, motion `0.25` diagonals/s, track gap `0.75` s. Bounds are checked server-side. These controls affect inference/decision rules, not trained model weights; changing them does not retrain or calibrate a model.
-- Optional `device`: `auto` (default), `cpu`, or `cuda`. `auto` selects CUDA only when PyTorch and CUDA-enabled OpenCV YuNet are both available; standard CPU OpenCV builds therefore select CPU. Explicit `cuda` requires the complete CUDA path and otherwise returns `503 device_unavailable`. The response reports `device_requested` and `device_used`.
+- Optional `device`: `auto` (default), `cpu`, or `cuda`. `auto` selects CUDA for YOLO/X3D when PyTorch CUDA is available; YuNet remains on CPU in the current mixed runtime. Explicit `cuda` requires CUDA-enabled PyTorch and otherwise returns `503 device_unavailable`. The response reports `device_requested` and `device_used`.
 
 ## Live pilot endpoints
 
 - `POST /api/live/start` accepts JSON `{source_type:"file"|"rtsp", source, model:"yolov8n"|"yolov8s", device:"auto"|"cpu"|"cuda"}`. Replay files must be below repository `data/`; only one stream can run. The RTSP source is never echoed in responses. Do not log the request body because it may contain credentials.
-- `POST /api/live/stop` requests stop and drains already-received frames. `GET /api/live/status` reports state and frame counters without the source URI.
-- `WS /api/live/events` emits fail-closed anonymized preview images, preliminary candidate events, X3D window results and health. A candidate is not a confirmed event. Overload ends in `degraded`; that state must not be interpreted as no incident.
+- `POST /api/live/start-upload` accepts a browser-selected video as multipart `file`, plus optional `model` and `device`. It is limited to 100 MB and supported video extensions; the temporary file is deleted when the session ends. If the process exits before cleanup, UUID-named replay files older than 24 hours are removed at the next startup.
+- `POST /api/live/stop` requests stop and drains already-received frames. `GET /api/live/status` reports state, device components, frame counters, replay mode, average processing FPS and rolling timings without the source URI. Timing names are `decode`, `face`, `yolo`, `x3d`, `preview_encode`, and `frame_total`; each reports the latest and mean milliseconds over up to 120 recent samples.
+- `WS /api/live/events` emits fail-closed anonymized preview images, preliminary candidate events, X3D window results and health (including rolling stage timings). A candidate is not a confirmed event. File replay slows under back-pressure to preserve received frames; a real-time source that cannot keep up ends in `degraded`. That state must not be interpreted as no incident.
 
 Example `analysis_settings` value:
 

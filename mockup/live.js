@@ -3,14 +3,60 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const sourceType = $('liveSourceType'), source = $('liveSource'), device = $('liveDevice');
+  const sourceFile = $('liveSourceFile'), sourceFileField = $('liveSourceFileField');
+  const sourcePathField = $('liveSourcePathField'), sourceFileName = $('liveSourceFileName');
   const start = $('liveStart'), stop = $('liveStop'), status = $('liveRealStatus');
   const preview = $('liveRealPreview'), events = $('liveRealEvents'), sourceHelp = $('liveSourceHelp');
+  const confidenceList = $('liveRealConfidence'), confidenceMeta = $('liveRealConfidenceMeta');
+  const metrics = $('liveRealMetrics');
   if (!start) return;
   let socket = null;
+  let latestFight = null;
+  let latestConfidenceMessage = null;
   function report(text) { status.textContent = text; }
+  function deviceSummary(devices, fallback) {
+    if (!devices) return fallback || 'ไม่ทราบอุปกรณ์';
+    return 'YOLO ' + (devices.yolo || '—') + ' · X3D ' + (devices.x3d || '—') + ' · YuNet ' + (devices.yunet || '—');
+  }
   function addEvent(text) {
-    const row = document.createElement('div'); row.className = 'feed-item'; row.textContent = text;
+    const row = document.createElement('div'); row.className = 'feed-item'; row.title = 'Live Event Feed item · ' + text; row.textContent = text;
     events.prepend(row); while (events.children.length > 40) events.lastChild.remove();
+  }
+  function confidenceRow(label, value, count) {
+    const row = document.createElement('div'); row.className = 'live-confidence-row';
+    const title = document.createElement('span'); title.className = 'live-confidence-label'; title.textContent = label;
+    const score = document.createElement('span'); score.className = 'live-confidence-value';
+    score.textContent = value == null ? '—' : Number(value).toFixed(2);
+    if (count != null) score.textContent += ' · ' + count + ' กล่อง';
+    const track = document.createElement('span'); track.className = 'live-confidence-track';
+    const fill = document.createElement('i');
+    fill.style.width = value == null ? '0%' : Math.max(0, Math.min(1, Number(value))) * 100 + '%';
+    track.append(fill); row.append(title, score, track); return row;
+  }
+  function renderConfidence(message) {
+    if (!confidenceList) return;
+    if (message) latestConfidenceMessage = message;
+    const latest = latestConfidenceMessage;
+    const classes = latest?.classes || {};
+    const names = [['person', 'คน'], ['helmet', 'หมวกนิรภัย'], ['vest', 'เสื้อสะท้อนแสง'],
+      ['fall', 'คนล้ม'], ['fire', 'ไฟ'], ['smoke', 'ควัน']];
+    confidenceList.replaceChildren();
+    for (const [key, label] of names) {
+      const item = classes[key];
+      confidenceList.append(confidenceRow(label, item ? item.max_confidence : null, item ? item.count : 0));
+    }
+    confidenceList.append(confidenceRow('Fight · X3D', latestFight, null));
+    if (confidenceMeta && latest) {
+      confidenceMeta.textContent = (latest.model || 'YOLO') + ' · ' + Number(latest.time_s || 0).toFixed(2) + ' s · ' + (latest.detection_count || 0) + ' กล่อง';
+    }
+  }
+  function renderMetrics(message) {
+    if (!metrics) return;
+    const timings = message.timings_ms || {};
+    const value = key => timings[key] ? `${Number(timings[key].mean_ms).toFixed(1)} ms` : '—';
+    const fps = Number(message.processing_fps || 0).toFixed(1);
+    const sourceFps = message.source_fps ? Number(message.source_fps).toFixed(1) : '—';
+    metrics.textContent = `เฉลี่ยสูงสุด 120 งานล่าสุด · Decode ${value('decode')} · YuNet ${value('face')} · YOLO ${value('yolo')} · X3D ${value('x3d')} · Preview ${value('preview_encode')} · ประมวลผล ${fps} FPS (ต้นทาง ${sourceFps}) · คิว ${message.queue_depth ?? 0}/12 · สแกนหน้า ${message.frames_face_scanned ?? 0}/${message.frames_received ?? 0}`;
   }
   async function request(path, method) {
     const r = await fetch(path, { method: method || 'GET', headers: {'Content-Type': 'application/json'} });
@@ -20,40 +66,100 @@
   }
   function updateSourceHelp() {
     const isFile = sourceType.value === 'file';
+    if (sourceFileField) sourceFileField.hidden = !isFile;
+    if (sourcePathField) sourcePathField.hidden = isFile;
     source.placeholder = isFile ? 'data/raw/clip.mp4' : 'rtsp://กล้องในเครือข่ายของคุณ/stream';
     if (sourceHelp) sourceHelp.textContent = isFile
-      ? 'ระบุ path ของคลิปภายในโฟลเดอร์ data/ เช่น data/raw/clip.mp4 · คลิปจะถูก replay เพื่อทดสอบ ไม่ใช่กล้องสด'
+      ? 'เลือกคลิปจากเครื่องเพื่อ replay ทดสอบ · ระบบจะอัปโหลดเป็นไฟล์ชั่วคราวและลบเมื่อจบ session (สูงสุด 100 MB)'
       : 'ใส่ RTSP URL ของกล้องที่เครื่องนี้เข้าถึงได้ · อย่าแชร์ URL เพราะอาจมีข้อมูลเข้าสู่ระบบ';
   }
+  if (sourceFile) sourceFile.addEventListener('change', () => {
+    const file = sourceFile.files && sourceFile.files[0];
+    if (sourceFileName) sourceFileName.textContent = file ? file.name : 'รองรับ MP4, AVI, MOV, MKV · ไม่เกิน 100 MB';
+  });
   sourceType.addEventListener('change', updateSourceHelp);
   updateSourceHelp();
   start.addEventListener('click', async () => {
-    if (!source.value.trim()) {
-      report(sourceType.value === 'file' ? 'กรุณาระบุ path ของคลิปในโฟลเดอร์ data/' : 'กรุณาระบุ RTSP URL');
+    const isFile = sourceType.value === 'file';
+    const file = sourceFile && sourceFile.files && sourceFile.files[0];
+    if (isFile && !file) {
+      report('กรุณาเลือกไฟล์วิดีโอ');
+      sourceFile?.focus();
+      return;
+    }
+    if (!isFile && !source.value.trim()) {
+      report('กรุณาระบุ RTSP URL');
       source.focus();
+      return;
+    }
+    if (isFile && file.size > 100 * 1024 * 1024) {
+      report('ไฟล์ต้องมีขนาดไม่เกิน 100 MB');
       return;
     }
     start.disabled = true; events.replaceChildren(); preview.hidden = true;
     try {
-      const result = await fetch('/api/live/start', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
-        source_type:sourceType.value, source:source.value, model:$('liveModel').value, device:device.value
-      })});
+      let result;
+      if (isFile) {
+        const data = new FormData();
+        data.append('file', file);
+        data.append('model', $('liveModel').value);
+        data.append('device', device.value);
+        result = await fetch('/api/live/start-upload', {method:'POST', body:data});
+      } else {
+        result = await fetch('/api/live/start', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+          source_type:sourceType.value, source:source.value, model:$('liveModel').value, device:device.value
+        })});
+      }
       const body = await result.json();
       if (!result.ok) throw new Error(body.error?.message || 'เริ่ม Live ไม่สำเร็จ');
-      stop.disabled = false; report('กำลังทำงาน · device: ' + body.device_used);
+      stop.disabled = false;
+      report(sourceType.value === 'file'
+        ? 'กำลังเล่นคลิปต่อเนื่อง · หากเครื่องช้าจะเล่นช้าลงเพื่อไม่ทิ้งเฟรม · ' + deviceSummary(body.device_components, body.device_used)
+        : 'กำลังทำงาน · ' + deviceSummary(body.device_components, body.device_used));
+      latestFight = null;
+      latestConfidenceMessage = null;
+      if (metrics) metrics.textContent = 'กำลังเก็บเวลาประมวลผลรายขั้น…';
+      if (confidenceList) {
+        const waiting = document.createElement('div');
+        waiting.className = 'live-confidence-empty';
+        waiting.textContent = 'กำลังรอผลจากโมเดลจริง…';
+        confidenceList.replaceChildren(waiting);
+      }
+      if (confidenceMeta) confidenceMeta.textContent = 'กำลังวิเคราะห์';
       socket = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/api/live/events');
       socket.onmessage = ev => {
         const msg = JSON.parse(ev.data);
         if (msg.type === 'preview' && typeof msg.jpeg_b64 === 'string') {
           preview.src = 'data:image/jpeg;base64,' + msg.jpeg_b64; preview.hidden = false;
+        } else if (msg.type === 'confidence') {
+          renderConfidence(msg);
         } else if (msg.type === 'candidate') addEvent('Candidate เบื้องต้น · ' + msg.time_s + 's · latency ' + msg.processing_latency_ms + 'ms · ' + msg.trigger_reasons.join(', '));
-        else if (msg.type === 'x3d') addEvent('X3D ' + msg.label + ' · fight=' + msg.fight + ' · ' + msg.start_s + '–' + msg.end_s + 's');
+        else if (msg.type === 'x3d') {
+          latestFight = msg.fight;
+          renderConfidence(null);
+          addEvent('X3D ' + msg.label + ' · fight=' + msg.fight + ' · ' + msg.start_s + '–' + msg.end_s + 's');
+        }
         else if (msg.type === 'health') {
-          report(msg.state + (msg.reason ? ' · ' + msg.reason : '') + ' · scanned ' + msg.frames_face_scanned + '/' + msg.frames_received);
+          const replayHint = msg.playback_mode === 'processing_paced' ? ' · replay ปรับความเร็วตามเครื่อง · ไม่ทิ้งเฟรม' : '';
+          const devices = msg.device_components ? ' · ' + deviceSummary(msg.device_components) : '';
+          renderMetrics(msg);
+          report(msg.state + (msg.reason ? ' · ' + msg.reason : '') + devices + replayHint + ' · scanned ' + msg.frames_face_scanned + '/' + msg.frames_received);
           if (['stopped','degraded','error'].includes(msg.state)) { start.disabled = false; stop.disabled = true; }
         }
       };
-      socket.onerror = () => report('WebSocket ขาดการเชื่อมต่อ · ตรวจ /api/live/status');
+      socket.onerror = () => report('WebSocket ขาดการเชื่อมต่อ · ตรวจสถานะ API และ log ของ server');
+      socket.onclose = () => {
+        if (stop.disabled) return;
+        fetch('/api/live/status').then(r => r.json()).then(body => {
+          if (['stopped', 'degraded', 'error', 'idle'].includes(body.status)) {
+            report('WebSocket ปิด · session ' + body.status + (body.reason ? ' · ' + body.reason : ''));
+            start.disabled = false; stop.disabled = true;
+            renderMetrics(body);
+          } else {
+            report('WebSocket หลุด · session ยัง ' + body.status + ' · กดเริ่มใหม่หลังหยุด session');
+          }
+        }).catch(() => report('WebSocket ปิดและอ่านสถานะ session ไม่ได้ · ตรวจ API'));
+      };
     } catch (err) { report(err.message); start.disabled = false; }
   });
   stop.addEventListener('click', async () => {

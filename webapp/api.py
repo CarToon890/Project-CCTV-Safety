@@ -1,6 +1,6 @@
 """FastAPI app for the Upload & Analyze prototype (contract: docs/web_api_contract.md).
 
-Run: ``.venv-cuda/Scripts/python -m uvicorn webapp.api:app --port 8000`` then open
+Run: ``.venv-test/Scripts/python -m uvicorn webapp.api:app --port 8000`` then open
 http://localhost:8000/. Models load lazily on the first analyze request.
 """
 
@@ -9,10 +9,14 @@ from __future__ import annotations
 import logging
 import json
 import math
+import re
 import sys
 import asyncio
 import queue
 import threading
+import tempfile
+import uuid
+import time
 from threading import BoundedSemaphore
 from time import perf_counter
 from pathlib import Path
@@ -112,6 +116,26 @@ def _too_long(info: media.VideoInfo) -> ApiError:
                     f"{config.WINDOW_S:g} s; the limit is {config.MAX_WINDOWS} windows (about 60 s).")
 
 
+def _cleanup_stale_live_uploads() -> int:
+    """Remove only this app's UUID-named Live replay files after a process restart."""
+    temp_dir = Path(tempfile.gettempdir()) / "cctv-safety-live"
+    if not temp_dir.is_dir():
+        return 0
+    cutoff = time.time() - 24 * 60 * 60
+    removed = 0
+    for path in temp_dir.iterdir():
+        if (not path.is_file() or path.suffix.lower() not in config.VIDEO_EXTENSIONS
+                or not re.fullmatch(r"[0-9a-f]{32}", path.stem)):
+            continue
+        try:
+            if path.stat().st_mtime < cutoff:
+                path.unlink(missing_ok=True)
+                removed += 1
+        except OSError:
+            logger.warning("Could not remove a stale Live replay upload")
+    return removed
+
+
 def _privacy_settings(face_confidence: str | None, face_padding: str | None,
                       face_blur_strength: str | None) -> dict[str, float]:
     specs = (
@@ -192,6 +216,12 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
     app.state.analysis_semaphore = analysis_semaphore
     live_lock = threading.Lock()
     app.state.live_session = None
+
+    @app.on_event("startup")
+    def cleanup_stale_live_uploads():
+        removed = _cleanup_stale_live_uploads()
+        if removed:
+            logger.info("Removed %d stale Live replay upload(s)", removed)
 
     def analysis_slot() -> Iterator[None]:
         """Keep only one CPU/GPU-heavy analysis active per local pilot process."""
@@ -313,7 +343,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                 ensure_model(model, active_device)
                 ensure_model(config.STAGE2_MODEL, active_device)
                 session = LiveSession(source_type, safe_source, model, active_device, registry,
-                                      active_settings, weights_dir)
+                                      active_settings, weights_dir, device_requested=requested_device)
                 session.on_finish = analysis_semaphore.release
                 app.state.live_session = session
                 session.start()
@@ -321,8 +351,69 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
                 analysis_semaphore.release()
                 raise
         return {"status": "starting", "device_requested": requested_device,
-                "device_used": active_device, "source_type": source_type,
+                "device_used": active_device,
+                "device_components": {"yolo": active_device, "x3d": active_device, "yunet": "cpu"},
+                "source_type": source_type,
                 "session_id": str(session.started_at)}
+
+    @app.post("/api/live/start-upload")
+    async def live_start_upload(file: UploadFile = File(...), model: str = Form("yolov8n"),
+                                device: str = Form("auto")):
+        """Replay a browser-selected video. The temporary upload is deleted when the session ends."""
+        suffix = Path(file.filename or "").suffix.lower()
+        if suffix not in config.VIDEO_EXTENSIONS:
+            raise ApiError(400, "invalid_source", "เลือกไฟล์วิดีโอ MP4, AVI, MOV หรือ MKV")
+        if model not in config.STAGE1_MODELS:
+            raise ApiError(400, "invalid_parameter", "model must be yolov8n or yolov8s")
+
+        temp_dir = Path(tempfile.gettempdir()) / "cctv-safety-live"
+        temp_dir.mkdir(parents=True, exist_ok=True)
+        uploaded_path = temp_dir / f"{uuid.uuid4().hex}{suffix}"
+        total = 0
+        try:
+            with uploaded_path.open("wb") as output:
+                while chunk := await file.read(1024 * 1024):
+                    total += len(chunk)
+                    if total > config.MAX_UPLOAD_BYTES:
+                        raise ApiError(413, "file_too_large", "วิดีโอต้องมีขนาดไม่เกิน 100 MB")
+                    output.write(chunk)
+            if total == 0:
+                raise ApiError(400, "invalid_source", "ไฟล์วิดีโอว่างเปล่า")
+
+            active_device = choose_device(device)
+            active_settings = _analysis_settings("{}", thresholds)
+            with live_lock:
+                current = app.state.live_session
+                if current and current.state in {"starting", "running", "stopping"}:
+                    raise ApiError(409, "live_session_busy", "A live session is already active or draining.")
+                if not analysis_semaphore.acquire(blocking=False):
+                    raise ApiError(409, "analysis_busy", "Another inference task is running; retry after it finishes.")
+                try:
+                    ensure_model(model, active_device)
+                    ensure_model(config.STAGE2_MODEL, active_device)
+                    session = LiveSession("file", str(uploaded_path), model, active_device, registry,
+                                          active_settings, weights_dir, device_requested=device)
+                    def cleanup_upload():
+                        try:
+                            uploaded_path.unlink(missing_ok=True)
+                        finally:
+                            analysis_semaphore.release()
+                    session.on_finish = cleanup_upload
+                    app.state.live_session = session
+                    session.start()
+                except Exception:
+                    analysis_semaphore.release()
+                    raise
+            return {"status": "starting", "device_requested": device,
+                    "device_used": active_device,
+                    "device_components": {"yolo": active_device, "x3d": active_device, "yunet": "cpu"},
+                    "source_type": "file",
+                    "session_id": str(session.started_at)}
+        except Exception:
+            uploaded_path.unlink(missing_ok=True)
+            raise
+        finally:
+            await file.close()
 
     @app.post("/api/live/stop")
     def live_stop():
@@ -335,7 +426,8 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
     @app.get("/api/live/status")
     def live_status():
         session = app.state.live_session
-        return {"status": "idle", "device_used": None} if not session else session.status()
+        return {"status": "idle", "device_requested": None, "device_used": None,
+                "device_components": None} if not session else {"status": session.state, **session.status()}
 
     @app.websocket("/api/live/events")
     async def live_events(websocket: WebSocket):
@@ -408,7 +500,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         active_thresholds = active_settings["yolo"]["thresholds"]
         ppe_confidence = min(active_thresholds["person"], active_thresholds["helmet"], active_thresholds["vest"])
         ensure_model(model, actual_device)
-        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings, device=actual_device)
+        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings, device="cpu")
 
         frames: list[dict] = []
         info = None
@@ -589,7 +681,7 @@ def create_app(registry=None, weights_dir: Path | None = None, face_anonymizer_f
         ppe_confidence = min(active_thresholds["person"], active_thresholds["helmet"], active_thresholds["vest"])
         ensure_model(model, actual_device)
         ensure_model(config.STAGE2_MODEL, actual_device)
-        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings, device=actual_device)
+        face_anonymizer = face_anonymizer_factory(weights_dir, **privacy_settings, device="cpu")
 
         path = media.save_to_temp(file.file, Path(file.filename).suffix.lower(), config.MAX_UPLOAD_BYTES)
         try:

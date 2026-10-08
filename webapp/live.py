@@ -18,11 +18,13 @@ from webapp.models import resolve_device
 
 
 class LiveSession:
-    def __init__(self, source_type, source, model, device, registry, settings, weights_dir):
+    def __init__(self, source_type, source, model, device, registry, settings, weights_dir,
+                 device_requested="auto"):
         self.source_type = source_type
         self.source = source
         self.model = model
         self.device = resolve_device(device)
+        self.device_requested = device_requested or "auto"
         self.registry = registry
         self.settings = settings
         self.weights_dir = weights_dir
@@ -31,11 +33,17 @@ class LiveSession:
         self.frames_received = 0
         self.frames_processed = 0
         self.frames_face_scanned = 0
+        self.source_fps = None
         self.started_at = time.time()
+        self.started_monotonic = time.monotonic()
         self._stop = threading.Event()
         self._worker_failed = threading.Event()
         self._frames = queue.Queue(maxsize=12)
         self._events = queue.Queue(maxsize=64)
+        self._metrics_lock = threading.Lock()
+        self._timings = {name: deque(maxlen=120) for name in
+                         ("decode", "face", "yolo", "x3d", "preview_encode", "frame_total")}
+        self._last_health_at = 0.0
         self.on_finish = None
         self._capture_thread = threading.Thread(target=self._capture, daemon=True)
         self._worker_thread = threading.Thread(target=self._process, daemon=True)
@@ -51,10 +59,28 @@ class LiveSession:
             self.state = "stopping"
 
     def status(self):
-        return {"state": self.state, "device_used": self.device,
+        with self._metrics_lock:
+            timings = {
+                name: {"last_ms": round(samples[-1], 1),
+                       "mean_ms": round(sum(samples) / len(samples), 1),
+                       "samples": len(samples)}
+                for name, samples in self._timings.items() if samples
+            }
+        elapsed = max(0.001, time.monotonic() - self.started_monotonic)
+        return {"state": self.state, "device_requested": self.device_requested,
+                "device_used": self.device,
+                "device_components": {"yolo": self.device, "x3d": self.device, "yunet": "cpu"},
                 "frames_received": self.frames_received, "frames_processed": self.frames_processed,
                 "frames_face_scanned": self.frames_face_scanned,
-                "queue_depth": self._frames.qsize(), "reason": self.reason}
+                "queue_depth": self._frames.qsize(), "reason": self.reason,
+                "playback_mode": "processing_paced" if self.source_type == "file" else "realtime",
+                "source_fps": self.source_fps,
+                "processing_fps": round(self.frames_processed / elapsed, 2),
+                "timings_ms": timings}
+
+    def _record_timing(self, name, elapsed_ms):
+        with self._metrics_lock:
+            self._timings[name].append(max(0.0, float(elapsed_ms)))
 
     def publish(self, event):
         try:
@@ -80,6 +106,7 @@ class LiveSession:
             self._frames.put(None)
             return
         fps = cap.get(cv2.CAP_PROP_FPS)
+        self.source_fps = round(float(fps), 3) if fps and fps > 0 else None
         pace = 1.0 / fps if self.source_type == "file" and fps and fps > 0 else 0.0
         try:
             index = 0
@@ -87,6 +114,7 @@ class LiveSession:
             while not self._stop.is_set():
                 t0 = time.monotonic()
                 ok, frame = cap.read()
+                self._record_timing("decode", (time.monotonic() - t0) * 1000)
                 if not ok:
                     break
                 self.frames_received += 1
@@ -101,16 +129,23 @@ class LiveSession:
                     source_time = time.monotonic() - wall_start
                 captured_at = time.monotonic()
                 # Back-pressure the source; never drop a frame already returned by VideoCapture.
+                frame_item = (frame, source_time, captured_at)
                 try:
-                    self._frames.put((frame, source_time, captured_at), timeout=0.25)
+                    self._frames.put(frame_item, timeout=0.25)
                 except queue.Full:
                     if self._worker_failed.is_set():
                         break
+                    if self.source_type == "file":
+                        # A replay file can be slowed by back-pressure without losing frames.
+                        # Keep the frame already read and resume when the worker frees a slot.
+                        self._frames.put(frame_item)
+                        index += 1
+                        continue
                     if not self._stop.is_set():
                         self.state, self.reason = "degraded", "processing_overload"
                         self._stop.set()
                     self.publish({"type": "health", **self.status()})
-                    self._frames.put((frame, source_time, captured_at))
+                    self._frames.put(frame_item)
                     break
                 index += 1
                 if pace:
@@ -129,7 +164,7 @@ class LiveSession:
 
     def _process(self):
         try:
-            anonymizer = YuNetFaceAnonymizer(self.weights_dir, device=self.device)
+            anonymizer = YuNetFaceAnonymizer(self.weights_dir, device="cpu")
             history = deque(maxlen=250)
             recent_entries = deque(maxlen=250)
             last_yolo = last_x3d = -1.0
@@ -138,8 +173,11 @@ class LiveSession:
                 item = self._frames.get()
                 if item is None:
                     break
+                frame_started = time.monotonic()
                 frame, t, captured_at = item
+                stage_started = time.monotonic()
                 safe, _ = anonymize(anonymizer, frame)
+                self._record_timing("face", (time.monotonic() - stage_started) * 1000)
                 self.frames_face_scanned += 1
                 self.frames_processed += 1
                 # Retain only the X3D-size representation; keeping seconds of full-resolution
@@ -147,9 +185,18 @@ class LiveSession:
                 history.append((t, media.letterbox_bgr(frame)))
                 if t - last_yolo >= 0.1:
                     options = {k: self.settings["yolo"][k] for k in ("iou", "imgsz", "max_det")}
+                    stage_started = time.monotonic()
                     detections = self.registry.stage1(self.model, [frame], self.settings["yolo"]["thresholds"], options, device=self.device)[0]
+                    self._record_timing("yolo", (time.monotonic() - stage_started) * 1000)
                     entry = {"time_s": t, "detections": [{"class_name": d.class_name, "xyxy": list(d.xyxy), "confidence": float(d.confidence)} for d in detections]}
                     recent_entries.append(entry)
+                    confidence_by_class = {}
+                    for detection in detections:
+                        current = confidence_by_class.setdefault(detection.class_name, {"count": 0, "max_confidence": 0.0})
+                        current["count"] += 1
+                        current["max_confidence"] = max(current["max_confidence"], float(detection.confidence))
+                    self.publish({"type": "confidence", "model": self.model, "time_s": round(t, 3),
+                                  "detection_count": len(detections), "classes": confidence_by_class})
                     add_track_ids(list(recent_entries), frame.shape[1], frame.shape[0], self.settings["tracking"]["max_track_gap_s"])
                     last_yolo = t
                     summary = summarize_window(list(recent_entries), max(0.0, t - 2), t + 0.001,
@@ -166,16 +213,25 @@ class LiveSession:
                     if len(clip_source) >= FRAMES:
                         import numpy as np
                         indices = np.linspace(0, len(clip_source) - 1, FRAMES).round().astype(int)
+                        stage_started = time.monotonic()
                         probs = self.registry.stage2([[clip_source[int(i)] for i in indices]], device=self.device)[0]
+                        self._record_timing("x3d", (time.monotonic() - stage_started) * 1000)
                         self.publish({"type": "x3d", "start_s": round(first_t, 3), "end_s": round(t, 3),
                                       "non_fight": round(probs[0], 4), "fight": round(probs[1], 4),
                                       "label": "fight" if probs[1] > self.settings["x3d"]["fight_threshold"] else "non_fight"})
                         last_x3d = t
-                if self.frames_processed % 5 == 0:
+                if self.frames_processed % 2 == 0:
+                    stage_started = time.monotonic()
                     ok, encoded = cv2.imencode(".jpg", safe, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                    self._record_timing("preview_encode", (time.monotonic() - stage_started) * 1000)
                     if ok:
                         self.publish({"type": "preview", "jpeg_b64": base64.b64encode(encoded).decode("ascii"), "time_s": round(t, 3),
                                       "processing_latency_ms": round((time.monotonic() - captured_at) * 1000, 1)})
+                self._record_timing("frame_total", (time.monotonic() - frame_started) * 1000)
+                now = time.monotonic()
+                if now - self._last_health_at >= 2.0:
+                    self.publish({"type": "health", **self.status()})
+                    self._last_health_at = now
             if self.state not in {"degraded", "error"}:
                 self.state = "stopped"
             self.publish({"type": "health", **self.status()})

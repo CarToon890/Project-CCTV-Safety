@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import threading
-import re
 from pathlib import Path
 
 import numpy as np
@@ -57,17 +56,15 @@ def runtime_status() -> dict:
         providers = []
     try:
         import cv2
-        build = cv2.getBuildInformation()
-        opencv_cuda = bool(re.search(r"NVIDIA CUDA:\s+YES", build))
-        if opencv_cuda:
-            opencv_cuda = cv2.cuda.getCudaEnabledDeviceCount() > 0
+        opencv_cuda = cv2.cuda.getCudaEnabledDeviceCount() > 0
     except Exception:  # noqa: BLE001
         opencv_cuda = False
-    face_backend = "opencv-yunet-cuda" if opencv_cuda else "opencv-yunet-cpu"
-    full_ready = cuda and opencv_cuda
+    # YuNet is deliberately kept on CPU; CUDA selection applies to YOLO/X3D only.
+    face_backend = "opencv-yunet-cpu"
     return {"cuda_available": cuda, "gpu": gpu, "onnx_providers": providers,
-            "face_backend": face_backend, "full_pipeline_cuda_ready": full_ready,
-            "opencv_cuda_available": opencv_cuda}
+            "face_backend": face_backend, "full_pipeline_cuda_ready": False,
+            "opencv_cuda_available": opencv_cuda,
+            "cuda_execution_mode": "cuda_models_cpu_yunet" if cuda else "cpu_only"}
 
 
 def resolve_device(requested: str | None) -> str:
@@ -81,12 +78,13 @@ def resolve_device(requested: str | None) -> str:
         raise ValueError("device must be one of auto, cpu, cuda")
     status = runtime_status()
     if requested == "cuda":
-        if not status["cuda_available"] or not status["full_pipeline_cuda_ready"]:
-            raise RuntimeError("Full CUDA runtime unavailable: PyTorch CUDA and CUDA-enabled OpenCV YuNet are both required")
+        # PyTorch runs YOLO/X3D on CUDA; Live and Upload keep YuNet on CPU.
+        if not status["cuda_available"]:
+            raise RuntimeError("PyTorch CUDA is unavailable; install a CUDA-enabled PyTorch build and verify the NVIDIA driver")
         return "cuda:0"
     if requested == "auto":
-        # Auto only promises an all-CUDA pipeline when every inference backend supports it.
-        return "cuda:0" if status["full_pipeline_cuda_ready"] else "cpu"
+        # Select CUDA for model inference when PyTorch reports it; YuNet remains CPU-only.
+        return "cuda:0" if status["cuda_available"] else "cpu"
     return "cpu"
 
 

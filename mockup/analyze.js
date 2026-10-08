@@ -238,9 +238,12 @@
     ui.apiDot.className = 'dot ' + (missing.length ? 'warn' : 'ok');
     const gpuText = runtime.gpu && runtime.gpu.name ? ' · GPU ' + runtime.gpu.name :
       (runtime.cuda_available ? ' · CUDA พร้อม' : ' · CPU only');
-    const faceText = runtime.face_backend === 'opencv-yunet-cpu' ? ' · YuNet ใช้ CPU' : '';
+    const faceText = runtime.face_backend === 'opencv-yunet-cpu' ? ' · YuNet ใช้ CPU' : ' · YuNet ใช้ CUDA';
+    const modeText = runtime.cuda_execution_mode === 'cuda_models_cpu_yunet'
+      ? ' · โหมดผสม: YOLO/X3D ใช้ GPU, YuNet ใช้ CPU'
+      : '';
     ui.apiText.textContent = 'API พร้อม · Auto=' + device + gpuText + faceText +
-      (missing.length ? ' · ไม่พบไฟล์น้ำหนัก: ' + missing.join(', ') : '');
+      modeText + (missing.length ? ' · ไม่พบไฟล์น้ำหนัก: ' + missing.join(', ') : '');
     Array.prototype.forEach.call(ui.model.options, opt => {
       const s = models[opt.value];
       opt.textContent = opt.dataset.label + (s === 'missing' ? ' — ไม่พบไฟล์น้ำหนัก' : '');

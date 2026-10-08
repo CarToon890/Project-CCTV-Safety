@@ -37,9 +37,9 @@ mockup/
 (`/api/health`, `/api/stage1/analyze`, `/api/stage2/analyze`, `/api/pipeline/analyze`) — ดู section 5 ของ
 `../docs/web_api_contract.md`
 
-```bash
+```powershell
 # จาก root ของ repo; ไฟล์ .pt อยู่ใน ./weights (หรือกำหนด CCTV_WEIGHTS_DIR)
-.venv-cuda/Scripts/python -m uvicorn webapp.api:app --host 127.0.0.1 --port 8000
+.\.venv-test\Scripts\python.exe -m uvicorn webapp.api:app --host 127.0.0.1 --port 8000
 ```
 
 แล้วเปิด `http://127.0.0.1:8000/` → เมนู **Upload & Analyze** (ไม่มีระบบ login; ใช้เฉพาะในเครื่อง)
@@ -58,7 +58,7 @@ mockup/
 | # | หน้า | สิ่งที่แสดง | สถานะ |
 |:--|:---|:---|:---|
 | 1 | **Dashboard** | KPI 4 ตัว, กราฟเหตุการณ์รายชั่วโมง, สัดส่วน 4 classes, สถานะกล้อง 14 ตัว, แจ้งเตือนล่าสุด | UI เสร็จ · **ข้อมูลจำลอง** |
-| 2 | **Live CCTV Monitoring** | กล้องจำลองเป็น mockup; มีแผง Live pilot แยกสำหรับ file replay ใน `data/` หรือ RTSP หนึ่ง stream พร้อม preview เบลอหน้า, candidate และ X3D | **Pilot inference จริง** · ยังไม่ผ่าน benchmark SLA และไม่ใช่ production |
+| 2 | **Live CCTV Monitoring** | กล้องจำลองเป็น mockup; แผง Live pilot รองรับ file replay จากเครื่องและมีทางรับ RTSP หนึ่ง stream พร้อม preview เบลอหน้า, candidate, X3D และ timing รายขั้น | **Pilot inference จริง** · file replay ใช้ทดสอบได้; RTSP ยังไม่ได้ทดสอบกับกล้องจริง และยังไม่ผ่าน benchmark SLA/production |
 | 3 | **Alert / Logs** | ตาราง 90 รายการ + ตัวกรอง 5 แบบ + แบ่งหน้า + modal รายละเอียด | UI เสร็จ · **ข้อมูลจำลอง** (ตัวกรองทำงานจริงบน mock data) |
 | 4 | **Upload & Analyze** | อัปโหลดภาพ/วิดีโอ → Stage 1 (YOLOv8n/s) และ Stage 2 (X3D-S, เฉพาะวิดีโอ) | **ผลจากโมเดลจริงผ่าน API** (ต้นแบบ pilot) |
 

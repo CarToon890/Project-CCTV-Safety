@@ -17,7 +17,7 @@ LIVE_JS = MOCKUP / "live.js"
 MOCK_TEXT = "ข้อมูลจำลอง"
 REAL_BADGE_TEXT = "ผลจากโมเดลจริง — pilot"
 ALLOWED_API = {"/api/health", "/api/stage1/analyze", "/api/stage2/analyze", "/api/pipeline/analyze",
-               "/api/live/start", "/api/live/stop", "/api/live/status", "/api/live/events"}
+               "/api/live/start", "/api/live/start-upload", "/api/live/stop", "/api/live/status", "/api/live/events"}
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr",
         "path", "circle", "rect", "line", "polyline", "polygon", "ellipse", "use", "stop"}
 
@@ -173,9 +173,17 @@ def test_analyze_js_calls_only_contract_endpoints(js_text):
 def test_live_js_uses_local_live_api_and_safe_text_rendering():
     code = _strip_js_comments(LIVE_JS.read_text(encoding="utf-8"))
     used = set(re.findall(r"['\"`](/api/[^'\"`?\s]*)", code))
-    assert used == {"/api/live/start", "/api/live/stop", "/api/live/events"}
+    assert used == {"/api/live/start", "/api/live/start-upload", "/api/live/stop", "/api/live/events"}
     assert "innerHTML" not in code and "textContent" in code
     assert "ws://" in code and "location.host" in code
+    assert "device_components" in code and "devices.yolo" in code and "devices.x3d" in code and "devices.yunet" in code
+
+
+def test_live_ui_disables_cuda_without_runtime_support():
+    flow = (MOCKUP / "live-flow.js").read_text(encoding="utf-8")
+    assert "cudaOption.disabled = !cudaAvailable" in flow
+    assert "device.value = 'auto'" in flow
+    assert "Auto เลือก GPU" in flow and "Auto ใช้ CPU" in flow
 
 
 def test_summary_does_not_claim_unique_people_or_confirmed_falls(js_text):
@@ -254,7 +262,7 @@ def test_analyze_js_manages_object_urls(js_text):
     assert "URL.createObjectURL" in code and "URL.revokeObjectURL" in code
 
 
-CONTRACT_FORM_FIELDS = {"file", "model", "max_frames", "mode", "sample_fps", "analysis_settings",
+CONTRACT_FORM_FIELDS = {"file", "model", "device", "max_frames", "mode", "sample_fps", "analysis_settings",
                         "face_confidence", "face_padding", "face_blur_strength"}
 
 
